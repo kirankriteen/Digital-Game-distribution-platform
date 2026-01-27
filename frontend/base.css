@@ -1,0 +1,115 @@
+/* *{
+    background-color: #1A1210;
+    /* background-color: #2E1F1A;    alt */
+
+} */
+
+p{
+    color: #F5EDE6 ;
+}
+
+p:hover{
+    color:#4e423f;
+
+}
+
+button{
+color :#FF6A00 
+}
+
+h4{
+    color : #FF3D00;
+
+}
+a{
+    text-decoration: none;
+}
+
+
+.freegames{
+  display: flex;
+}
+
+
+/*  card css */
+.card {
+  width: 220px;
+  height: 200px;
+  padding: 10px;
+  color: #F5EDE6 ;
+  background-color: #1A1210;
+  position: relative;
+  border-radius: 2.5em;
+  /* padding: 2em; */
+  transition: transform 0.4s ease;
+}
+
+.card .card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5em;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+
+.card .card-top, .card .card-bottom {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card .card-top p, .card .card-top .card-title, .card .card-bottom p, .card .card-bottom .card-title {
+  margin: 0;
+}
+
+.card .card-title {
+  font-weight: bold;
+  text-decoration: none;
+}
+
+
+.card .card-top p, .card .card-bottom p {
+  font-weight: 600;
+}
+
+.card .card-bottom {
+  align-items: flex-end;
+}
+
+.card .card-image {
+  /* position: absolute; */
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.card .card-image svg {
+  width: 4em;
+  height: 4em;
+  transition: transform 0.4s ease;
+}
+
+
+
+.card:hover {
+  cursor: pointer;
+  transform: scale(0.97);
+}
+
+.card:hover .card-content {
+  transform: scale(0.96);
+}
+
+.card:hover .card-image svg {
+  transform: scale(1.05);
+}
+
+.card:active {
+  transform: scale(0.9);
+}
+
+
