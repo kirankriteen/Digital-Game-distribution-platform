@@ -1,9 +1,13 @@
-const http = require('http');
-const fs = require('fs');
+const express = require('express');
 const path = require('path');
 const crypto = require('crypto');
-
+const app = express();
 const PORT = 3000;
+
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files like html, css and js which are in the same folder
+app.use(express.static(path.join(__dirname)));
 
 const users = {
     "testuser": hashPassword("password123")
@@ -13,52 +17,16 @@ function hashPassword(password) {
     return crypto.createHash('sha256').update(password).digest('hex');
 }
 
-// Server HTML Pages
-function serveFile(res, filePath, contentType) {
-    fs.readFile(filePath, (err, data) => {
-        if (err) {
-            res.writeHead(404);
-            res.end("Not Found");
-            return;
-        }
-        res.writeHead(200, {"Content-Type": contentType});
-        res.end(data);
-    });
-}
+app.post('/login', (req, res) => {
+    const {username, password}  = req.body;
 
-// Create HTTP Server
-const server = http.createServer((req, res) => {
-    if(req.method === "GET") {
-        if(req.url === '/') {
-            serveFile(res, path.join(__dirname, 'index.html'), 'text/html');
-        } else if(req.url === '/script.js') {
-            serveFile(res, path.join(__dirname, 'script.js'), 'application/javascript');
-        } else {
-            res.writeHead(404);
-            res.end("Not Found");
-        }
-    } else if(req.method === "POST" && req.url === '/login') {
-        let body = '';
-        req.on('data', chuck => body += chuck);
-        req.on('end', () => {
-            const params = new URLSearchParams(body);
-            const username = params.get('username');
-            const password = params.get('password');
-
-            if(users[username] && users[username] === hashPassword(password)) {
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end('Login successful!');
-            } else {
-                res.writeHead(401, { 'Content-Type': 'text/plain' });
-                res.end('Invalid credentials');
-            }
-        });
+    if(users[username] && users[username] === hashPassword(password)) {
+        res.send("Login Successful!");
     } else {
-        res.writeHead(405);
-        res.end('Method Not Allowed');
+        res.status(401).send('Invalid credentials');
     }
 });
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });

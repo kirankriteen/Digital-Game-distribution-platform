@@ -1,1 +1,2 @@
 - Testing login pages using naive javascript and express js.
+- Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
