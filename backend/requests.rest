@@ -11,7 +11,25 @@ Content-Type: application/json
 }
 
 ### 
-# With the access token access the projects at /me
+# With the access token access the projects at /me, access token
 GET http://localhost:3000/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJreWxlIiwicGFzc3dvcmQiOiIkMmIkMTAkTGRISGpUVVNKM2pONC8yMndCUkhPT1FyZXMuTHRvSHAuMlNLb3p3aVFJbWRpbmNNNldNc08iLCJpYXQiOjE3Njk3NzcyODIsImV4cCI6MTc2OTc3NzM0Mn0.l_iSFhmAp5L5M_YSjoxecNlK6jJ8pn_5p4vfR5ltRyM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3Njk3NzgxMTMsImV4cCI6MTc2OTc3ODE3M30.T1kSyWaFUxQYGlsP6j5JxPqvKohAikxKvc0q5YCeGcs
+
+###
+# If token expire goto /token for new one, here refresh token
+POST http://localhost:4000/token
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJreWxlIiwicGFzc3dvcmQiOiIkMmIkMTAkTGRISGpUVVNKM2pONC8yMndCUkhPT1FyZXMuTHRvSHAuMlNLb3p3aVFJbWRpbmNNNldNc08iLCJpYXQiOjE3Njk3NzgwMzJ9.zF6hP0T43k64SNpkt_Ul7jPJja6ciY-cfKterGpxf-Q"
+}
+
+###
+# If logout token here is refresh token
+DELETE http://localhost:4000/logout
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJreWxlIiwicGFzc3dvcmQiOiIkMmIkMTAkTGRISGpUVVNKM2pONC8yMndCUkhPT1FyZXMuTHRvSHAuMlNLb3p3aVFJbWRpbmNNNldNc08iLCJpYXQiOjE3Njk3NzgwMzJ9.zF6hP0T43k64SNpkt_Ul7jPJja6ciY-cfKterGpxf-Q"
+}
 
