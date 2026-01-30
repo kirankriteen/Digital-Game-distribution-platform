@@ -1,11 +1,17 @@
 GET http://localhost:3000/
 
 ###
-# Login details
-POST http://localhost:3000/login
+# Login details for server at 4000
+POST http://localhost:4000/login
 Content-Type: application/json
 
 {
     "username": "kyle",
     "password": "password123"
 }
+
+### 
+# With the access token access the projects at /me
+GET http://localhost:3000/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJreWxlIiwicGFzc3dvcmQiOiIkMmIkMTAkTGRISGpUVVNKM2pONC8yMndCUkhPT1FyZXMuTHRvSHAuMlNLb3p3aVFJbWRpbmNNNldNc08iLCJpYXQiOjE3Njk3NzcyODIsImV4cCI6MTc2OTc3NzM0Mn0.l_iSFhmAp5L5M_YSjoxecNlK6jJ8pn_5p4vfR5ltRyM
+

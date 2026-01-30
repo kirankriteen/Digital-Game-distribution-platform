@@ -4,7 +4,9 @@ express = require('express')
 const bcrypt = require('bcrypt')
 const PORT = 3000
 const app = express()
-const { ROLE, users, userData } = require('./data')
+const { ROLE, users, userData, projects } = require('./data')
+
+const jwt = require('jsonwebtoken')
 
 app.use(express.json())
 
@@ -12,21 +14,25 @@ app.get('/', (req, res) => {
     res.send('Home Page')
 })
 
-app.post('/login', async (req, res) => {
-    const user = userData.find(user => user.username === req.body.username)
-    if(!user) {
-        return res.status(400).send('Cannot find user')
-    }
-    try {
-        if(await bcrypt.compare(req.body.password, user.password)) {
-            res.send('success')
-        } else {
-            res.send('not allowed')
-        }
-    } catch {
-        res.status(500).send()
-    }
+app.get('/me', authenticateToken, (req, res) => {
+    res.json(projects.filter(p => p.userId === req.user.id))
 })
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if(!token) {
+        return res.sendStatus(401)
+    }
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if(err) {
+            return res.status(403).send('from authentication token')
+        }
+        req.user = user
+        next()
+    })
+}
 
 app.listen(PORT, () => {
     console.log(`Server Runnning at http://localhost:${PORT}`)
