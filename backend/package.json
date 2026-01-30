@@ -6,7 +6,7 @@
   "scripts": {
     "devStart": "nodemon day2/prac3/server.js",
     "devStartAuth": "nodemon day2/prac3/authServer.js",
-    "start": "node day1/server.js"
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
