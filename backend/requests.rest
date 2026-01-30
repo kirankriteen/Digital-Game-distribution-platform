@@ -10,10 +10,25 @@ Content-Type: application/json
     "password": "password123"
 }
 
+###
+# Login details for server at 4000 for joe
+POST http://localhost:4000/login
+Content-Type: application/json
+
+{
+    "username": "joe",
+    "password": "password123"
+}
+
 ### 
-# With the access token access the projects at /me, access token
-GET http://localhost:3000/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3Njk3NzgxMTMsImV4cCI6MTc2OTc3ODE3M30.T1kSyWaFUxQYGlsP6j5JxPqvKohAikxKvc0q5YCeGcs
+# With the access token access the projects at /projects/me, access token
+GET http://localhost:3000/projects/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImpvZSIsImlhdCI6MTc2OTc4MjQyOSwiZXhwIjoxNzY5NzgyNDg5fQ.H3xX_aFpro3nSberu4LnhtN8a0sfd8S7uVEnLyftDQg
+
+### 
+# With the access token access the projects at /projects, access token
+GET http://localhost:3000/projects/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImpvZSIsImlhdCI6MTc2OTc4MjQyOSwiZXhwIjoxNzY5NzgyNDg5fQ.H3xX_aFpro3nSberu4LnhtN8a0sfd8S7uVEnLyftDQg
 
 ###
 # If token expire goto /token for new one, here refresh token
@@ -21,7 +36,7 @@ POST http://localhost:4000/token
 Content-Type: application/json
 
 {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJreWxlIiwicGFzc3dvcmQiOiIkMmIkMTAkTGRISGpUVVNKM2pONC8yMndCUkhPT1FyZXMuTHRvSHAuMlNLb3p3aVFJbWRpbmNNNldNc08iLCJpYXQiOjE3Njk3NzgwMzJ9.zF6hP0T43k64SNpkt_Ul7jPJja6ciY-cfKterGpxf-Q"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidXNlcm5hbWUiOiJqb2UiLCJwYXNzd29yZCI6IiQyYiQxMCRVOGNpMTlwWllxUDJ2RzNuOVI2MlRlb3V4OGRDTm13YW50WHpwVnBUZjdpLlpHMXk2UUNmYSIsImlhdCI6MTc2OTc4MjM2NX0.GC300UbCvlc0ltQYph3Wyy4ANduTVZqEs9-d99zVmio"
 }
 
 ###
@@ -30,6 +45,11 @@ DELETE http://localhost:4000/logout
 Content-Type: application/json
 
 {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJreWxlIiwicGFzc3dvcmQiOiIkMmIkMTAkTGRISGpUVVNKM2pONC8yMndCUkhPT1FyZXMuTHRvSHAuMlNLb3p3aVFJbWRpbmNNNldNc08iLCJpYXQiOjE3Njk3NzgwMzJ9.zF6hP0T43k64SNpkt_Ul7jPJja6ciY-cfKterGpxf-Q"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJreWxlIiwicGFzc3dvcmQiOiIkMmIkMTAkTGRISGpUVVNKM2pONC8yMndCUkhPT1FyZXMuTHRvSHAuMlNLb3p3aVFJbWRpbmNNNldNc08iLCJpYXQiOjE3Njk3ODAzMjV9.Z06J9XqRADk0Ox608qcaXc2Jx9G0rq20tHOPOTLyQd8"
 }
+
+###
+# Accessing the admin page
+GET http://localhost:3000/admin
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImpvZSIsImlhdCI6MTc2OTc4MjQyOSwiZXhwIjoxNzY5NzgyNDg5fQ.H3xX_aFpro3nSberu4LnhtN8a0sfd8S7uVEnLyftDQg
 
