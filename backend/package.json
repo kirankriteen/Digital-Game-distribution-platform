@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend for the project",
+  "main": "script.js",
+  "scripts": {
+    "devStart": "nodemon day2/prac3/server.js",
+    "devStartAuth": "nodemon day2/prac3/authServer.js",
+    "start": "nodemon server.js",
+    "startAuth": "nodemon authServer.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
