@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const express = require('express')
 const app = express()
+const cors = require('cors')
 const bcrypt = require('bcrypt')
 const PORT = 4000
 const { userData } = require('./data')
@@ -9,6 +10,8 @@ const { userData } = require('./data')
 const jwt = require('jsonwebtoken')
 
 app.use(express.json())
+
+app.use(cors({origin: "http://127.0.0.1:5500"}));
 
 let refreshTokens = []
 
