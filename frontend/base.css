@@ -33,9 +33,10 @@ a{
 
 /*  card css */
 .card {
-  width: 220px;
-  height: 200px;
-  padding: 10px;
+  width: 320px;
+  height: 320px;
+  padding-left: 10px;
+  margin-left: 15px;
   color: #F5EDE6 ;
   background-color: #1A1210;
   position: relative;
