@@ -1,0 +1,157 @@
+/* --- 1. Design Tokens --- */
+:root {
+    --bg-dark: #08090a;
+    --panel-left: #111214;        /* Server/Group list */
+    --panel-mid: #1e1f22;         /* Channel/Project list */
+    --panel-main: #2b2d31;        /* Chat/Workspace area */
+    --accent: #6366f1;            /* Indigo Dev Accent */
+    --accent-glow: rgba(99, 102, 241, 0.2);
+    --text-bright: #f2f3f5;
+    --text-dim: #94a3b8;
+    --code-bg: #0e0e10;
+    --success: #23a559;
+    --glass: blur(15px);
+}
+
+/* --- 2. Base Layout --- */
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-bright);
+    font-family: 'JetBrains Mono', 'Inter', monospace; /* Dev-friendly font */
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- 3. Three-Tier Navigation --- */
+
+/* Tier 1: Dev Group Icons */
+.group-sidebar {
+    width: 72px;
+    background: var(--panel-left);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    gap: 8px;
+    border-right: 1px solid rgba(0,0,0,0.2);
+}
+
+/* Tier 2: Channels & Repos */
+.channel-sidebar {
+    width: 240px;
+    background: var(--panel-mid);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Tier 3: The Main Feed */
+.main-workspace {
+    flex-grow: 1;
+    background: var(--panel-main);
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- 4. Dev-Specific Components --- */
+
+/* Code Blocks in Chat */
+.code-snippet {
+    background: var(--code-bg);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+    font-family: 'Consolas', monospace;
+    position: relative;
+    font-size: 0.9rem;
+}
+
+.code-header {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Live Deployment Status Card */
+.deploy-status {
+    background: rgba(35, 165, 89, 0.1);
+    border: 1px solid var(--success);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 10px var(--success);
+}
+
+/* Group Member Cards */
+.member-item {
+    padding: 8px 12px;
+    margin: 2px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.member-item:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+/* Custom Nav Icons */
+.nav-icon {
+    width: 48px;
+    height: 48px;
+    background: #313338;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-icon:hover {
+    border-radius: 15px;
+    background: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* --- 5. Interactive Chat Input --- */
+.chat-input-area {
+    padding: 20px;
+    background: var(--panel-main);
+}
+
+.input-wrapper {
+    background: #383a40;
+    border-radius: 8px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-wrapper input {
+    background: transparent;
+    border: none;
+    color: white;
+    flex-grow: 1;
+    outline: none;
+}

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevHub | Game Distribution</title>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet"> -->
+    <style>
+        :root {
+            --primary: #6366f1; /* Dynamic */
+            --bg: #020617;
+            --sidebar: #0f172a;
+            --card: rgba(30, 41, 59, 0.5);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            transition: all 0.5s ease;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        nav {
+            width: 260px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+        }
+
+        .logo { font-weight: 800; font-size: 1.5rem; margin-bottom: 40px; color: var(--primary); }
+        
+        .nav-item {
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-bottom: 5px;
+            transition: 0.3s;
+        }
+
+        .nav-item.active { background: var(--primary); color: white; }
+        .nav-item:hover:not(.active) { background: rgba(255,255,255,0.05); color: white; }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent);
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+
+        /* Bento Grid */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        /* Custom Card Sizes */
+        .rev-card { grid-column: span 2; grid-row: span 1; }
+        .dl-card { grid-column: span 1; }
+        .active-card { grid-column: span 1; }
+        .games-list-card { grid-column: span 4; }
+
+        .stat-label { color: var(--text-dim); font-size: 0.9rem; font-weight: 600; }
+        .stat-value { font-size: 2.5rem; font-weight: 800; margin: 10px 0; display: block; }
+        
+        .badge {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.8rem;
+        }
+
+        /* Table UI */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; color: var(--text-dim); font-size: 0.8rem; padding: 12px; }
+        td { padding: 16px 12px; border-top: 1px solid var(--border); }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 14px 0 var(--primary);
+        }
+    </style>
+<!-- for my game styles -->
+
+<style>
+    /* My Games Specific Styles */
+    .controls-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 20px;
+    }
+
+    .search-bar {
+        background: var(--card);
+        border: 1px solid var(--border);
+        padding: 12px 20px;
+        border-radius: 12px;
+        color: white;
+        width: 300px;
+        outline: none;
+    }
+
+    .search-bar:focus { border-color: var(--primary); }
+
+    .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    .game-card {
+        background: var(--card);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+    .game-card:hover {
+        transform: scale(1.03);
+        border-color: var(--primary);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .poster-container {
+        width: 100%;
+        height: 160px;
+        background: #1e293b;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .game-poster {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.7;
+        transition: 0.3s;
+    }
+
+    .game-card:hover .game-poster { opacity: 1; }
+
+    .card-content { padding: 20px; }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border);
+    }
+
+    .status-tag {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        backdrop-filter: blur(5px);
+    }
+
+    .status-live { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #4ade80; }
+    .status-pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #fbbf24; }
+
+    .manage-btn {
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .manage-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+    
+.logo a{ 
+    font-weight: 800; 
+    font-size: 1.5rem; 
+    margin-bottom: 40px; 
+    color: var(--primary);
+    letter-spacing: -1px;
+}
+</style>
+
+</head>
+<body>
+
+<nav>
+    <div class="logo"><a href="../../base.html" style="text-decoration: none;">Game Distribution System</a></div>
+    <a href="dev_dashboard.htm" class="nav-item active">Dashboard</a>
+    <a href="dev_games_section.htm" class="nav-item">My Games</a>
+    <a href="dev_analysis.htm" class="nav-item">Analytics</a>
+    <a href="dev_payouts.htm" class="nav-item">Payouts</a>
+    <a href="dev_settings.htm" class="nav-item">Settings</a>
+</nav>
+
+<main>
+    <div class="header">
+        <h1>Overview</h1>
+        <a href="adding_a_new_game.htm" class="btn-primary" id="addGameBtn">+ New Game</a>
+    </div>
+
+    <div class="bento-grid">
+        <div class="card rev-card">
+            <span class="stat-label">Total Revenue</span>
+            <span class="stat-value" id="revVal">$42,920.50</span>
+            <div class="badge">↑ 24% vs last month</div>
+        </div>
+
+        <div class="card dl-card">
+            <span class="stat-label">Downloads</span>
+            <span class="stat-value">12.4k</span>
+            <div style="color: var(--primary)">Studio Lifetime</div>
+        </div>
+
+        <div class="card active-card">
+            <span class="stat-label">Active Players</span>
+            <span class="stat-value">1,082</span>
+            <div class="badge" style="background:rgba(99, 102, 241, 0.2); color: var(--primary)">Live Now</div>
+        </div>
+
+        <div class="card games-list-card">
+            <div style="display: flex; justify-content: space-between;">
+                <h3>Your Projects</h3>
+                <select id="themeSelector" style="background: transparent; color: white; border: 1px solid var(--border); border-radius: 5px; padding: 5px;">
+                    <option value="RPG">Theme: RPG (Purple)</option>
+                    <option value="Action">Theme: Action (Red)</option>
+                    <option value="Horror">Theme: Horror (Dark)</option>
+                </select>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Genre</th>
+                        <th>Sales</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Ether Bound</strong></td>
+                        <td>RPG</td>
+                        <td>2,400</td>
+                        <td><span class="badge">Live</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Velocity Drift</strong></td>
+                        <td>Action</td>
+                        <td>1,120</td>
+                        <td><span class="badge">Live</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script>
+    const themes = {
+        "RPG": "#8b5cf6",
+        "Action": "#f43f5e",
+        "Horror": "#450a0a"
+    };
+
+    const selector = document.getElementById('themeSelector');
+    
+    selector.addEventListener('change', (e) => {
+        const color = themes[e.target.value];
+        document.documentElement.style.setProperty('--primary', color);
+        // Add a subtle glow to the revenue value
+        document.getElementById('revVal').style.textShadow = `0 0 20px ${color}55`;
+    });
+</script>
+
+</body>
+</html>
