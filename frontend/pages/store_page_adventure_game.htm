@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberStrike 2077 | GameVault Store</title>
+    <style>
+        :root {
+            --bg-body: #121212;
+            --bg-card: #202020;
+            --text-main: #f5f5f5;
+            --text-secondary: #ccc;
+            --accent: #0078f2;
+            --accent-hover: #0063c7;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            line-height: 1.6;
+            /* overflow-x: hidden; */
+        }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 40px;
+        }
+
+        .game-title { font-size: 3rem; margin-bottom: 20px; }
+
+        /* --- Media Carousel Section --- */
+        .media-container {
+            position: relative;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden; /* Clips the buttons slightly for a cleaner look */
+        }
+
+        .media-main {
+            width: 100%;
+            aspect-ratio: 4/3;
+            height: 400px;
+            background: #000;
+            display: flex;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;  
+            scrollbar-width: none;     
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+
+        .media-main::-webkit-scrollbar {
+            display: none;
+        }
+
+        .media-main img, 
+        .media-main video {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            scroll-snap-align: start;
+        }
+
+        /* --- Nav Buttons --- */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 20px 15px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 10;
+            transition: background 0.3s;
+            opacity: 0; /* Hidden by default, shown on container hover */
+        }
+
+        .media-container:hover .nav-btn {
+            opacity: 1;
+        }
+
+        .nav-btn:hover { background: var(--accent); }
+        .btn-left { left: 0; border-radius: 0 8px 8px 0; }
+        .btn-right { right: 0; border-radius: 8px 0 0 8px; }
+
+        /* --- Content Styling --- */
+        .description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            border-left: 3px solid var(--accent);
+            padding-left: 20px;
+        }
+
+        .specs-table {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .spec-item label { color: #888; display: block; font-size: 0.8rem; text-transform: uppercase; }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+        }
+
+        .game-logo-box {
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .price-tag { font-size: 1.5rem; font-weight: bold; margin-bottom: 15px; }
+
+        .btn-buy {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .btn-buy:hover { background: var(--accent-hover); }
+
+        .btn-wishlist {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .btn-wishlist:hover { background: #333; }
+
+        .meta-list { list-style: none; font-size: 0.9rem; border-top: 1px solid #333; padding-top: 15px; padding-left: 0; }
+        .meta-list li { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .meta-list span { color: var(--text-secondary); }
+
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <main>
+            <h1 class="game-title">CyberStrike 2077</h1>
+            
+            <div class="media-container">
+                <button class="nav-btn btn-left" id="prevBtn">&#10094;</button>
+                <div class="media-main" id="mediaCarousel">
+                    <img src="https://images.unsplash.com/photo-1614732414444-096e5f1122d5?auto=format&fit=crop&w=1200&q=80" alt="Cyberpunk City">
+                    <video controls muted loop>
+                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                    </video>
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80" alt="Gaming Setup">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80" alt="Tech Background">
+                </div>
+                <button class="nav-btn btn-right" id="nextBtn">&#10095;</button>
+            </div>
+
+            <p class="description">
+                CyberStrike 2077 is an open-world, action-adventure RPG set in the megalopolis of Night City, 
+                where you play as a cyberpunk mercenary wrapped up in a do-or-die fight for survival. 
+                Improved for the next generation and featuring brand-new free content!
+            </p>
+
+            <h3>System Requirements</h3>
+            <div class="specs-table">
+                <div class="spec-item"><label>OS</label>Windows 10 64-bit</div>
+                <div class="spec-item"><label>Processor</label>Intel Core i7-12700</div>
+                <div class="spec-item"><label>Memory</label>16 GB RAM</div>
+                <div class="spec-item"><label>Storage</label>70 GB SSD</div>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <img class="game-logo-box" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80" alt="Game Logo">
+            <div class="price-tag">$59.99</div>
+            <button class="btn-buy" id="buyBtn">Buy Now</button>
+            <button class="btn-wishlist" id="wishBtn">Add to Wishlist</button>
+
+            <ul class="meta-list">
+                <li><span>Developer</span> <strong>Nebula Studios</strong></li>
+                <li><span>Publisher</span> <strong>Nebula Games</strong></li>
+                <li><span>Release Date</span> <strong>Oct 24, 2025</strong></li>
+                <li><span>Platform</span> <strong>Windows</strong></li>
+            </ul>
+        </aside>
+    </div>
+
+    <script>
+        const carousel = document.getElementById('mediaCarousel');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const buyBtn = document.getElementById('buyBtn');
+        const wishBtn = document.getElementById('wishBtn');
+
+        let scrollInterval;
+
+        // --- Carousel Logic ---
+        function startAutoScroll() {
+            scrollInterval = setInterval(() => {
+                shiftSlide(1);
+            }, 5000); 
+        }
+
+        function stopAutoScroll() {
+            clearInterval(scrollInterval);
+        }
+
+        function shiftSlide(direction) {
+            const slideWidth = carousel.clientWidth;
+            const maxScroll = carousel.scrollWidth - slideWidth;
+            
+            // Loop logic: if at end and moving right, go to start. 
+            // If at start and moving left, go to end.
+            if (direction === 1 && carousel.scrollLeft >= maxScroll - 5) {
+                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+            } else if (direction === -1 && carousel.scrollLeft <= 5) {
+                carousel.scrollTo({ left: maxScroll, behavior: 'smooth' });
+            } else {
+                carousel.scrollBy({ left: slideWidth * direction, behavior: 'smooth' });
+            }
+        }
+
+        // Manual Navigation
+        nextBtn.addEventListener('click', () => {
+            shiftSlide(1);
+            resetTimer();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            shiftSlide(-1);
+            resetTimer();
+        });
+
+        // Hover Behavior
+        carousel.addEventListener('mouseenter', stopAutoScroll);
+        carousel.addEventListener('mouseleave', startAutoScroll);
+
+        function resetTimer() {
+            stopAutoScroll();
+            startAutoScroll();
+        }
+
+        // --- Store Interaction Logic ---
+        buyBtn.addEventListener('click', () => {
+            buyBtn.innerText = "Adding to Cart...";
+            setTimeout(() => {
+                alert("Game added to your library!");
+                buyBtn.innerText = "Owned";
+                buyBtn.style.background = "#333";
+                buyBtn.disabled = true;
+            }, 1000);
+        });
+
+        let wishlisted = false;
+        wishBtn.addEventListener('click', () => {
+            wishlisted = !wishlisted;
+            wishBtn.innerText = wishlisted ? "❤ In Wishlist" : "Add to Wishlist";
+            wishBtn.style.borderColor = wishlisted ? "var(--accent)" : "#555";
+        });
+
+        // Initialize Auto Scroll
+        startAutoScroll();
+    </script>
+</body>
+</html>

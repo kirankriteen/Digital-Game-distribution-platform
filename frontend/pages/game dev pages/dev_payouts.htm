@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payouts | GAMEDISTRO</title>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet"> -->
+    <link rel="stylesheet" href="styles.css"> 
+</head>
+<body>
+
+    <nav>
+        <div class="logo"><a href="../../base.html" style="text-decoration: none;">Game Distribution System</a></div>
+        <a href="dev_dashboard.htm" class="nav-item">Dashboard</a>
+        <a href="dev_games_section.htm" class="nav-item">My Games</a>
+        <a href="dev_analysis.htm" class="nav-item">Analytics</a>
+        <a href="dev_payouts.htm" class="nav-item active">Payouts</a>
+        <a href="dev_settings.htm" class="nav-item">Settings</a>
+    </nav>
+
+    <main>
+        <div class="header">
+            <h1>Financial Overview</h1>
+            <button class="btn-primary">Withdraw Funds</button>
+        </div>
+
+        <div class="bento-grid">
+            <div class="card" style="grid-column: span 2;">
+                <span class="text-dim">Available for Withdrawal</span>
+                <div style="font-size: 2.5rem; font-weight: 800; margin: 10px 0;">$12,450.00</div>
+                <span class="badge">Next Payout: March 1st</span>
+            </div>
+            
+            <div class="card">
+                <span class="text-dim">Lifetime Earnings</span>
+                <div style="font-size: 1.8rem; font-weight: 800; margin: 10px 0;">$84,200</div>
+                <span class="text-dim" style="font-size: 0.8rem;">All-time total</span>
+            </div>
+
+            <div class="card">
+                <span class="text-dim">Pending Clearance</span>
+                <div style="font-size: 1.8rem; font-weight: 800; margin: 10px 0; color: var(--accent);">$1,200</div>
+                <span class="text-dim" style="font-size: 0.8rem;">7-day hold period</span>
+            </div>
+        </div>
+
+        <div class="card mt-20">
+            <h3>Recent Transactions</h3>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="color: var(--text-dim); font-size: 0.85rem; border-bottom: 1px solid var(--border);">
+                        <th style="padding: 15px 10px;">Date</th>
+                        <th style="padding: 15px 10px;">Method</th>
+                        <th style="padding: 15px 10px;">Amount</th>
+                        <th style="padding: 15px 10px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 15px 10px;">Feb 24, 2026</td>
+                        <td style="padding: 15px 10px;">Bank Transfer (**** 4291)</td>
+                        <td style="padding: 15px 10px; font-weight: 600;">$4,500.00</td>
+                        <td style="padding: 15px 10px;"><span class="badge">Completed</span></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 15px 10px;">Feb 10, 2026</td>
+                        <td style="padding: 15px 10px;">PayPal (dev@studio.com)</td>
+                        <td style="padding: 15px 10px; font-weight: 600;">$2,100.00</td>
+                        <td style="padding: 15px 10px;"><span class="badge">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px 10px;">Jan 28, 2026</td>
+                        <td style="padding: 15px 10px;">Bank Transfer (**** 4291)</td>
+                        <td style="padding: 15px 10px; font-weight: 600;">$3,800.00</td>
+                        <td style="padding: 15px 10px;"><span class="badge">Completed</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>
