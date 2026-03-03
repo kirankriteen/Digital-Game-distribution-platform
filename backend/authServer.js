@@ -43,8 +43,8 @@ app.post('/login', authenticateUser, (req, res) => {
         id: user.id,
         name: user.username
     }
-    const accessToken = generateAccessToken(user)
-    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
+    const accessToken = generateAccessToken(payload)
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET)
     refreshTokens.push(refreshToken)
     res.json({ accessToken: accessToken, refreshToken: refreshToken })
 })
