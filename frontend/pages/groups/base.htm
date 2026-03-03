@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEAVERLY | Dev & Social Hub</title>
+    <style>
+        :root {
+            --bg: #08090a;
+            --panel: rgba(25, 27, 30, 0.7);
+            --accent: #6366f1; /* Indigo vibrant */
+            --accent-glow: rgba(99, 102, 241, 0.3);
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- 1. Workspace Sidebar (Developer Focus) --- */
+        .workspace-bar {
+            width: 80px;
+            background: rgba(0,0,0,0.4);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 20px;
+        }
+
+        .nav-circle {
+            width: 48px;
+            height: 48px;
+            background: var(--panel);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-circle:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: scale(1.05);
+        }
+
+        /* --- 2. Main Exploration Area --- */
+        .main-stage {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: radial-gradient(circle at top left, #111218, #08090a);
+        }
+
+        .glass-header {
+            background: var(--panel);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- 3. Carousel Styling --- */
+        .carousel-container {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .carousel-track {
+            display: flex;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+
+        .carousel-track::-webkit-scrollbar { display: none; }
+
+        .slide {
+            min-width: 100%;
+            height: 450px;
+            position: relative;
+            scroll-snap-align: start;
+        }
+
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+
+        .slide-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 40px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+        }
+
+        /* --- 4. Developer Upload Dropzone --- */
+        .dev-upload-zone {
+            background: dashed rgba(99, 102, 241, 0.2);
+            border: 2px dashed var(--accent);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            transition: 0.3s;
+        }
+
+        .dev-upload-zone:hover { background: rgba(99, 102, 241, 0.1); }
+
+        /* --- 5. Social Sidebar (Friend Recommendation) --- */
+        .social-sidebar {
+            width: 320px;
+            background: var(--panel);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .recommendation-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .match-badge {
+            font-size: 10px;
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+
+        .btn-action {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-action:hover { filter: brightness(1.2); }
+
+    </style>
+</head>
+<body>
+
+    <div class="workspace-bar">
+        <a href="../../base.html"><div class="nav-circle" title="Home">🏠</div></a>
+        <a href="./devs_page.htm"><div class="nav-circle" title="Developer Dashboard">🛠️</div></a>
+        <a href="./public_page.htm"><div class="nav-circle" title="Developer Dashboard">🗨️</div></a>
+        <!-- <div class="nav-circle" title="My Apps">📦</div> -->
+        <div class="nav-circle" title="Settings" style="margin-top: auto;">⚙️</div>
+    </div>
+
+    <div class="main-stage">
+        <header class="glass-header">
+            <div>
+                <h2 style="margin:0">Explore Applications</h2>
+                <span style="color: var(--text-dim); font-size: 14px;">Discover what developers are building today.</span>
+            </div>
+            <input type="text" placeholder="Search projects..." style="background: rgba(0,0,0,0.2); border: 1px solid #333; color: white; padding: 10px 20px; border-radius: 10px;">
+        </header>
+
+        <div class="carousel-container">
+            <div class="carousel-track" id="mainCarousel">
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1614732414444-096e5f1122d5?auto=format&fit=crop&w=1200&q=80">
+                    <div class="slide-overlay">
+                        <h1>Project Nebula v2.0</h1>
+                        <p>A high-performance web framework for real-time data.</p>
+                        <button class="btn-action">View Project</button>
+                    </div>
+                </div>
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80">
+                    <div class="slide-overlay">
+                        <h1>Synthwave UI Kit</h1>
+                        <p>80+ glassmorphic components for React developers.</p>
+                        <button class="btn-action">Get Assets</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section>
+            <h3 style="margin-bottom: 20px;">Developer Dropzone</h3>
+            <div class="dev-upload-zone" id="dropzone">
+                <p style="font-size: 18px; margin-bottom: 10px;">Drag & Drop your Build Folder (.zip)</p>
+                <span style="color: var(--text-dim)">Your app will be automatically scanned for vulnerabilities.</span>
+                <br><br>
+                <button class="btn-action" style="background: transparent; border: 1px solid var(--accent);">Browse Files</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="social-sidebar">
+        <h3 style="margin:0">Social Discovery</h3>
+        
+        <div class="recommendation-card">
+            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 10px;">
+                <div style="width: 40px; height: 40px; background: #444; border-radius: 50%;"></div>
+                <div>
+                    <div style="font-weight: 600;">Alex_Coder</div>
+                    <span class="match-badge">98% Similarity</span>
+                </div>
+            </div>
+            <p style="font-size: 12px; color: var(--text-dim);">Alex also purchased "Advanced React Patterns" and "Tailwind Mastery".</p>
+            <button class="btn-action" style="width: 100%; font-size: 13px;">Add Friend</button>
+        </div>
+
+        <div style="margin-top: auto; padding: 15px; background: rgba(99, 102, 241, 0.1); border-radius: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 13px;">Matchmaking Active</span>
+                <input type="checkbox" checked id="matchBool">
+            </div>
+            <p style="font-size: 11px; color: var(--text-dim); margin-top: 8px;">
+                You are currently visible to developers with similar interests.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const carousel = document.getElementById('mainCarousel');
+        
+        // --- 5 Second Window Auto Scroll ---
+        setInterval(() => {
+            const width = carousel.clientWidth;
+            const max = carousel.scrollWidth - width;
+            
+            if (carousel.scrollLeft >= max - 5) {
+                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                carousel.scrollBy({ left: width, behavior: 'smooth' });
+            }
+        }, 5000);
+
+        // --- Dev Dropzone Logic ---
+        const dropzone = document.getElementById('dropzone');
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.style.borderColor = 'white';
+        });
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.style.borderColor = 'var(--accent)';
+        });
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            alert("File received! Initializing cloud build...");
+            dropzone.style.borderColor = 'var(--success)';
+        });
+
+        // --- Recommendation System Toggle ---
+        const matchBool = document.getElementById('matchBool');
+        matchBool.addEventListener('change', () => {
+            const status = matchBool.checked ? "visible" : "hidden";
+            alert(`Your profile is now ${status} to similar buyers.`);
+        });
+    </script>
+</body>
+</html>
