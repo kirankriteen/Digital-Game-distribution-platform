@@ -13,7 +13,7 @@ const jwt = require('jsonwebtoken')
 
 app.use(express.json())
 
-app.use(cors({origin: "http://127.0.0.1:60333"}));
+app.use(cors({ origin: "http://127.0.0.1:55028" }));
 
 let refreshTokens = []
 
@@ -58,6 +58,42 @@ app.post('/login', authenticateUser, (req, res) => {
     res.json({ accessToken: accessToken, refreshToken: refreshToken })
 })
 
+app.post('/signup', async (req, res) => {
+    try {
+        const fullName = req.body.fullName
+        const email = req.body.email
+        const password = req.body.password
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!password || !passwordRegex.test(password)) {
+            return res.status(400).json({ error: 'Password must be at least 8 characters and include uppercase, lowercase, and a number' });
+        }
+
+        if (!fullName || fullName.length < 2) {
+            return res.status(400).json({ error: 'Full name is required and must be at least 2 characters' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const sql = 'INSERT INTO userLogin (username, password_hash, fullname) VALUES (?, ?, ?)';
+        const [result] = await pool.execute(sql, [email, hashedPassword, fullName]);
+
+        res.status(201).json({ message: 'User registered successfully', userId: result.insertId });
+    }
+    catch(err) {
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ error: 'Email already exists' });
+        }
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+
+})
+
 function generateAccessToken(user) {
     return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60s' })
 }
@@ -74,7 +110,6 @@ async function authenticateUser(req, res, next) {
             return res.status(400).send('Cannot find user');
         }
         const user = rows[0];
-        console.log(user.password)
         const isMatch = await bcrypt.compare(req.body.password, user.password_hash);
 
         if (isMatch) {
