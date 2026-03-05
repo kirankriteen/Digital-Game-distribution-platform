@@ -11,3 +11,6 @@ CREATE TABLE userLogin (
 
 INSERT INTO userLogin (username, password_hash)
 VALUES ('kyle', '$2b$10$LdHHjTUSJ3jN4/22wBRHOOQres.LtoHp.2SKozwiQImdincM6WMsO');
+
+ALTER TABLE userLogin
+ADD COLUMN fullname VARCHAR(255) NULL;
