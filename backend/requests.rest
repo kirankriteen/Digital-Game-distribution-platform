@@ -63,3 +63,7 @@ Content-Type: application/json
     "email": "peterparker@gmail.com",
     "password": "Password123"
 }
+
+###
+# Request a presigned url for game upload
+GET http://localhost:3000/games/upload-url
