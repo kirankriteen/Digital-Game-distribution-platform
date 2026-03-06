@@ -10,6 +10,7 @@ const { authUser, authRole } = require('./roleAuth')
 const { authenticateToken, setUser } = require('./middleware/auth')
 const projectRouter = require('./routes/projects')
 const gamesRouter = require('./routes/games')
+const devRouter = require('./routes/developer')
 
 const jwt = require('jsonwebtoken')
 app.use(cors({ origin: "http://127.0.0.1:52662" }));
@@ -17,6 +18,7 @@ app.use(cors({ origin: "http://127.0.0.1:52662" }));
 app.use(express.json())
 app.use('/projects', projectRouter)
 app.use('/games', gamesRouter)
+app.use('/dev', devRouter)
 
 app.get('/', (req, res) => {
     res.send('Home Page')

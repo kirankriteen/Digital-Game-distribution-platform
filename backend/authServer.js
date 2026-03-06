@@ -33,7 +33,7 @@ app.post('/token', (req, res) => {
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) return res.sendStatus(403)
         const payload = {
-            id: user.id,
+            id: user.user_id,
             name: user.username
         }
         const accessToken = generateAccessToken(payload)
@@ -49,7 +49,7 @@ app.delete('/logout', (req, res) => {
 app.post('/login', authenticateUser, (req, res) => {
     const user = req.user
     const payload = {
-        id: user.id,
+        id: user.user_id,
         name: user.username
     }
     const accessToken = generateAccessToken(payload)
