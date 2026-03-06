@@ -6,8 +6,7 @@ const cors = require('cors')
 const bcrypt = require('bcrypt')
 const PORT = 4000
 const { userData } = require('./data')
-
-const mysql = require('mysql2')
+const { pool } = require('./db/pool')
 
 const jwt = require('jsonwebtoken')
 
@@ -16,13 +15,6 @@ app.use(express.json())
 app.use(cors({ origin: "http://127.0.0.1:55028" }));
 
 let refreshTokens = []
-
-const pool = mysql.createPool({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'password123',
-    database: 'game_distribution'
-}).promise()
 
 app.post('/token', (req, res) => {
     const refreshToken = req.body.token

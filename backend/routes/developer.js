@@ -1,18 +1,12 @@
 const express = require('express')
-const mysql = require('mysql2')
-const { authenticateToken, setUser } = require('../middleware/auth')
+const { authenticateToken, setUser, authenticateDev, authenticateRole } = require('../middleware/auth')
+const { pool } = require('../db/pool')
+const { ROLE } = require('../data')
 
 const router = express.Router()
 router.use(express.json())
 
-const pool = mysql.createPool({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'password123',
-    database: 'game_distribution'
-}).promise()
-
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', authenticateToken, authenticateRole(ROLE.USER), async (req, res) => {
     const [userRows] = await pool.query(
         `SELECT role_id FROM userLogin WHERE user_id = ?`,
         [req.user.id]
@@ -24,35 +18,28 @@ router.get('/', authenticateToken, async (req, res) => {
     });
 })
 
-router.get('/dashboard', authenticateToken, async (req, res) => {
-    const user_id = req.user.id;
+async function getDeveloperId(user_id) {
+
+    const [rows] = await pool.query(
+        `SELECT d.dev_id
+         FROM developer d
+         JOIN userLogin u ON d.user_id = u.user_id
+         JOIN roles r ON u.role_id = r.role_id
+         WHERE u.user_id = ? AND r.role = ?`,
+        [user_id, ROLE.DEVELOPER]
+    );
+
+    if (rows.length === 0) {
+        throw { status: 403, message: 'User is not a developer' };
+    }
+
+    return rows[0].dev_id;
+}
+
+router.get('/dashboard', authenticateToken, authenticateRole(ROLE.DEVELOPER), async (req, res) => {
 
     try {
-        const [userRows] = await pool.query(
-            `SELECT role_id FROM userLogin WHERE user_id = ?`,
-            [user_id]
-        );
-
-        if (userRows.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        const role_id = userRows[0].role_id;
-
-        if (role_id !== 2) { // Developer role id is 2
-            return res.status(403).json({ message: 'User is not a developer' });
-        }
-
-        const [devRows] = await pool.query(
-            `SELECT dev_id FROM developer WHERE user_id = ?`,
-            [user_id]
-        );
-
-        if (devRows.length === 0) {
-            return res.status(404).json({ message: 'Developer record not found' });
-        }
-
-        const dev_id = devRows[0].dev_id;
+        const dev_id = await getDeveloperId(req.user.id);
 
         const [dashboardRows] = await pool.query(
             `SELECT total_revenue, downloads, active_players
@@ -90,35 +77,11 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
     }
 })
 
-router.get('/mygames', authenticateToken, async (req, res) => {
-    const user_id = req.user.id;
+router.get('/mygames', authenticateToken, authenticateRole(ROLE.DEVELOPER), async (req, res) => {
 
     try {
-        const [userRows] = await pool.query(
-            `SELECT role_id FROM userLogin WHERE user_id = ?`,
-            [user_id]
-        );
+        const dev_id = await getDeveloperId(req.user.id);
 
-        if (userRows.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        const role_id = userRows[0].role_id;
-
-        if (role_id !== 2) { // Developer role id is 2
-            return res.status(403).json({ message: 'User is not a developer' });
-        }
-
-        const [devRows] = await pool.query(
-            `SELECT dev_id FROM developer WHERE user_id = ?`,
-            [user_id]
-        );
-
-        if (devRows.length === 0) {
-            return res.status(404).json({ message: 'Developer record not found' });
-        }
-
-        const dev_id = devRows[0].dev_id;
         const [projectsRows] = await pool.query(
             `SELECT g.title
              FROM dev_games dg
@@ -139,22 +102,10 @@ router.get('/mygames', authenticateToken, async (req, res) => {
     }
 })
 
-router.get('/account', authenticateToken, async (req, res) => {
-    const user_id = req.user.id;
+router.get('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), async (req, res) => {
 
     try {
-        const [userRows] = await pool.query(
-            `SELECT role_id FROM userLogin WHERE user_id = ?`,
-            [user_id]
-        );
-
-        if (userRows.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        if (userRows[0].role_id !== 2) { // 2 = developer
-            return res.status(403).json({ message: 'User is not a developer' });
-        }
+        const dev_id = await getDeveloperId(req.user.id);
 
         const [devRows] = await pool.query(
             `SELECT d.studio_name, d.email, d.bio, d.password_hash,
@@ -163,8 +114,8 @@ router.get('/account', authenticateToken, async (req, res) => {
              FROM developer d
              LEFT JOIN currency c ON d.currency_id = c.currency_id
              LEFT JOIN language l ON d.language_id = l.lang_id
-             WHERE d.user_id = ?`,
-            [user_id]
+             WHERE d.dev_id = ?`,
+            [dev_id]
         );
 
         if (devRows.length === 0) {

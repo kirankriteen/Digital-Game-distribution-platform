@@ -1,26 +1,12 @@
 const express = require('express')
 const path = require('path')
-const Minio = require('minio')
-const mysql = require('mysql2');
+const { pool } = require('../db/pool')
+const { minioClient } = require('../db/minioclient')
+
 const { authenticateToken, setUser } = require('../middleware/auth')
 
 const router = express.Router()
 router.use(express.json())
-
-const pool = mysql.createPool({
-  host: '127.0.0.1',
-  user: 'root',
-  password: 'password123',
-  database: 'game_distribution'
-}).promise()
-
-const minioClient = new Minio.Client({
-  endPoint: '127.0.0.1',
-  port: 9000,
-  useSSL: false,
-  accessKey: 'minioadmin',
-  secretKey: 'minioadmin'
-});
 
 router.get('/', (req, res) => {
   res.send('Games Page')
