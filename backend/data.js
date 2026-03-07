@@ -1,6 +1,8 @@
 const ROLE = {
   ADMIN: 'admin',
-  BASIC: 'basic'
+  BASIC: 'basic',
+  DEVELOPER: 'developer',
+  USER: 'user'
 }
 
 module.exports = {

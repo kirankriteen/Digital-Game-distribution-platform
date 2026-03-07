@@ -6,8 +6,8 @@ POST http://localhost:4000/login
 Content-Type: application/json
 
 {
-    "username": "peterparker@gmail.com",
-    "password": "Password123"
+    "username": "sally",
+    "password": "password123"
 }
 
 ###
@@ -63,3 +63,12 @@ Content-Type: application/json
     "email": "peterparker@gmail.com",
     "password": "Password123"
 }
+
+###
+# Request a presigned url for game upload
+GET http://localhost:3000/games/upload-url
+
+### 
+# Request to hello dev page
+GET http://localhost:3000/dev/account
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzcyODE3MTI2LCJleHAiOjE3NzI4MTcxODZ9.QMn_86Pgy8sonZ-bOME6L-d-Cnq_GQEM6Yq23YKg550
