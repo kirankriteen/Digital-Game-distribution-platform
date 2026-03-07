@@ -1,5 +1,5 @@
 const express = require('express')
-const { authenticateToken, setUser, authenticateDev, authenticateRole } = require('../middleware/auth')
+const { authenticateToken, setUser, authenticateRole } = require('../middleware/auth')
 const { pool } = require('../db/pool')
 const { ROLE } = require('../data')
 
@@ -138,6 +138,7 @@ router.get('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), asyn
     }
 })
 
+// module.exports = {router, getDeveloperId }
 module.exports = router
 
 

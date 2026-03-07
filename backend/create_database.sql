@@ -103,3 +103,7 @@ CREATE TABLE dev_games (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
+ALTER TABLE games
+ADD COLUMN filelocation VARCHAR(255),
+ADD COLUMN filestatus VARCHAR(50) DEFAULT 'pending';

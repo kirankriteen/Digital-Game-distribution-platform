@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload/Download with MinIO + Metadata</title>
+</head>
+<body>
+  <h2>Upload File to MinIO</h2>
+
+  <!-- Upload Section -->
+  <input type="file" id="fileInput" /><br><br>
+  <label for="title">Title:</label>
+  <input type="text" id="title" placeholder="Enter title" /><br><br>
+  <label for="genre">Genre:</label>
+  <input type="text" id="genre" placeholder="Enter genre" /><br><br>
+  <button id="uploadBtn">Upload</button>
+  <br><br>
+
+  <!-- Upload Progress Bar -->
+  <progress id="uploadProgress" value="0" max="100" style="width:300px;"></progress>
+  <span id="progressText">0%</span>
+
+  <hr>
+
+  <h2>Download File from MinIO</h2>
+
+  <label for="downloadFilename">Filename in MinIO:</label>
+  <input type="text" id="downloadFilename" placeholder="Enter filename in MinIO" /><br><br>
+
+  <label for="saveAs">Save as (local filename):</label>
+  <input type="text" id="saveAs" placeholder="Enter local filename" /><br><br>
+
+  <button id="downloadBtn">Download</button>
+
+  <script>
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressText = document.getElementById('progressText');
+
+    uploadBtn.addEventListener('click', async () => {
+      const file = fileInput.files[0];
+      const title = document.getElementById('title').value.trim();
+      const genre = document.getElementById('genre').value.trim();
+
+      if (!file) { alert('Please select a file'); return; }
+      if (!title || !genre) { alert('Please provide title and genre'); return; }
+
+      const metaData = {
+        title: title,
+        genre: genre,
+        size: file.size + ' bytes'
+      };
+
+      try {
+        // 1️⃣ Request presigned URL from server including metadata
+        const query = new URLSearchParams({
+          filename: file.name,
+          title: metaData.title,
+          genre: metaData.genre,
+          size: file.size
+        }).toString();
+
+        const res = await fetch(`http://127.0.0.1:3000/games/upload-url?${query}`);
+        const data = await res.json();
+        const presignedUrl = data.url;
+        console.log('Presigned URL:', presignedUrl);
+
+        // 2️⃣ Upload file to MinIO (metadata already in presigned URL)
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', presignedUrl, true);
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            uploadProgress.value = percent;
+            progressText.textContent = percent + '%';
+          }
+        };
+
+        xhr.onload = async () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            alert('Upload successful!');
+            uploadProgress.value = 0;
+            progressText.textContent = '0%';
+
+            // 3️⃣ Notify server to verify metadata and update DB
+            const updateRes = await fetch('http://127.0.0.1:3000/games/update', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ filename: file.name, metadata: metaData })
+            });
+
+            const updateData = await updateRes.json();
+            if (updateRes.ok) {
+              console.log('Server verified metadata and updated DB:', updateData);
+            } else {
+              alert('Metadata verification failed: ' + updateData);
+            }
+          } else {
+            alert('Upload failed');
+          }
+        };
+
+        xhr.onerror = () => { alert('Error uploading file'); };
+        xhr.send(file);
+
+      } catch (err) {
+        console.error(err);
+        alert('Error uploading file');
+      }
+    });
+
+    // ---------------- Download Section ----------------
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadFilenameInput = document.getElementById('downloadFilename');
+    const saveAsInput = document.getElementById('saveAs');
+
+    downloadBtn.addEventListener('click', async () => {
+      const downloadFilename = downloadFilenameInput.value.trim();
+      const saveAs = saveAsInput.value.trim();
+
+      if (!downloadFilename || !saveAs) { alert('Please fill all fields'); return; }
+
+      try {
+        const res = await fetch(`http://127.0.0.1:3000/games/download-url?filename=${encodeURIComponent(downloadFilename)}`);
+        const data = await res.json();
+        const presignedUrl = data.url;
+
+        const link = document.createElement('a');
+        link.href = presignedUrl;
+        link.download = saveAs;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } catch (err) {
+        console.error(err);
+        alert('Error generating download URL');
+      }
+    });
+  </script>
+</body>
+</html>
