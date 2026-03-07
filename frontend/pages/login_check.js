@@ -5,7 +5,7 @@ document.getElementById("loginBtn").addEventListener("click", async (e) => {
     const password = document.getElementById("logpass").value;
     console.log(username)
 
-    const response = await fetch("http://localhost:4000/login", {
+    const response = await fetch("http://localhost:4000/login", {   
         method: "POST",
         headers: {
             "Content-Type": "application/json"
