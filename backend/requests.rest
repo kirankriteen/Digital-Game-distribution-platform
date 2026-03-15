@@ -6,7 +6,7 @@ POST http://localhost:4000/login
 Content-Type: application/json
 
 {
-    "username": "sally",
+    "username": "kyle",
     "password": "password123"
 }
 
@@ -28,7 +28,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6I
 ### 
 # With the access token access the projects at /projects, access token
 GET http://localhost:3000/projects/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImpvZSIsImlhdCI6MTc2OTc4MjQyOSwiZXhwIjoxNzY5NzgyNDg5fQ.H3xX_aFpro3nSberu4LnhtN8a0sfd8S7uVEnLyftDQg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzM1ODE4Njh9.OAjHTg5NN3zQwXnwkqP156AUbN441g4oofdKi85vXvc
 
 ###
 # If token expire goto /token for new one, here refresh token
@@ -51,7 +51,7 @@ Content-Type: application/json
 ###
 # Accessing the admin page
 GET http://localhost:3000/admin
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImpvZSIsImlhdCI6MTc2OTc4MjQyOSwiZXhwIjoxNzY5NzgyNDg5fQ.H3xX_aFpro3nSberu4LnhtN8a0sfd8S7uVEnLyftDQg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzM1ODE4Njh9.OAjHTg5NN3zQwXnwkqP156AUbN441g4oofdKi85vXvc
 
 ###
 # Sending signup request
@@ -70,5 +70,7 @@ GET http://localhost:3000/games/upload-url
 
 ### 
 # Request to hello dev page
-GET http://localhost:3000/dev/account
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzcyODE3MTI2LCJleHAiOjE3NzI4MTcxODZ9.QMn_86Pgy8sonZ-bOME6L-d-Cnq_GQEM6Yq23YKg550
+GET http://localhost:3000/dev/dashboard
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzM1OTM0OTksImV4cCI6MTc3MzU5MzU1OX0.areU3CGV2RXEVfPbwL1w4nMGkDVjelRtGtPrywL32RQ
+
+GET http://localhost:3000/dev

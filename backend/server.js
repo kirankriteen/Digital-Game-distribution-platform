@@ -13,7 +13,7 @@ const gamesRouter = require('./routes/games')
 const devRouter = require('./routes/developer')
 
 const jwt = require('jsonwebtoken')
-app.use(cors({ origin: "http://127.0.0.1:60729" }));
+app.use(cors({ origin: "http://127.0.0.1:5501" }));
 
 app.use(express.json())
 app.use('/projects', projectRouter)

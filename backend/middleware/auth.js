@@ -33,7 +33,7 @@ function setUser(req, res, next) {
 
 function authenticateRole(role) {
     return async (req, res, next) => {
-        if (!req.user) return res.sendStatus(401)
+        if (!req.user) return res.sendStatus(401)     
         const userId = req.user.id
         if (userId) {
             try {

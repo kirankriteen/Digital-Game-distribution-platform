@@ -1,9 +1,9 @@
 document.getElementById("loginBtn").addEventListener("click", async (e) => {
     e.preventDefault(); // IMPORTANT (explained below)
 
-    const username = document.getElementById("logemail").value;
-    const password = document.getElementById("logpass").value;
-    console.log(username)
+    const username = document.getElementById("loginemail").value;
+    const password = document.getElementById("loginpass").value;
+    console.log(username);
 
     const response = await fetch("http://localhost:4000/login", {   
         method: "POST",
