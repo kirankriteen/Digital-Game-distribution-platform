@@ -12,7 +12,7 @@ const jwt = require('jsonwebtoken')
 
 app.use(express.json())
 
-app.use(cors({ origin: "http://127.0.0.1:60729" }));
+app.use(cors({ origin: "http://localhost:3000" }));
 
 let refreshTokens = []
 
