@@ -92,7 +92,7 @@ CREATE TABLE dev_dashboard (
 -- Developer-games table (many-to-many relationship)
 CREATE TABLE dev_games (
     dev_id INT NOT NULL,
-    game_id INT NOT NULL,
+    game_id INT NOT NULL UNIQUE,
     PRIMARY KEY (dev_id, game_id),
     CONSTRAINT fk_devgame_dev FOREIGN KEY (dev_id)
         REFERENCES developer(dev_id)
@@ -107,3 +107,6 @@ CREATE TABLE dev_games (
 ALTER TABLE games
 ADD COLUMN filelocation VARCHAR(255),
 ADD COLUMN filestatus VARCHAR(50) DEFAULT 'pending';
+
+ALTER TABLE developer
+ADD COLUMN imglocation VARCHAR(255); 
