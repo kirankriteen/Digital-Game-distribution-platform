@@ -185,6 +185,97 @@ router.get('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), asyn
     }
 })
 
+router.patch('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), upload.single('image'), async (req, res) => {
+    try {
+        const dev_id = await getDeveloperId(req.user.id);
+
+        const { studio_name, email, bio, currency, language, old_password, new_password } = req.body;
+
+        let fields = [];
+        let values = [];
+
+        if (studio_name) {
+            fields.push('studio_name = ?');
+            values.push(studio_name);
+        }
+
+        if (email) {
+            fields.push('email = ?');
+            values.push(email);
+        }
+
+        if (bio) {
+            fields.push('bio = ?');
+            values.push(bio);
+        }
+
+        if (currency) {
+            const currency_id = await getCurrencyId(currency);
+            fields.push('currency_id = ?');
+            values.push(currency_id);
+        }
+
+        if (language) {
+            const language_id = await getLanguageId(language);
+            fields.push('lang_id = ?');
+            values.push(language_id);
+        }
+
+        if (old_password && new_password) {
+            const [old] = await pool.query(`SELECT password_hash FROM developer WHERE dev_id = ?`, [dev_id])
+            old_hash = old[0].password_hash
+            const isMatch = await bcrypt.compare(old_password, old_hash);
+            if (isMatch) {
+                const password_hash = await bcrypt.hash(new_password, 10)
+                fields.push('password_hash = ?');
+                values.push(password_hash);
+            }
+
+        }
+
+        if (req.file) {
+            const [oldData] = await pool.query(
+                'SELECT imglocation FROM developer WHERE dev_id = ?',
+                [dev_id]
+            );
+
+            if (oldData[0]?.imglocation) {
+                const oldPath = path.join(__dirname, '../', oldData[0].imglocation);
+                fs.unlink(oldPath, err => {
+                    if (err) console.error('Failed to delete old image:', err);
+                });
+            }
+
+            fields.push('imglocation = ?');
+            values.push(`/uploads/${req.file.filename}`);
+        }
+
+        if (fields.length === 0) {
+            return res.status(400).json({ message: 'No fields provided to update' });
+        }
+
+        values.push(dev_id);
+
+        const query = `UPDATE developer SET ${fields.join(', ')} WHERE dev_id = ?`;
+        await pool.query(query, values);
+
+        res.json({ success: true, message: 'Profile updated successfully' });
+
+
+
+    } catch {
+        console.error(err);
+        if (req.file) {
+            fs.unlink(
+                path.join(__dirname, '../uploads', req.file.filename),
+                () => { }
+            );
+        }
+
+        res.status(500).json({ message: 'Server error' });
+    }
+})
+
 router.post('/create-account', authenticateToken, authenticateRole(ROLE.DEVELOPER), upload.single('image'), async (req, res) => {
     try {
         const [rows] = await pool.query(
@@ -197,11 +288,11 @@ router.post('/create-account', authenticateToken, authenticateRole(ROLE.DEVELOPE
         if (rows.length !== 0) {
             console.log('multiple user account creation')
             if (req.file) {
-            // Change for main server, this is for testing only, change on production !!!
-            fs.unlink(path.join(__dirname, '../uploads', req.file.filename), unlinkErr => {
-                if (unlinkErr) console.error('Failed to delete file:', unlinkErr);
-            });
-        }
+                // Change for main server, this is for testing only, change on production !!!
+                fs.unlink(path.join(__dirname, '../uploads', req.file.filename), unlinkErr => {
+                    if (unlinkErr) console.error('Failed to delete file:', unlinkErr);
+                });
+            }
             return res.status(400).json({ error: 'User already exists' });
         }
 

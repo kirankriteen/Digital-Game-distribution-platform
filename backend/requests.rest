@@ -71,4 +71,4 @@ GET http://localhost:3000/games/upload-url
 ### 
 # Request to hello dev page
 GET http://localhost:3000/dev/account
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzM5MjAzNzEsImV4cCI6MTc3NDAwNjc3MX0.vmWscqvDtX_y2gUv2EfVgpXO7SqA43EB9yQby_I8ZJ8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzM5NDM1MDQsImV4cCI6MTc3NDAyOTkwNH0.B_K2tI5f4sC3lem0flF6DdKNY6BzusYZpYHE8A-j29M
