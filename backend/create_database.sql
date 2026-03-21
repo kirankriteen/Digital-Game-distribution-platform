@@ -110,3 +110,20 @@ ADD COLUMN filestatus VARCHAR(50) DEFAULT 'pending';
 
 ALTER TABLE developer
 ADD COLUMN imglocation VARCHAR(255); 
+
+ALTER TABLE games
+ADD COLUMN price INT;
+
+ALTER TABLE developer ADD column acc_id VARCHAR(100) DEFAULT NULL;
+
+CREATE TABLE user_games (
+    user_id INT NOT NULL,
+    game_id INT NOT NULL,
+    PRIMARY KEY (user_id, game_id),
+    CONSTRAINT fk_user 
+        FOREIGN KEY (user_id) 
+        REFERENCES userlogin(user_id),
+    CONSTRAINT fk_game 
+        FOREIGN KEY (game_id) 
+        REFERENCES games(game_id)
+);

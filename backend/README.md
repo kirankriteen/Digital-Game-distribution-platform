@@ -41,3 +41,8 @@ npm i --save-dev nodemon
 npm i jsonwebtoken dotenv
 npm run devStart
 ```
+
+```
+stripe login
+stripe listen --forward-to localhost:3000/dev/webhook
+```
