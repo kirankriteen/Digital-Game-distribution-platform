@@ -25,20 +25,24 @@ const jwt = require('jsonwebtoken')
 // app.use(cors({ origin: "http://localhost:3000" }));
 app.use(cors());
 
-app.use(express.json({
-    verify: (req, res, buf) => {
-        if (req.originalUrl.includes('/pay/webhook')) {
-            req.rawBody = buf
-        }
-    }
-}))
+app.use('/pay', payRouter)
+
+// app.use(express.json({
+//     verify: (req, res, buf) => {
+//         if (req.originalUrl.includes('/pay/webhook')) {
+//             req.rawBody = buf
+//         }
+//     }
+// }))
+app.use(express.json());
+
 app.use(express.static(path.join(__dirname, "../frontend")))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/projects', projectRouter)
 app.use('/games', gamesRouter)
 app.use('/dev', devRouter)
-app.use('/pay', payRouter)
+
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/base.html"))
