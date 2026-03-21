@@ -13,6 +13,7 @@ const { authenticateToken, setUser } = require('./middleware/auth')
 const projectRouter = require('./routes/projects')
 const gamesRouter = require('./routes/games')
 const devRouter = require('./routes/developer')
+const payRouter = require('./routes/payments')
 
 const PORT = 3000
 const app = express()
@@ -24,13 +25,20 @@ const jwt = require('jsonwebtoken')
 // app.use(cors({ origin: "http://localhost:3000" }));
 app.use(cors());
 
-app.use(express.json())
+app.use(express.json({
+    verify: (req, res, buf) => {
+        if (req.originalUrl.includes('/pay/webhook')) {
+            req.rawBody = buf
+        }
+    }
+}))
 app.use(express.static(path.join(__dirname, "../frontend")))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/projects', projectRouter)
 app.use('/games', gamesRouter)
 app.use('/dev', devRouter)
+app.use('/pay', payRouter)
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/base.html"))

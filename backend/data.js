@@ -5,6 +5,8 @@ const ROLE = {
   USER: 'user'
 }
 
+const DEV_FEE = 2000
+
 module.exports = {
   ROLE: ROLE,
   users: [
@@ -20,5 +22,6 @@ module.exports = {
     { id: 1, username: 'kyle', password: '$2b$10$LdHHjTUSJ3jN4/22wBRHOOQres.LtoHp.2SKozwiQImdincM6WMsO'},
     { id: 2, username: 'sally', password: '$2b$10$rmqcYxJZjIjBdLaZIwJTmuDAlJOQo5RlEdT0euydIIgdZzvy5b206'},
     { id: 3, username: 'joe', password: '$2b$10$U8ci19pZYqP2vG3n9R62Teoux8dCNmwantXzpVpTf7i.ZG1y6QCfa'},
-  ]
+  ],
+  DEV_FEE: DEV_FEE
 }

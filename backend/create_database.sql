@@ -110,3 +110,6 @@ ADD COLUMN filestatus VARCHAR(50) DEFAULT 'pending';
 
 ALTER TABLE developer
 ADD COLUMN imglocation VARCHAR(255); 
+
+ALTER TABLE games
+ADD column price 
