@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload/Download with MinIO</title>
+</head>
+<body>
+  <h2>Upload Game to MinIO</h2>
+
+  <!-- Game Metadata Inputs -->
+  <label for="title">Game Title:</label>
+  <input type="text" id="title" placeholder="Enter game title" /><br><br>
+
+  <label for="genre">Genre:</label>
+  <input type="text" id="genre" placeholder="Enter genre" /><br><br>
+
+  <label for="fileInput">Game File:</label>
+  <input type="file" id="fileInput" /><br><br>
+
+  <button id="uploadBtn">Upload Game</button>
+
+  <br><br>
+  <progress id="uploadProgress" value="0" max="100" style="width:300px;"></progress>
+  <span id="progressText">0%</span>
+
+  <hr>
+
+  <h2>Download File from MinIO</h2>
+
+  <label for="downloadFilename">Filename in MinIO:</label>
+  <input type="text" id="downloadFilename" placeholder="Enter filename in MinIO" /><br><br>
+
+  <label for="saveAs">Save as (local filename):</label>
+  <input type="text" id="saveAs" placeholder="Enter filename to save locally" /><br><br>
+
+  <button id="downloadBtn">Download</button>
+
+  <script>
+    // ---------------- Upload Section ----------------
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressText = document.getElementById('progressText');
+
+    uploadBtn.addEventListener('click', async () => {
+      const file = fileInput.files[0];
+      const title = document.getElementById('title').value.trim();
+      const genre = document.getElementById('genre').value.trim();
+
+      if (!file || !title || !genre) {
+        alert('Please fill all fields and select a file.');
+        return;
+      }
+
+      try {
+        // Step 1: Request presigned URL from server
+        const res = await fetch('http://127.0.0.1:3000/games/upload-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: file.name,
+            title,
+            genre
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to get upload URL');
+        }
+
+        const data = await res.json();
+        const presignedUrl = data.uploadUrl;
+        const gameId = data.gameId;
+
+        console.log('Presigned URL:', presignedUrl, 'Game ID:', gameId);
+
+        // Step 2: Upload file with XMLHttpRequest for progress
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', presignedUrl, true);
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            uploadProgress.value = percent;
+            progressText.textContent = percent + '%';
+          }
+        };
+
+        xhr.onload = async () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            uploadProgress.value = 100;
+            progressText.textContent = '100%';
+            alert('Upload finished! Notifying server...');
+
+            // Step 3: Notify server upload is complete
+            const notifyRes = await fetch('http://127.0.0.1:3000/games/upload-complete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ gameId })
+            });
+
+            const notifyData = await notifyRes.json();
+            if (notifyRes.ok && notifyData.success) {
+              alert('Server confirmed game uploaded successfully!');
+              // Reset UI
+              uploadProgress.value = 0;
+              progressText.textContent = '0%';
+              fileInput.value = '';
+              document.getElementById('title').value = '';
+              document.getElementById('genre').value = '';
+            } else {
+              alert('Upload completed but server verification failed.');
+            }
+          } else {
+            alert('Upload failed. Status: ' + xhr.status);
+          }
+        };
+
+        xhr.onerror = () => {
+          alert('Error uploading file.');
+        };
+
+        xhr.send(file);
+
+      } catch (err) {
+        console.error(err);
+        alert('Error: ' + err.message);
+      }
+    });
+
+    // ---------------- Download Section ----------------
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadFilenameInput = document.getElementById('downloadFilename');
+    const saveAsInput = document.getElementById('saveAs');
+
+    downloadBtn.addEventListener('click', async () => {
+      const downloadFilename = downloadFilenameInput.value.trim();
+      const saveAs = saveAsInput.value.trim();
+
+      if (!downloadFilename || !saveAs) {
+        alert('Please enter filename in MinIO and local save name');
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://127.0.0.1:3000/games/download-url?filename=${encodeURIComponent(downloadFilename)}`);
+        const data = await res.json();
+        const presignedUrl = data.url;
+
+        const link = document.createElement('a');
+        link.href = presignedUrl;
+        link.download = saveAs;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } catch (err) {
+        console.error(err);
+        alert('Error generating download URL');
+      }
+    });
+  </script>
+</body>
+</html>

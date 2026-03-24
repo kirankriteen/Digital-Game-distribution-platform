@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload/Download with MinIO</title>
+</head>
+<body>
+  <h2>Upload File to MinIO</h2>
+
+  <!-- Upload Section -->
+  <input type="file" id="fileInput" />
+  <button id="uploadBtn">Upload</button>
+  <br><br>
+
+  <!-- Upload Progress Bar -->
+  <progress id="uploadProgress" value="0" max="100" style="width:300px;"></progress>
+  <span id="progressText">0%</span>
+
+  <hr>
+
+  <h2>Download File from MinIO</h2>
+
+  <!-- Download Section -->
+  <label for="downloadFilename">Filename in MinIO to download:</label>
+  <input type="text" id="downloadFilename" placeholder="Enter filename in MinIO" /><br><br>
+
+  <label for="saveAs">Save as (local filename):</label>
+  <input type="text" id="saveAs" placeholder="Enter filename to save locally" /><br><br>
+
+  <button id="downloadBtn">Download</button>
+
+  <script>
+    // ---------------- Upload Section ----------------
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
+
+    // Progress elements
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressText = document.getElementById('progressText');
+
+    uploadBtn.addEventListener('click', async () => {
+      const file = fileInput.files[0];
+      if (!file) {
+        alert('Please select a file first');
+        return;
+      }
+
+      try {
+        // Step 1: Get presigned URL from server with filename
+        const filename = encodeURIComponent(file.name);
+        const res = await fetch(`http://127.0.0.1:3000/games/upload-url?filename=${filename}`);
+        const data = await res.json();
+        const presignedUrl = data.url;
+        console.log('Presigned URL:', presignedUrl);
+
+        // Step 2: Upload with XMLHttpRequest to track progress
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', presignedUrl, true);
+
+        // Track upload progress
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            uploadProgress.value = percent;
+            progressText.textContent = percent + '%';
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            alert('Upload successful!');
+            uploadProgress.value = 0;
+            progressText.textContent = '0%';
+          } else {
+            alert('Upload failed');
+          }
+        };
+
+        xhr.onerror = () => {
+          alert('Error uploading file');
+        };
+
+        xhr.send(file); // send file directly
+      } catch (err) {
+        console.error(err);
+        alert('Error uploading file');
+      }
+    });
+
+    // ---------------- Download Section ----------------
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadFilenameInput = document.getElementById('downloadFilename');
+    const saveAsInput = document.getElementById('saveAs');
+
+    downloadBtn.addEventListener('click', async () => {
+      const downloadFilename = downloadFilenameInput.value.trim();
+      const saveAs = saveAsInput.value.trim();
+
+      if (!downloadFilename) {
+        alert('Please enter the filename in MinIO to download');
+        return;
+      }
+
+      if (!saveAs) {
+        alert('Please enter the local filename to save as');
+        return;
+      }
+
+      try {
+        // Get presigned download URL from server
+        const res = await fetch(`http://127.0.0.1:3000/games/download-url?filename=${encodeURIComponent(downloadFilename)}`);
+        const data = await res.json();
+        const presignedUrl = data.url;
+        console.log('Presigned download URL:', presignedUrl);
+
+        // Trigger browser download
+        const link = document.createElement('a');
+        link.href = presignedUrl;
+        link.download = saveAs;  // ensures saved file uses the name specified
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } catch (err) {
+        console.error(err);
+        alert('Error generating download URL');
+      }
+    });
+  </script>
+</body>
+</html>

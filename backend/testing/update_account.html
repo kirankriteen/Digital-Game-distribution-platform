@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Developer Account</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    form { display: flex; flex-direction: column; max-width: 400px; }
+    input, select, textarea, button { margin: 8px 0; padding: 8px; font-size: 1rem; }
+    img { max-width: 200px; margin-top: 10px; }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h2>Update Developer Account</h2>
+  <form id="createAccountForm">
+    <input type="text" name="studio_name" placeholder="Studio Name" />
+    <input type="email" name="email" placeholder="Email" />
+    <textarea name="bio" placeholder="Bio" rows="3"></textarea>
+    <input type="password" name="old_password" placeholder="Old Password" />
+    <input type="password" name="new_password" placeholder="New Password" />
+    <select name="currency">
+      <option value="">Select Currency</option>
+      <option value="usd">USD</option>
+      <option value="eur">EUR</option>
+      <option value="gbp">GBP</option>
+    </select>
+    <select name="language">
+      <option value="">Select Language</option>
+      <option value="english">English</option>
+      <option value="french">French</option>
+      <option value="japanese">Japanese</option>
+    </select>
+    <input type="file" name="image" accept="image/*" />
+    <button type="submit">Update Account</button>
+  </form>
+
+  <p class="success" id="successMsg"></p>
+  <p class="error" id="errorMsg"></p>
+
+  <script>
+    const form = document.getElementById('createAccountForm');
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg = document.getElementById('errorMsg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      successMsg.textContent = '';
+      errorMsg.textContent = '';
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('http://localhost:3000/dev/account', {
+          method: 'PATCH',
+          // If you need authentication token, include it in headers:
+          headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzM5NDM1MDQsImV4cCI6MTc3NDAyOTkwNH0.B_K2tI5f4sC3lem0flF6DdKNY6BzusYZpYHE8A-j29M' },
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          successMsg.textContent = `Account created successfully! Developer ID: ${data.developerId}`;
+        } else {
+          errorMsg.textContent = data.message || 'Failed to create account';
+        }
+      } catch (err) {
+        console.error(err);
+        errorMsg.textContent = 'Server error';
+      }
+    });
+  </script>
+</body>
+</html>
