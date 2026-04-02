@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weaverly | Account Settings</title>
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --accent-blue: #3b82f6;
+            --danger-red: #ef4444;
+            --text-main: #ffffff;
+            --text-dim: #888888;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .settings-container {
+            width: 100%;
+            max-width: 900px;
+            padding: 4rem 2rem;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Bento Grid Layout --- */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-large { grid-column: span 2; }
+        .card-small { grid-column: span 1; }
+        .card-full { grid-column: span 3; }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-bottom: 0.8rem;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--accent-blue);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--accent-blue), #9333ea);
+            margin-bottom: 1.5rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 12px 24px;
+            transition: 0.3s;
+        }
+
+        .btn-save {
+            background: var(--accent-blue);
+            color: white;
+            margin-top: 1rem;
+        }
+
+        .btn-save:hover { filter: brightness(1.2); }
+
+        .btn-delete {
+            background: transparent;
+            border: 1px solid var(--danger-red);
+            color: var(--danger-red);
+        }
+
+        .btn-delete:hover {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        .danger-zone {
+            margin-top: 2rem;
+            border-color: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.02);
+        }
+
+        .danger-zone h3 {
+            color: var(--danger-red);
+            margin-bottom: 0.5rem;
+        }
+
+        .danger-zone p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="settings-container">
+        <div class="header">
+            <h1>Core Settings</h1>
+            <p style="color: var(--text-dim);">Manage your Weaverly identity and global preferences.</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="card card-small">
+                <div class="profile-pic"></div>
+                <div class="status-badge">Developer Tier</div>
+                <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim);">Joined March 2026</p>
+            </div>
+
+            <div class="card card-large">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <label>Display Name</label>
+                        <input type="text" placeholder="Alex Coder" id="user-name">
+                    </div>
+                    <div>
+                        <label>Age</label>
+                        <input type="number" placeholder="24" id="user-age">
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="dev@weaverly.io" id="user-email">
+                </div>
+                <button class="btn btn-save" onclick="saveSettings()">Update Profile</button>
+            </div>
+
+            <!-- <div class="card card-full">
+                <label>Developer Communication</label>
+                <p style="font-size: 0.9rem; color: var(--text-dim);">Receive updates about new API endpoints and community groups.</p>
+            </div> -->
+
+            <div class="card card-full danger-zone">
+                <h3>Delete Account</h3>
+                <p>Once you delete your account, there is no going back. All game licenses, wishlist items, and communication logs will be permanently removed.</p>
+                <button class="btn btn-delete" onclick="confirmDelete()">Delete Weaverly Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function saveSettings() {
+            const name = document.getElementById('user-name').value;
+            if(name) {
+                alert(`Profile updated for ${name}!`);
+            } else {
+                alert("Settings saved successfully.");
+            }
+        }
+
+        function confirmDelete() {
+            const confirmation = confirm("Are you absolutely sure? This action cannot be undone.");
+            if (confirmation) {
+                alert("Account scheduled for deletion. Redirecting...");
+                window.location.href = "pages/login/signup_login.htm";
+            }
+        }
+    </script>
+</body>
+</html>
