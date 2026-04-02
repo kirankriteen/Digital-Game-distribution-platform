@@ -9,8 +9,9 @@ button.addEventListener("click", () => {
         },
         body: JSON.stringify({
             games: [
-                { title: "clone wars" },
-                { title: 'the night sky'}
+                // { title: "clone wars" },
+                // { title: 'the night sky'}
+                {title: 'cricket07'}
             ]
         }),
     })
