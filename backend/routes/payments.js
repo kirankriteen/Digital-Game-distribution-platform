@@ -42,6 +42,32 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
                 VALUES(?, ?)`,
                 [session.metadata.userId, session.metadata.gameId]
             )
+        } else if (session.metadata.info === 'games-checkout') {
+            console.log('Payment successful!', session.id)
+            console.log('User ID:', session.metadata.userId)
+
+            const games = JSON.parse(session.metadata.games)
+
+            for (const game of games) {
+                const [existing] = await pool.query(
+                    `SELECT * FROM user_games WHERE user_id = ? AND game_id = ?`,
+                    [session.metadata.userId, game.gameId]
+                )
+
+                if (existing.length === 0) {
+                    await pool.query(
+                        `INSERT INTO user_games(user_id, game_id)
+                 VALUES(?, ?)`,
+                        [session.metadata.userId, game.game_id]
+                    );
+                    console.log(`Game "${game.title}" assigned to user.`);
+                } else {
+                    console.log(`Game "${game.title}" already owned by user, skipping.`);
+                }
+
+                // console.log(`Game "${game.title}" assigned to user. Dev acc_id: ${game.acc_id}`);
+            }
+            await payDevelopers(games);
         }
     }
 
@@ -49,6 +75,37 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 })
 
 router.use(express.json())
+
+async function payDevelopers(games) {
+
+    const balance = await stripe.balance.retrieve();
+    const availableUSD = balance.available.find(b => b.currency === 'usd')?.amount || 0;
+
+    const totalPayout = games.reduce((sum, g) => sum + g.price, 0);
+
+    if (availableUSD < totalPayout) {
+        console.log(`Insufficient USD balance. Available: ${availableUSD} cents, Needed: ${totalPayout} cents`);
+        return;
+    }
+    const platformFeePercent = 2;
+    for (const game of games) {
+        try {
+            const devAmount = Math.floor(game.price * (100 - platformFeePercent) / 100);
+            await stripe.transfers.create({
+                amount: devAmount,
+                currency: 'usd',
+                destination: game.acc_id,
+                description: `Payout for game "${game.title}" (game_id: ${game.game_id})`
+            });
+
+
+            console.log(`Developer ${game.dev_id} paid for game "${game.title}"`);
+        } catch (e) {
+            console.log(e.message)
+            throw new Error(e.message);
+        }
+    }
+}
 
 router.post('/dev-checkout', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
     try {
@@ -124,7 +181,7 @@ router.post('/game-checkout', authenticateToken, authenticateRole([ROLE.USER, RO
             [req.user.id]
         )
 
-        if(hasGame.length !== 0) {
+        if (hasGame.length !== 0) {
             console.log(`User already has the game with the title ${req.body.title}`)
             return res.status(400).json({ error: `User already has the game with the title ${req.body.title}` });
         }
@@ -151,6 +208,127 @@ router.post('/game-checkout', authenticateToken, authenticateRole([ROLE.USER, RO
             cancel_url: `http://localhost:3000/pages/cancel.html`
         })
         res.json({ url: session.url })
+    } catch (e) {
+        console.log(e.message)
+        res.status(500).json({ error: e.message })
+    }
+})
+
+router.post('/games-checkout', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
+    const balance = await stripe.balance.retrieve();
+
+    console.log('Available balance:');
+    balance.available.forEach(item => {
+        console.log(`Currency: ${item.currency}, Amount: ${item.amount}`);
+    });
+
+    console.log('Pending balance:');
+    balance.pending.forEach(item => {
+        console.log(`Currency: ${item.currency}, Amount: ${item.amount}`);
+    });
+    try {
+        // Get all the game titles from the body
+        const getGameTitles = (games) => {
+            if (!games || !Array.isArray(games)) {
+                throw new Error('Invalid games format');
+            }
+
+            return games.map(g => {
+                if (!g.title || typeof g.title !== 'string' || !g.title.trim()) {
+                    throw new Error('Invalid or missing game title');
+                }
+                return g.title.trim();
+            });
+        };
+
+        const gameTitles = getGameTitles(req.body.games);
+
+        // Get the developer id and account id for each game
+        const gameInfos = [];
+
+        for (const game of req.body.games) {
+            const [gameRows] = await pool.query(
+                `SELECT title, game_id, price FROM games WHERE title = ?`,
+                [game.title]
+            )
+
+            if (gameRows.length === 0) {
+                console.log(`No game found with the title "${game.title}"`);
+                return res.status(400).json({ error: `No game found with the title "${game.title}"` });
+            }
+
+            const gameData = gameRows[0];
+
+            const [ownedRows] = await pool.query(
+                `SELECT game_id FROM user_games WHERE user_id = ? AND game_id = ?`,
+                [req.user.id, gameData.game_id]
+            );
+
+            if (ownedRows.length > 0) {
+                console.log(`User already owns the game "${game.title}"`);
+                return res.status(400).json({ error: `User already owns the game "${game.title}"` });
+            }
+
+            const [devRows] = await pool.query(
+                `SELECT dev_id FROM dev_games WHERE game_id = ?`,
+                [gameData.game_id]
+            );
+
+            if (devRows.length === 0) {
+                console.log(`No developer found for the game "${game.title}"`);
+                return res.status(400).json({ error: `No developer found for the game "${game.title}"` });
+            }
+
+            const devId = devRows[0].dev_id;
+
+            const [accRows] = await pool.query(
+                `SELECT acc_id FROM developer WHERE dev_id = ?`,
+                [devId]
+            );
+
+            if (accRows.length === 0) {
+                console.log(`No account found for developer of game "${game.title}"`);
+                return res.status(400).json({ error: `No account found for developer of game "${game.title}"` });
+            }
+
+            const accId = accRows[0].acc_id;
+
+            gameInfos.push({
+                title: gameData.title,
+                game_id: gameData.game_id,
+                price: gameData.price,
+                dev_id: devId,
+                acc_id: accId
+            });
+        }
+
+        // Give a total checkout and make payment to the platform
+        const total = gameInfos.reduce((sum, game) => sum + game.price, 0);
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: gameInfos.map(game => ({
+                price_data: {
+                    currency: 'usd',
+                    product_data: { name: game.title },
+                    unit_amount: game.price
+                },
+                quantity: 1
+            })),
+            mode: 'payment',
+            metadata: {
+                userId: req.user.id,
+                info: 'games-checkout',
+                games: JSON.stringify(gameInfos)
+            },
+            success_url: `http://localhost:3000/pages/success.html`,
+            cancel_url: `http://localhost:3000/pages/cancel.html`
+        })
+
+        res.json({ url: session.url, total });
+        // Wait for the webhook
+
+        // Once the webhook arrives make the seperate payments to the others
     } catch (e) {
         console.log(e.message)
         res.status(500).json({ error: e.message })
