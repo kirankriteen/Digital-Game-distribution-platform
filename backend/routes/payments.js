@@ -87,11 +87,12 @@ async function payDevelopers(games) {
         console.log(`Insufficient USD balance. Available: ${availableUSD} cents, Needed: ${totalPayout} cents`);
         return;
     }
+    const platformFeePercent = 2;
     for (const game of games) {
         try {
-
+            const devAmount = Math.floor(game.price * (100 - platformFeePercent) / 100);
             await stripe.transfers.create({
-                amount: game.price,
+                amount: devAmount,
                 currency: 'usd',
                 destination: game.acc_id,
                 description: `Payout for game "${game.title}" (game_id: ${game.game_id})`
