@@ -5,7 +5,7 @@ button.addEventListener("click", () => {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzQwODgwNDIsImV4cCI6MTc3NDE3NDQ0Mn0.mgX02H0uz0FeQf_rdRQW3tPpIxEVSPRAJvoezpd3f6U'
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzQzNDQ3NzYsImV4cCI6MTc3NDQzMTE3Nn0.6ECso8ekBIX65pbSuQuDymIb1YeYo207iB_2t4k6VTI'
         },
         body: JSON.stringify({
             title: 'clone wars'

@@ -16,7 +16,7 @@ POST http://localhost:4000/login
 Content-Type: application/json
 
 {
-    "username": "joe",
+    "username": "sally",
     "password": "password123"
 }
 
