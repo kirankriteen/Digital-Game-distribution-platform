@@ -1,14 +1,17 @@
 const button = document.querySelector("button")
 button.addEventListener("click", () => {
-    fetch("http://localhost:3000/pay/game-checkout", {
+    fetch("http://localhost:3000/pay/games-checkout", {
     // fetch("http://localhost:3000/pay/onboard", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzQwODgwNDIsImV4cCI6MTc3NDE3NDQ0Mn0.mgX02H0uz0FeQf_rdRQW3tPpIxEVSPRAJvoezpd3f6U'
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MTI0MzcyLCJleHAiOjE3NzUyMTA3NzJ9.dLCc4o3li6zCuCYC82l1YmWOVX1XqtddEW7RWhcQnjI'
         },
         body: JSON.stringify({
-            title: 'clone wars'
+            games: [
+                { title: "clone wars" },
+                { title: 'the night sky'}
+            ]
         }),
     })
         .then(res => {
