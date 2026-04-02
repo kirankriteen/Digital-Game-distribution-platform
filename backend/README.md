@@ -44,5 +44,5 @@ npm run devStart
 
 ```
 stripe login
-stripe listen --forward-to localhost:3000/dev/webhook
+stripe listen --forward-to localhost:3000/pay/webhook
 ```
