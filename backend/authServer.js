@@ -12,7 +12,9 @@ const jwt = require('jsonwebtoken')
 
 app.use(express.json())
 
-app.use(cors({ origin: "http://localhost:3000" }));
+//app.use(cors({ origin: "http://127.0.0.1:5501" }));
+//app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors());
 
 let refreshTokens = []
 
@@ -108,7 +110,7 @@ async function authenticateUser(req, res, next) {
             req.user = user;
             next();
         } else {
-            res.status(401).send('Invalid credentials');
+            return res.status(403).json({ message: "Wrong password" });
         }
 
     } catch (error) {
