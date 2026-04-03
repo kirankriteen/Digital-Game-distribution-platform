@@ -16,7 +16,7 @@ POST http://localhost:4000/login
 Content-Type: application/json
 
 {
-    "username": "joe",
+    "username": "sally",
     "password": "password123"
 }
 
@@ -59,9 +59,9 @@ POST http://localhost:4000/signup
 Content-Type: application/json
 
 {
-    "fullName": "spidey",
-    "email": "peterparker@gmail.com",
-    "password": "Password123"
+    "fullName": "Samsrith",
+    "email": "sams@gmail.com",
+    "password": "Samsrith123"
 }
 
 ###
@@ -70,7 +70,5 @@ GET http://localhost:3000/games/upload-url
 
 ### 
 # Request to hello dev page
-GET http://localhost:3000/dev/dashboard
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzM1OTM0OTksImV4cCI6MTc3MzU5MzU1OX0.areU3CGV2RXEVfPbwL1w4nMGkDVjelRtGtPrywL32RQ
-
-GET http://localhost:3000/dev
+GET http://localhost:3000/dev/account
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzQwODgwNDIsImV4cCI6MTc3NDE3NDQ0Mn0.mgX02H0uz0FeQf_rdRQW3tPpIxEVSPRAJvoezpd3f6U

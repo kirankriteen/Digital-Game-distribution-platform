@@ -12,7 +12,9 @@ const jwt = require('jsonwebtoken')
 
 app.use(express.json())
 
-app.use(cors({ origin: "http://127.0.0.1:5501" }));
+//app.use(cors({ origin: "http://127.0.0.1:5501" }));
+//app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors());
 
 let refreshTokens = []
 
@@ -87,7 +89,7 @@ app.post('/signup', async (req, res) => {
 })
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60s' })
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
 }
 
 async function authenticateUser(req, res, next) {
@@ -108,7 +110,7 @@ async function authenticateUser(req, res, next) {
             req.user = user;
             next();
         } else {
-            res.status(401).send('Invalid credentials');
+            return res.status(403).json({ message: "Wrong password" });
         }
 
     } catch (error) {

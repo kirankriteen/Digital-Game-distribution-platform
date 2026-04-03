@@ -3,107 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weaverly | Dev Communication Hub</title>
+    <title>Weaverly | Cyber-Terminal Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #08090a;
-            --panel-left: #111214;        
-            --panel-mid: #1e1f22;         
-            --panel-main: #2b2d31;        
-            --accent: #6366f1;            
-            --accent-glow: rgba(99, 102, 241, 0.2);
-            --text-bright: #f2f3f5;
-            --text-dim: #94a3b8;
-            --code-bg: #0e0e10;
-            --success: #23a559;
-            --danger: #ed4245;
+            --bg-dark: #050506;
+            --panel-left: #0a0a0c;
+            --panel-mid: rgba(16, 17, 22, 0.8);
+            --panel-main: rgba(22, 23, 28, 0.6);
+            --accent: #da7116; /* Cyber Cyan */
+            --accent-glow: rgba(0, 242, 255, 0.2);
+            --text-bright: #e2faff;
+            --text-dim: #64748b;
+            --code-bg: #000000;
+            --success: #00ff88;
+            --danger: #ff4757;
+            --border: rgba(0, 242, 255, 0.1);
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; transition: all 0.2s ease; }
 
         body {
             background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 50%, #111418 0%, #050506 100%);
             color: var(--text-bright);
-            font-family: 'JetBrains Mono', 'Inter', monospace;
+            font-family: 'Fira Code', monospace;
             margin: 0;
             display: flex;
             height: 100vh;
             overflow: hidden;
         }
 
-        /* --- 1. Group Sidebar --- */
+        /* --- Scanline Overlay Effect --- */
+        body::before {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            background-size: 100% 3px, 3px 100%;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* --- 1. Navigation Sidebar --- */
         .group-sidebar {
             width: 72px;
             background: var(--panel-left);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 12px 0;
-            gap: 12px;
-            border-right: 1px solid rgba(0,0,0,0.2);
+            padding: 15px 0;
+            gap: 15px;
+            border-right: 1px solid var(--border);
+            z-index: 10;
         }
 
         .nav-icon {
-            width: 48px;
-            height: 48px;
-            background: #313338;
-            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            background: #16171d;
+            border: 1px solid var(--border);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             font-weight: bold;
+            font-size: 14px;
+            color: var(--text-dim);
         }
 
         .nav-icon:hover, .nav-icon.active {
-            border-radius: 15px;
-            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--accent);
             box-shadow: 0 0 15px var(--accent-glow);
+            transform: scale(1.05);
+            background: rgba(0, 242, 255, 0.05);
         }
 
-        /* --- 2. Channel/Project Rail --- */
+        /* --- 2. Channels / System Rail --- */
         .channel-sidebar {
-            width: 240px;
+            width: 260px;
             background: var(--panel-mid);
+            backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
+            border-right: 1px solid var(--border);
         }
 
         .sidebar-header {
-            height: 50px;
+            height: 60px;
             display: flex;
             align-items: center;
-            padding: 0 16px;
-            font-weight: 800;
-            box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+            padding: 0 20px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-size: 14px;
+            color: var(--accent);
+            text-shadow: 0 0 8px var(--accent-glow);
+            border-bottom: 1px solid var(--border);
         }
 
         .section-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-dim);
             text-transform: uppercase;
-            padding: 20px 16px 8px;
-            font-weight: bold;
+            padding: 25px 20px 10px;
+            letter-spacing: 3px;
         }
 
         .channel-item {
-            padding: 8px 12px;
-            margin: 2px 8px;
+            padding: 10px 20px;
+            margin: 2px 10px;
             border-radius: 4px;
             color: var(--text-dim);
             cursor: pointer;
+            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .channel-item:hover, .channel-item.active {
-            background: rgba(255,255,255,0.05);
+            background: rgba(0, 242, 255, 0.05);
             color: var(--text-bright);
         }
 
-        .channel-item.active { color: var(--accent); font-weight: bold; }
+        .channel-item.active { 
+            color: var(--accent); 
+            border-left: 2px solid var(--accent);
+        }
+
+        /* Matchmaking Glass Card */
+        .match-card {
+            margin: auto 15px 20px;
+            background: rgba(0, 242, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 11px;
+        }
+
+        .switch {
+            position: relative; display: inline-block; width: 34px; height: 18px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { 
+            position: absolute; cursor: pointer; inset: 0; 
+            background-color: #222; transition: .4s; border-radius: 34px; 
+            border: 1px solid var(--border);
+        }
+        .slider:before { 
+            position: absolute; content: ""; height: 12px; width: 12px; 
+            left: 2px; bottom: 2px; background-color: var(--text-dim); 
+            transition: .4s; border-radius: 50%; 
+        }
+        input:checked + .slider { background-color: rgba(0, 242, 255, 0.2); border-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(16px); background-color: var(--accent); }
 
         /* --- 3. Main Workspace --- */
         .main-workspace {
@@ -115,117 +174,126 @@
         }
 
         .top-status-bar {
-            padding: 12px 20px;
-            background: rgba(35, 165, 89, 0.05);
-            border-bottom: 1px solid rgba(35, 165, 89, 0.2);
+            padding: 12px 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 15px;
-            font-size: 13px;
+            gap: 20px;
+            font-size: 11px;
+            letter-spacing: 1px;
         }
 
         .pulse {
-            width: 8px; height: 8px; border-radius: 50%;
+            width: 6px; height: 6px; border-radius: 50%;
             background: var(--success);
-            box-shadow: 0 0 8px var(--success);
+            box-shadow: 0 0 10px var(--success);
             animation: pulse-ring 2s infinite;
         }
 
-        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.8); opacity: 0.5; } }
+        @keyframes pulse-ring { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
 
         /* Chat Feed */
         .chat-feed {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 25px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
         }
 
-        .msg { display: flex; gap: 15px; }
-        .avatar { width: 40px; height: 40px; border-radius: 8px; background: #444; flex-shrink: 0; }
-        .msg-content h4 { margin: 0 0 5px 0; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-        .timestamp { font-size: 10px; color: var(--text-dim); font-weight: normal; }
+        .msg { display: flex; gap: 18px; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Code Block */
+        .avatar { 
+            width: 42px; height: 42px; border-radius: 4px; 
+            background: #111; border: 1px solid var(--border); flex-shrink: 0; 
+        }
+        .msg-content h4 { margin: 0 0 6px 0; font-size: 14px; color: var(--accent); }
+        .timestamp { font-size: 10px; color: var(--text-dim); margin-left: 10px; font-weight: normal; }
+        .msg-text { color: var(--text-bright); line-height: 1.6; font-size: 13px; margin: 0; }
+
+        /* Code Block Enhancement */
         .code-snippet {
             background: var(--code-bg);
-            border: 1px solid #333;
-            border-radius: 8px;
-            margin-top: 10px;
-            overflow: hidden;
-            max-width: 600px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-top: 12px;
+            max-width: 800px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
-        .code-head { background: #1a1a1c; padding: 6px 12px; font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between; }
-        .code-body { padding: 12px; font-size: 13px; color: #d1d1d1; white-space: pre; overflow-x: auto; }
+        .code-head { 
+            background: #0a0a0c; padding: 8px 15px; font-size: 10px; 
+            color: var(--accent); border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; text-transform: uppercase;
+        }
+        .code-body { padding: 15px; font-size: 12px; color: #a5d6ff; white-space: pre; overflow-x: auto; }
 
-        /* Matchmaking Toggle */
-        .match-card {
-            margin: auto 10px 20px;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid var(--accent);
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 12px;
-        }
-
-        .switch {
-            position: relative; display: inline-block; width: 34px; height: 20px;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #444; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent); }
-        input:checked + .slider:before { transform: translateX(14px); }
-
-        /* Input Area */
-        .chat-input {
-            padding: 0 20px 20px;
-        }
+        /* Input Area - Terminal Style */
+        .chat-input { padding: 25px; background: transparent; }
         .input-box {
-            background: #383a40;
-            border-radius: 8px;
-            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             gap: 15px;
         }
+        .input-box::before { content: ">"; color: var(--accent); font-weight: bold; }
         .input-box input {
-            background: transparent; border: none; color: white; flex-grow: 1; outline: none; font-family: inherit;
+            background: transparent; border: none; color: var(--accent); 
+            flex-grow: 1; outline: none; font-family: 'Fira Code', monospace; font-size: 13px;
         }
+        .input-box input::placeholder { color: #334155; }
+        
+        .send-btn {
+            background: transparent; border: 1px solid var(--accent);
+            color: var(--accent); padding: 4px 12px; font-size: 11px;
+            cursor: pointer; text-transform: uppercase;
+        }
+        .send-btn:hover { background: var(--accent); color: var(--bg-dark); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
     </style>
 </head>
 <body>
 
     <aside class="group-sidebar">
-        <div class="nav-icon active">W</div>
-        <div class="nav-icon">JS</div>
-        <div class="nav-icon">🐍</div>
-        <div class="nav-icon" style="margin-top: auto; color: var(--success);">➕</div>
+        <div class="nav-icon active" title="Weaverly Core">W</div>
+        <div class="nav-icon" title="JS Projects">JS</div>
+        <div class="nav-icon" title="Python Scripts">🐍</div>
+        <div class="nav-icon" title="Rust Services">🦀</div>
+        <div class="nav-icon" style="margin-top: auto; color: var(--success); border-color: var(--success);">+</div>
     </aside>
 
     <aside class="channel-sidebar">
-        <div class="sidebar-header">WEAVERLY-DEV</div>
+        <div class="sidebar-header">WEAVERLY_OS // v1.0</div>
         
-        <div class="section-label">Active Channels</div>
-        <div class="channel-item active"># general-chat</div>
-        <div class="channel-item"># deployment-logs</div>
-        <div class="channel-item"># bug-tracking</div>
+        <div class="section-label">Nodes</div>
+        <div class="channel-item active"># main-terminal</div>
+        <div class="channel-item"># build-logs</div>
+        <div class="channel-item"># trace-bugs</div>
 
-        <div class="section-label">Private Repos</div>
-        <div class="channel-item">🔒 project-nebula</div>
-        <div class="channel-item">🔒 weaverly-core</div>
+        <div class="section-label">Secure Repos</div>
+        <div class="channel-item">:: project_nebula</div>
+        <div class="channel-item">:: core_engine</div>
 
         <div class="match-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <strong>Buyer Matching</strong>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <strong style="letter-spacing: 1px;">PEER_FINDER</strong>
                 <label class="switch">
                     <input type="checkbox" id="matchToggle" checked>
                     <span class="slider"></span>
                 </label>
             </div>
-            <p style="color: var(--text-dim); margin: 0; line-height: 1.4;">Active: You'll be suggested to developers with similar tech stacks.</p>
+            <div style="color: var(--accent); font-size: 9px; margin-bottom: 5px;">● 42 PEERS ACTIVE</div>
+            <p style="color: var(--text-dim); margin: 0; line-height: 1.4;">Matching enabled for: <span style="color:#fff">React, Rust, Three.js</span></p>
         </div>
     </aside>
 
@@ -233,33 +301,35 @@
         
         <div class="top-status-bar">
             <div class="pulse"></div>
-            <strong>Production Build v1.0.4</strong>
-            <span style="color: var(--text-dim)">|  Uptime: 99.9%  |  Global Edge: Active</span>
+            <div style="display: flex; gap: 20px;">
+                <span><span style="color:var(--text-dim)">SYS:</span> ONLINE</span>
+                <span><span style="color:var(--text-dim)">CPU:</span> 04%</span>
+                <span><span style="color:var(--text-dim)">MEM:</span> 1.2GB</span>
+            </div>
+            <div style="margin-left: auto; color: var(--accent); opacity: 0.7;">LOC: EDGE_NODE_SFO</div>
         </div>
 
         <div class="chat-feed" id="chatFeed">
             <div class="msg">
-                <div class="avatar" style="background: var(--accent);"></div>
+                <div class="avatar" style="background: linear-gradient(45deg, #00f2ff, #0066ff);"></div>
                 <div class="msg-content">
-                    <h4>Nebula_Bot <span class="timestamp">Today at 10:24 AM</span></h4>
-                    <p>New pull request detected in <strong>weaverly-core</strong>. Analyzing for security...</p>
+                    <h4>Nebula_Bot <span class="timestamp">14:02:11</span></h4>
+                    <p class="msg-text">System check complete. All sub-modules in <strong style="color:var(--accent)">weaverly-core</strong> are operational. 0 vulnerabilities found.</p>
                 </div>
             </div>
 
             <div class="msg">
-                <div class="avatar" style="background: #eab308;"></div>
+                <div class="avatar" style="background: #1e1e1e; border: 1px solid #facc15;"></div>
                 <div class="msg-content">
-                    <h4>Lead_Architect <span class="timestamp">Today at 10:26 AM</span></h4>
-                    <p>Modified the friend recommendation logic. Here is the updated `matchBool` filter for the global API:</p>
+                    <h4>Lead_Dev <span class="timestamp">14:05:44</span></h4>
+                    <p class="msg-text">Pushing the new recommendation logic. It now checks for the `peer_affinity` score before suggesting a match.</p>
                     
                     <div class="code-snippet">
-                        <div class="code-head"><span>recommendation_engine.js</span> <span>Copy</span></div>
-                        <div class="code-body">function getSuggestedFriends(user) {
-  return users.filter(peer => 
-    peer.active_matchmaking === true && 
-    peer.tech_stack.includes(user.interest)
-  );
-}</div>
+                        <div class="code-head"><span>affinity_engine.js</span> <span>[READ ONLY]</span></div>
+                        <div class="code-body">const calculateMatch = (user, peer) => {
+  const score = user.tags.filter(t => peer.tags.includes(t)).length;
+  return score > MIN_THRESHOLD && peer.is_discoverable;
+};</div>
                     </div>
                 </div>
             </div>
@@ -267,76 +337,52 @@
 
         <div class="chat-input">
             <div class="input-box">
-                <button style="background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:18px;">➕</button>
-                <input type="text" id="userInput" placeholder="Message #general-chat or drop a build folder...">
-                <button id="sendBtn" style="background:var(--accent); border:none; color:white; padding:5px 15px; border-radius:5px; cursor:pointer;">Send</button>
+                <input type="text" id="userInput" placeholder="Execute command or send message..." autocomplete="off">
+                <button class="send-btn" id="sendBtn">Execute</button>
             </div>
         </div>
     </main>
 
     <script>
-        const chatFeed = document.getElementById('chatFeed');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
-        const matchToggle = document.getElementById('matchToggle');
+        const chatFeed = document.getElementById('chatFeed');
 
-        // --- Basic Chat Logic ---
-        function appendMessage(user, text, isBot = false) {
+        function createMessage(sender, text) {
+            const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
             const msgDiv = document.createElement('div');
             msgDiv.className = 'msg';
-            const color = isBot ? 'var(--accent)' : '#444';
-            
             msgDiv.innerHTML = `
-                <div class="avatar" style="background: ${color};"></div>
+                <div class="avatar" style="background: #333; border: 1px solid var(--accent)"></div>
                 <div class="msg-content">
-                    <h4>${user} <span class="timestamp">Just now</span></h4>
-                    <p>${text}</p>
+                    <h4>${sender} <span class="timestamp">${time}</span></h4>
+                    <p class="msg-text">${text}</p>
                 </div>
             `;
             chatFeed.appendChild(msgDiv);
             chatFeed.scrollTop = chatFeed.scrollHeight;
         }
 
-        sendBtn.addEventListener('click', () => {
-            if(userInput.value.trim() !== "") {
-                appendMessage("You", userInput.value);
-                userInput.value = "";
+        function handleSend() {
+            const val = userInput.value.trim();
+            if (val) {
+                createMessage('Root_User', val);
+                userInput.value = '';
+                
+                // Random automated response for "uniqueness"
+                if(val.toLowerCase().includes('status')) {
+                    setTimeout(() => createMessage('SYSTEM', 'All clusters nominal. Latency: 12ms.'), 600);
+                }
             }
-        });
+        }
 
+        sendBtn.addEventListener('click', handleSend);
         userInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') sendBtn.click();
+            if (e.key === 'Enter') handleSend();
         });
 
-        // --- Matchmaking System Toggle ---
-        matchToggle.addEventListener('change', () => {
-            const status = matchToggle.checked ? "Activated" : "Deactivated";
-            appendMessage("System", `Recommendation engine ${status}.`, true);
-        });
-
-        // --- Simple Drag and Drop Feature ---
-        const workspace = document.querySelector('.main-workspace');
-        
-        workspace.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            workspace.style.background = "rgba(99, 102, 241, 0.05)";
-        });
-
-        workspace.addEventListener('dragleave', () => {
-            workspace.style.background = "var(--panel-main)";
-        });
-
-        workspace.addEventListener('drop', (e) => {
-            e.preventDefault();
-            workspace.style.background = "var(--panel-main)";
-            const files = e.dataTransfer.files;
-            if(files.length > 0) {
-                appendMessage("System", `Uploading ${files[0].name} to group repository...`, true);
-                setTimeout(() => {
-                    appendMessage("Nebula_Bot", `Scan complete: No vulnerabilities found in ${files[0].name}. Build ready.`, true);
-                }, 2000);
-            }
-        });
+        // Initial entry animation logic
+        console.log("Weaverly OS Initialized...");
     </script>
 </body>
 </html>

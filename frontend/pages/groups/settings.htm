@@ -8,12 +8,12 @@
         :root {
             --bg: #08090a;
             --panel: rgba(25, 27, 30, 0.7);
-            --accent: #da7116; /* Indigo vibrant */
+            --accent: #6366f1; 
             --accent-glow: rgba(99, 102, 241, 0.3);
             --text: #e2e8f0;
             --text-dim: #94a3b8;
             --success: #10b981;
-            --modal-overlay: rgba(0, 0, 0, 0.85);
+            --modal-bg: rgba(13, 14, 18, 0.95);
         }
 
         body {
@@ -26,7 +26,7 @@
             overflow: hidden;
         }
 
-        /* --- Workspace Sidebar --- */
+        /* --- 1. Workspace Sidebar --- */
         .workspace-bar {
             width: 80px;
             background: rgba(0,0,0,0.4);
@@ -36,7 +36,7 @@
             align-items: center;
             padding: 20px 0;
             gap: 20px;
-            z-index: 100;
+            z-index: 10;
         }
 
         .nav-circle {
@@ -50,53 +50,59 @@
             cursor: pointer;
             transition: 0.3s;
             border: 1px solid rgba(255,255,255,0.1);
-            color: white;
             text-decoration: none;
+            font-size: 20px;
         }
 
-        .nav-circle:hover {
+        .nav-circle:hover, .nav-circle.active {
             border-color: var(--accent);
             box-shadow: 0 0 15px var(--accent-glow);
             transform: scale(1.05);
         }
 
-        /* --- Settings Modal --- */
-        .settings-modal {
+        /* --- 2. Settings Overlay --- */
+        .settings-overlay {
             position: fixed;
             inset: 0;
-            background: var(--modal-overlay);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
             display: none; /* Hidden by default */
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            animation: fadeIn 0.3s ease;
         }
 
-        .settings-content {
-            background: #111218;
-            width: 400px;
-            padding: 30px;
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .settings-card {
+            background: var(--modal-bg);
+            width: 450px;
+            padding: 40px;
             border-radius: 24px;
             border: 1px solid var(--accent);
-            box-shadow: 0 0 30px var(--accent-glow);
+            box-shadow: 0 0 50px rgba(99, 102, 241, 0.2);
         }
 
-        .settings-content h3 { margin-top: 0; color: var(--accent); }
+        .settings-card h2 { margin-top: 0; color: var(--accent); letter-spacing: 1px; }
 
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
-        .input-group input, .input-group textarea {
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; font-weight: 700; }
+        
+        .form-group input, .form-group textarea {
             width: 100%;
-            background: rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.1);
             padding: 12px;
-            border-radius: 10px;
             color: white;
+            border-radius: 10px;
             font-family: inherit;
-            box-sizing: border-box;
+            outline: none;
         }
 
-        /* --- Main Exploration Area --- */
+        .form-group input:focus { border-color: var(--accent); }
+
+        /* --- 3. Main Stage --- */
         .main-stage {
             flex-grow: 1;
             padding: 30px;
@@ -116,7 +122,6 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* --- Carousel Styling --- */
         .carousel-container {
             position: relative;
             border-radius: 24px;
@@ -133,16 +138,11 @@
             scrollbar-width: none;
         }
 
-        .carousel-track::-webkit-scrollbar { display: none; }
-
-        .slide { min-width: 100%; height: 450px; position: relative; scroll-snap-align: start; }
+        .slide { min-width: 100%; height: 400px; position: relative; scroll-snap-align: start; }
         .slide img { width: 100%; height: 100%; object-fit: cover; }
-        .slide-overlay {
-            position: absolute; bottom: 0; left: 0; right: 0; padding: 40px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-        }
+        .slide-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); }
 
-        /* --- Social Sidebar --- */
+        /* --- 4. Social Sidebar --- */
         .social-sidebar {
             width: 320px;
             background: var(--panel);
@@ -161,53 +161,58 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .btn-action {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .match-badge { font-size: 10px; color: var(--success); background: rgba(16, 185, 129, 0.1); padding: 2px 8px; border-radius: 10px; text-transform: uppercase; }
 
-        .btn-action:hover { filter: brightness(1.2); }
-        .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); }
+        .btn-action { background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-action:hover { filter: brightness(1.2); transform: translateY(-2px); }
+        .btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); padding: 12px 20px; border-radius: 12px; cursor: pointer; margin-left: 10px; }
 
+        /* Custom Scrollbar for sidebars */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <h3>USER_CONFIG</h3>
-            <div class="input-group">
+    <div class="settings-overlay" id="settingsOverlay">
+        <div class="settings-card">
+            <h2>USER_PROFILE</h2>
+            <div class="form-group">
                 <label>Display Name</label>
-                <input type="text" id="set-name" value="Current_User">
+                <input type="text" id="editName" value="Alex_Coder">
             </div>
-            <div class="input-group">
-                <label>Short Bio</label>
-                <textarea id="set-bio" rows="3">Developer & Explorer</textarea>
+            <div class="form-group">
+                <label>Bio / Headline</label>
+                <textarea id="editBio" rows="3">Full-stack enthusiast exploring Project Nebula.</textarea>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn-action" onclick="closeSettings()">Save Changes</button>
-                <button class="btn-action btn-ghost" onclick="closeSettings()">Cancel</button>
+            <div class="form-group">
+                <label>Developer Stack</label>
+                <input type="text" id="editStack" value="React, Node.js, PostgreSQL">
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <span style="font-size: 13px; color: var(--text-dim);">Discovery Mode</span>
+                <input type="checkbox" checked>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button class="btn-action" onclick="saveSettings()">Save Configuration</button>
+                <button class="btn-secondary" onclick="toggleSettings()">Cancel</button>
             </div>
         </div>
     </div>
 
     <div class="workspace-bar">
-        <a href="../../base.html"><div class="nav-circle" title="Home">🏠</div></a>
-        <a href="./devs_page.htm"><div class="nav-circle" title="Developer Chat">🛠️</div></a>
-        <a href="./public_page.htm"><div class="nav-circle" title="Community">🗨️</div></a>
-        <div class="nav-circle" title="Settings" style="margin-top: auto;" onclick="openSettings()">⚙️</div>
+        <div class="nav-circle" title="Home">🏠</div>
+        <div class="nav-circle" title="Developer Chat">🛠️</div>
+        <div class="nav-circle" title="Community">🗨️</div>
+        <div class="nav-circle" id="settingsBtn" onclick="toggleSettings()" title="Settings" style="margin-top: auto;">⚙️</div>
     </div>
 
     <div class="main-stage">
         <header class="glass-header">
             <div>
-                <h2 style="margin:0" id="header-name">Explore Applications</h2>
+                <h2 style="margin:0" id="displayUsername">Explore Applications</h2>
                 <span style="color: var(--text-dim); font-size: 14px;">Discover what developers are building today.</span>
             </div>
             <input type="text" placeholder="Search projects..." style="background: rgba(0,0,0,0.2); border: 1px solid #333; color: white; padding: 10px 20px; border-radius: 10px; outline: none;">
@@ -233,6 +238,15 @@
                 </div>
             </div>
         </div>
+
+        <section>
+            <h3 style="margin-bottom: 20px;">Trending Now</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+                <div class="recommendation-card" style="height: 150px; display: flex; align-items: center; justify-content: center; border-style: dashed;">
+                    <span style="color: var(--text-dim)">+ Add Your Project</span>
+                </div>
+            </div>
+        </section>
     </div>
 
     <div class="social-sidebar">
@@ -240,42 +254,46 @@
         
         <div class="recommendation-card">
             <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 10px;">
-                <div style="width: 40px; height: 40px; background: #444; border-radius: 50%;"></div>
+                <div style="width: 40px; height: 40px; background: #444; border-radius: 12px; border: 1px solid var(--accent);"></div>
                 <div>
-                    <div style="font-weight: 600;">Alex_Coder</div>
-                    <span style="font-size: 10px; color: var(--success);">98% Similarity</span>
+                    <div style="font-weight: 600;">Sarah_Dev</div>
+                    <span class="match-badge">92% Match</span>
                 </div>
             </div>
-            <p style="font-size: 12px; color: var(--text-dim);">Alex matches your current stack preferences.</p>
+            <p style="font-size: 12px; color: var(--text-dim);">Sarah is also using React and Three.js in her current projects.</p>
             <button class="btn-action" style="width: 100%; font-size: 13px;">Add Friend</button>
         </div>
 
-        <div style="margin-top: auto; padding: 15px; background: rgba(99, 102, 241, 0.1); border-radius: 15px;">
+        <div style="margin-top: auto; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 20px; border: 1px solid var(--accent-glow);">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 13px;">Matchmaking Active</span>
+                <span style="font-size: 13px; font-weight: 600;">Discovery Engine</span>
                 <input type="checkbox" checked id="matchBool">
             </div>
+            <p style="font-size: 11px; color: var(--text-dim); margin-top: 10px; line-height: 1.4;">
+                Your profile is active in the matching pool.
+            </p>
         </div>
     </div>
 
     <script>
-        // --- Settings Logic ---
-        const modal = document.getElementById('settingsModal');
-        const headerName = document.getElementById('header-name');
-        const setNameInput = document.getElementById('set-name');
-
-        function openSettings() {
-            modal.style.display = 'flex';
-        }
-
-        function closeSettings() {
-            // Update UI with new name as an example
-            headerName.innerText = `Explore: ${setNameInput.value}`;
-            modal.style.display = 'none';
-        }
-
-        // --- Carousel Logic ---
         const carousel = document.getElementById('mainCarousel');
+        const settingsOverlay = document.getElementById('settingsOverlay');
+        const displayUsername = document.getElementById('displayUsername');
+
+        // --- Settings Logic ---
+        function toggleSettings() {
+            const isVisible = settingsOverlay.style.display === 'flex';
+            settingsOverlay.style.display = isVisible ? 'none' : 'flex';
+        }
+
+        function saveSettings() {
+            const newName = document.getElementById('editName').value;
+            // Visual feedback
+            alert(`Profile Updated: Welcome, ${newName}!`);
+            toggleSettings();
+        }
+
+        // --- Carousel Auto Scroll ---
         setInterval(() => {
             const width = carousel.clientWidth;
             const max = carousel.scrollWidth - width;
@@ -290,7 +308,7 @@
         const matchBool = document.getElementById('matchBool');
         matchBool.addEventListener('change', () => {
             const status = matchBool.checked ? "visible" : "hidden";
-            alert(`Your profile is now ${status} to similar buyers.`);
+            console.log(`Discovery status: ${status}`);
         });
     </script>
 </body>

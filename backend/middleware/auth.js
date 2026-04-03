@@ -31,7 +31,9 @@ function setUser(req, res, next) {
     next()
 }
 
-function authenticateRole(role) {
+function authenticateRole(roles) {
+    if (!Array.isArray(roles)) roles = [roles];
+
     return async (req, res, next) => {
         if (!req.user) return res.sendStatus(401)     
         const userId = req.user.id
@@ -53,7 +55,7 @@ function authenticateRole(role) {
                 )
                 const tableRole = roleRows[0].role;
 
-                if (tableRole !== role) {
+                if (!roles.includes(tableRole)) {
                     return res.status(403).json({ message: 'You cannot access dev page' })
                 }
             } catch (err) {
