@@ -59,9 +59,9 @@ POST http://localhost:4000/signup
 Content-Type: application/json
 
 {
-    "fullName": "spidey",
-    "email": "peterparker@gmail.com",
-    "password": "Password123"
+    "fullName": "Samsrith",
+    "email": "sams@gmail.com",
+    "password": "Samsrith123"
 }
 
 ###
