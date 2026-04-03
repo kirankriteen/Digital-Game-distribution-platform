@@ -255,13 +255,13 @@
 
         <div class="card dl-card">
             <span class="stat-label">Downloads</span>
-            <span class="stat-value">12.4k</span>
+            <span class="stat-value" id="downloadsVal">12.4k</span>
             <div style="color: var(--primary)">Studio Lifetime</div>
         </div>
 
         <div class="card active-card">
             <span class="stat-label">Active Players</span>
-            <span class="stat-value">1,082</span>
+            <span class="stat-value" id="activePlayersVal">1,082</span>
             <div class="badge" style="background:rgba(99, 102, 241, 0.2); color: var(--primary)">Live Now</div>
         </div>
 
@@ -283,7 +283,7 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="projectsTable">
                     <tr>
                         <td><strong>Ether Bound</strong></td>
                         <td>RPG</td>
@@ -318,6 +318,7 @@
         document.getElementById('revVal').style.textShadow = `0 0 20px ${color}55`;
     });
 </script>
+<script src="../devdashborad.js"></script>
 
 </body>
 </html>
