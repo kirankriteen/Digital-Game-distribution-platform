@@ -1,1 +1,10 @@
-GET http://localhost:8080/notes
+GET http://localhost:3000/
+
+###
+GET http://localhost:3000/games
+
+###
+GET http://localhost:3000/dev
+
+###
+GET http://localhost:3000/projects

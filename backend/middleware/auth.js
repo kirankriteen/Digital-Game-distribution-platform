@@ -35,7 +35,7 @@ function authenticateRole(roles) {
     if (!Array.isArray(roles)) roles = [roles];
 
     return async (req, res, next) => {
-        if (!req.user) return res.sendStatus(401)
+        if (!req.user) return res.sendStatus(401)     
         const userId = req.user.id
         if (userId) {
             try {

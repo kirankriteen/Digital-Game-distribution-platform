@@ -28,7 +28,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6I
 ### 
 # With the access token access the projects at /projects, access token
 GET http://localhost:3000/projects/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImpvZSIsImlhdCI6MTc2OTc4MjQyOSwiZXhwIjoxNzY5NzgyNDg5fQ.H3xX_aFpro3nSberu4LnhtN8a0sfd8S7uVEnLyftDQg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzM1ODE4Njh9.OAjHTg5NN3zQwXnwkqP156AUbN441g4oofdKi85vXvc
 
 ###
 # If token expire goto /token for new one, here refresh token
@@ -51,7 +51,7 @@ Content-Type: application/json
 ###
 # Accessing the admin page
 GET http://localhost:3000/admin
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImpvZSIsImlhdCI6MTc2OTc4MjQyOSwiZXhwIjoxNzY5NzgyNDg5fQ.H3xX_aFpro3nSberu4LnhtN8a0sfd8S7uVEnLyftDQg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzM1ODE4Njh9.OAjHTg5NN3zQwXnwkqP156AUbN441g4oofdKi85vXvc
 
 ###
 # Sending signup request
