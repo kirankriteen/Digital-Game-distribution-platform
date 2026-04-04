@@ -190,7 +190,7 @@ router.patch('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), up
         const dev_id = await getDeveloperId(req.user.id);
 
         const { studio_name, email, bio, currency, language, old_password, new_password } = req.body;
-
+ 
         let fields = [];
         let values = [];
 
