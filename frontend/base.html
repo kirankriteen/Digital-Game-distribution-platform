@@ -151,7 +151,7 @@
                     <span style="font-size: 1.2rem;">🔍</span> <span>Quick Find</span>
                 </div>
              <a href="pages/groups/base.htm">Groups</a>
-                <a href="pages/game dev pages/dev_signup_page.htm">Developers</a>
+                <a href="#" id="devNav">Developers</a>
                 <a href="pages/cart/base.htm">Cart</a>
                 <a href="pages/wishlist/base.htm">Wishlist🤍</a>
                 <a href="pages/downloads/base.htm">Downloads</a>
@@ -229,6 +229,35 @@
             });
         }
 
+        //developer login
+        document.getElementById("devNav").addEventListener("click", async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+            alert("Please login first");
+            window.location.href = "/pages/login/signup_login.htm";
+            return;
+        }
+    
+        try {
+            const res = await fetch("http://localhost:3000/dev/check", {
+                headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+        
+            if (res.status === 200) {
+                window.location.href = "/pages/game dev pages/dev_dashboard.htm";
+            } else if (res.status === 403) {
+                window.location.href = "/pages/game dev pages/dev_signup_page.htm";
+                } else {
+                    throw new Error("Unknown response");
+                }
+        
+        } catch (err) {
+            console.error(err);
+            alert("Error checking developer access");
+        }
+        });
 
         const heroData = {
             pixel: { title: "Pixel Streaming", desc: "Deliver high-end graphics to any device instantly with zero latency using our global edge network.", gradient: "linear-gradient(135deg, #ff4d4d, #3b82f6)", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600" },

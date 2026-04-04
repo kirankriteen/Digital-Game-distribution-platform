@@ -8,5 +8,51 @@
 </head>
 <body>
   <h3 style="margin-top: 0;">Success</h3>
+<script>
+async function createDevAccount() {
+    const token = localStorage.getItem("accessToken");
+    const data = JSON.parse(localStorage.getItem("devSignupData"));
+
+    if (!data) {
+        alert("No signup data found");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:3000/dev/create-account", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                studio_name: data.studio_name,
+                email: data.email,
+                password: data.password,
+                bio: data.bio,
+                currency: "USD",
+                language: "English"
+            })
+        });
+
+        const resData = await response.json();
+
+        if (response.ok) {
+            alert("Developer account created!");
+            localStorage.removeItem("devSignupData");
+            window.location.href = "game dev pages/dev_dashboard.htm";
+        } else {
+            alert(resData.error);
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert("Error creating dev account");
+    }
+}
+
+createDevAccount();
+</script>
 </body>
+
 </html>

@@ -106,30 +106,63 @@ input:focus, select:focus, textarea:focus {
             <label for="companyBio">Company Bio:</label>
             <textarea id="companyBio" name="companyBio" rows="4" required placeholder="Enter company bio"></textarea>
         </div>
-        <a href='dev_dashboard.htm' <button type="submit" class="btn-primary">Create Company</button> </a>
+        <button id="createDevBtn" class="btn-primary">Pay & Create Company</button>    
     </form>
 </div>
 
 <script>
-document.getElementById('companyForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    const companyName = document.getElementById('companyName').value;
-    const contactEmail = document.getElementById('contactEmail').value;
-    const companyPassword = document.getElementById('companyPassword').value;
-    const companyBio = document.getElementById('companyBio').value;
+document.getElementById("companyForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    if (companyName && contactEmail && companyPassword && companyBio) {
-        alert(`Company Created Successfully:
-- Name: ${companyName}
-- Email: ${contactEmail}
-- Password: ${companyPassword}
-- Bio: ${companyBio}`);
-        
-        // Reset form
-        document.getElementById('companyForm').reset();
-    } else {
-        alert('Please fill out all fields.');
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+        alert("Login first");
+        window.location.href = "../../login/signup_login.htm";
+        return;
+    }
+
+    // Collect form data
+    const companyName = document.getElementById("companyName").value;
+    const contactEmail = document.getElementById("contactEmail").value;
+    const companyPassword = document.getElementById("companyPassword").value;
+    const companyBio = document.getElementById("companyBio").value;
+
+    if (!companyName || !contactEmail || !companyPassword || !companyBio) {
+        alert("Fill all fields");
+        return;
+    }
+
+    try {
+        // STEP 1 → Store data temporarily (VERY IMPORTANT)
+        localStorage.setItem("devSignupData", JSON.stringify({
+            studio_name: companyName,
+            email: contactEmail,
+            password: companyPassword,
+            bio: companyBio
+        }));
+
+        // STEP 2 → Call payment API
+        const response = await fetch("http://localhost:3000/pay/dev-checkout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // STEP 3 → Redirect to Stripe
+            window.location.href = data.url;
+        } else {
+            alert(data.error || "Payment failed");
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert("Server error");
     }
 });
 </script>

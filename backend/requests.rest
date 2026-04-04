@@ -74,6 +74,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6I
 
 GET http://localhost:3000/dev
 
+###
+
 # Request to hello dev page
 GET http://localhost:3000/dev/account
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUyMjU3MTMsImV4cCI6MTc3NTMxMjExM30.1YQcMD08bcgRaJDVj0h5Zy8fi1jgnqB1H9ZU1eaJNto
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUyOTc0NTcsImV4cCI6MTc3NTM4Mzg1N30.jGI1nfRIagw6UXaGeqEj-xlkUzv0DG-v28vFMjhN6jc
