@@ -1,9 +1,9 @@
 const token = localStorage.getItem("accessToken");
 
-if (!token) {
-    alert("You must login first");
-    window.location.href = "../../login.html";
-}
+// if (!token) {
+//     alert("You must login first");
+//     window.location.href = "../login/signup_login.htm";
+// }
 
 async function loadDashboard() {
     try {
@@ -35,14 +35,22 @@ async function loadDashboard() {
             `;
             table.appendChild(row);
         });
-
     } catch (error) {
         console.error("Dashboard load failed:", error);
-        alert("Session expired. Please login again.");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "../../login.html";
+        // TEMP: do NOT logout or redirect
+        console.log("Running in no-auth mode");
+        // Optional fallback UI
+        document.getElementById("revVal").innerText = "$0";
+        document.getElementById("downloadsVal").innerText = "0";
+        document.getElementById("activePlayersVal").innerText = "0";
     }
+    // } catch (error) {
+    //     console.error("Dashboard load failed:", error);
+    //     alert("Session expired. Please login again.");
+    //     localStorage.removeItem("accessToken");
+    //     localStorage.removeItem("refreshToken");
+    //     window.location.href = "../../login.html";
+    // }
 }
 // Run dashboard loader
 loadDashboard();
