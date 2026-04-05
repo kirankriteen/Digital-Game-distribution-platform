@@ -1,143 +1,202 @@
-const token = localStorage.getItem("accessToken");
+// Wait until DOM is fully loaded
+document.addEventListener("DOMContentLoaded", () => {
 
-if (!token) {
-    alert("Please login first");
-    window.location.href = "../../login/signup_login.htm";
-}
+    const token = localStorage.getItem("accessToken");
 
-// ==========================
-// ELEMENTS
-// ==========================
-const form = document.getElementById("gameForm");
-const titleInput = document.getElementById("inTitle");
-const genreInput = document.getElementById("inGenre");
-const buildInput = document.getElementById("inBuild");
-const thumbInput = document.getElementById("inThumb");
+    // ================= THEME SYSTEM =================
+    const genreThemes = {
+        "Action": {
+            primary: "#f43f5e",
+            card: "#1c1917",
+            body: "#0c0a09"
+        },
+        "RPG": {
+            primary: "#8b5cf6",
+            card: "#1e293b",
+            body: "#020617"
+        },
+        "Horror": {
+            primary: "#7f1d1d",
+            card: "#1a0a0a",
+            body: "#050000"
+        },
+        "Simulation": {
+            primary: "#10b981",
+            card: "#18181b",
+            body: "#09090b"
+        }
+    };
 
-// Preview elements
-const preTitle = document.getElementById("preTitle");
-const preGenre = document.getElementById("preGenre");
-const preImg = document.getElementById("preImg");
+    const root = document.documentElement;
 
-// ==========================
-// LIVE PREVIEW
-// ==========================
-titleInput.addEventListener("input", () => {
-    preTitle.innerText = titleInput.value || "Untitled Game";
-});
+    function updateTheme(genre) {
+        const theme = genreThemes[genre];
+        if (!theme) return;
 
-genreInput.addEventListener("change", () => {
-    preGenre.innerText = genreInput.value;
-});
-
-thumbInput.addEventListener("change", () => {
-    const file = thumbInput.files[0];
-    if (file) {
-        const url = URL.createObjectURL(file);
-        preImg.src = url;
-    }
-});
-
-// ==========================
-// SUBMIT GAME
-// ==========================
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const title = titleInput.value.trim();
-    const genre = genreInput.value;
-    const file = buildInput.files[0];
-
-    if (!title || !genre || !file) {
-        alert("Please fill all fields and upload game file");
-        return;
+        root.style.setProperty('--primary', theme.primary);
+        root.style.setProperty('--bg-card', theme.card);
+        root.style.setProperty('--bg-body', theme.body);
     }
 
-    try {
-        // =========================
-        // STEP 1: Get presigned URL
-        // =========================
-        const res = await fetch("http://localhost:3000/games/upload-url", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
-            },
-            body: JSON.stringify({
-                filename: file.name,
-                title: title,
-                genre: genre,
-                price: 0   // default FREE
-            })
-        });
+    // ================= INPUT REFERENCES =================
+    const inTitle = document.getElementById("inTitle");
+    const inGenre = document.getElementById("inGenre");
+    const inPrice = document.getElementById("inPrice");
+    const inCoverPreview = document.getElementById("inCoverPreview");
 
-        if (!res.ok) {
-            const err = await res.text();
-            throw new Error(err || "Failed to get upload URL");
+    const preTitle = document.getElementById("preTitle");
+    const preGenre = document.getElementById("preGenre");
+    const prePrice = document.getElementById("prePrice");
+    const preImg = document.getElementById("preImg");
+
+    // ================= LIVE PREVIEW =================
+    inTitle.addEventListener("input", () => {
+        preTitle.innerText = inTitle.value || "Untitled Game";
+    });
+
+    inGenre.addEventListener("change", () => {
+        preGenre.innerText = inGenre.value;
+
+        // 🔥 ALSO update theme here
+        updateTheme(inGenre.value);
+    });
+
+    inPrice.addEventListener("input", () => {
+        prePrice.innerText = inPrice.value ? "$" + inPrice.value : "Free";
+    });
+
+    inCoverPreview.addEventListener("change", () => {
+        const file = inCoverPreview.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preImg.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // ================= ZIP CLICK HANDLING =================
+    document.getElementById("gameZipZone").addEventListener("click", () => {
+        document.getElementById("inGameZip").click();
+    });
+
+    document.getElementById("assetsZipZone").addEventListener("click", () => {
+        document.getElementById("inAssetsZip").click();
+    });
+
+    document.getElementById("inGameZip").addEventListener("change", (e) => {
+        document.getElementById("gameZipLabel").innerText = e.target.files[0]?.name || "Upload Game ZIP";
+    });
+
+    document.getElementById("inAssetsZip").addEventListener("change", (e) => {
+        document.getElementById("assetsZipLabel").innerText = e.target.files[0]?.name || "Upload Assets ZIP";
+    });
+
+    // ================= FORM SUBMIT =================
+    document.getElementById("gameForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const title = inTitle.value;
+        const genre = inGenre.value;
+        const price = inPrice.value;
+        const bio = document.getElementById("inBio").value;
+
+        const os = document.getElementById("inOS").value;
+        const processor = document.getElementById("inProcessor").value;
+        const memory = document.getElementById("inMemory").value;
+        const storage = document.getElementById("inStorage").value;
+
+        const gameZip = document.getElementById("inGameZip").files[0];
+        const assetsZip = document.getElementById("inAssetsZip").files[0];
+
+        if (!gameZip || !assetsZip) {
+            alert("Upload both ZIP files");
+            return;
         }
 
-        const data = await res.json();
-        const presignedUrl = data.uploadUrl;
-        const gameId = data.gameId;
+        try {
+            // STEP 1: Get presigned URL
+            const res = await fetch("http://localhost:3000/games/upload-url", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    filename: gameZip.name,
+                    title,
+                    genre,
+                    price,
+                    bio,
+                    os,
+                    processor,
+                    memory,
+                    storage
+                })
+            });
 
-        console.log("Game ID:", gameId);
+            const data = await res.json();
+            const presignedUrl = data.uploadUrl;
+            const gameId = data.gameId;
 
-        // =========================
-        // STEP 2: Upload file
-        // =========================
-        const xhr = new XMLHttpRequest();
-        xhr.open("PUT", presignedUrl, true);
+            // STEP 2: Upload game ZIP
+            const xhr = new XMLHttpRequest();
+            xhr.open("PUT", presignedUrl, true);
 
-        xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable) {
-                const percent = Math.round((event.loaded / event.total) * 100);
-                console.log("Upload:", percent + "%");
-            }
-        };
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    const percent = Math.round((event.loaded / event.total) * 100);
+                    console.log("Upload:", percent + "%");
+                }
+            };
 
-        xhr.onload = async () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
+            xhr.onload = async () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
 
-                // =========================
-                // STEP 3: Notify backend
-                // =========================
-                const notifyRes = await fetch("http://localhost:3000/games/upload-complete", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + token
-                    },
-                    body: JSON.stringify({ gameId })
-                });
+                    // STEP 3: Confirm upload
+                    await fetch("http://localhost:3000/games/upload-complete", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + token
+                        },
+                        body: JSON.stringify({ gameId })
+                    });
 
-                const notifyData = await notifyRes.json();
+                    // STEP 4: Upload assets ZIP
+                    const formData = new FormData();
+                    formData.append("zipfile", assetsZip);
+                    formData.append("gameId", gameId);
 
-                if (notifyData.success) {
-                    alert("🎉 Game published successfully!");
+                    const zipRes = await fetch("http://localhost:3000/games/upload-zip", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": "Bearer " + token
+                        },
+                        body: formData
+                    });
 
-                    // Reset form
-                    form.reset();
-                    preTitle.innerText = "Untitled Game";
-                    preGenre.innerText = "Genre";
-                    preImg.src = "https://via.placeholder.com/400x200?text=Game+Cover";
+                    const zipData = await zipRes.json();
+
+                    if (zipData.success) {
+                        alert("🎉 Game Published Successfully!");
+                        document.getElementById("gameForm").reset();
+                    } else {
+                        alert("Assets upload failed");
+                    }
 
                 } else {
-                    alert("Upload done but server failed");
+                    alert("Upload failed");
                 }
+            };
 
-            } else {
-                alert("Upload failed: " + xhr.status);
-            }
-        };
+            xhr.send(gameZip);
 
-        xhr.onerror = () => {
-            alert("Upload error");
-        };
+        } catch (err) {
+            console.error(err);
+            alert("Server error");
+        }
+    });
 
-        xhr.send(file);
-
-    } catch (err) {
-        console.error("Error:", err);
-        alert(err.message);
-    }
 });
