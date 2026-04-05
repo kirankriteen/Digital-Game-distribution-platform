@@ -4,7 +4,7 @@ const fileInput = document.getElementById('fileInput');
 const uploadProgress = document.getElementById('uploadProgress');
 const progressText = document.getElementById('progressText');
 
-const BEARER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUxMzQ5MzQsImV4cCI6MTc3NTIyMTMzNH0.eINW2YiKWNjfK4e9ZLkb7_Ho6sapKfq4zTR2ObVvzEw";
+const BEARER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUzMDI3MzcsImV4cCI6MTc3NTM4OTEzN30.078XrWFRQdC5Od9jSB5XxAF8GDiXY6KR9RFNqA9eCPw";
 
 uploadBtn.addEventListener('click', async () => {
     const file = fileInput.files[0];

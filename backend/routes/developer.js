@@ -34,6 +34,19 @@ router.get('/', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER])
     });
 })
 
+router.get('/check', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
+    const [userRows] = await pool.query(
+        `SELECT role_id FROM userLogin WHERE user_id = ?`,
+        [req.user.id]
+    );
+
+    if(userRows[0].role_id === 2) {
+        return res.sendStatus(200)
+    } else if(userRows[0].role_id < 2) {
+        return res.sendStatus(403)
+    }
+})
+
 async function getDeveloperId(user_id) {
 
     const [rows] = await pool.query(
@@ -190,7 +203,7 @@ router.patch('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), up
         const dev_id = await getDeveloperId(req.user.id);
 
         const { studio_name, email, bio, currency, language, old_password, new_password } = req.body;
-
+ 
         let fields = [];
         let values = [];
 
@@ -217,7 +230,7 @@ router.patch('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), up
 
         if (language) {
             const language_id = await getLanguageId(language);
-            fields.push('lang_id = ?');
+            fields.push('language_id = ?');
             values.push(language_id);
         }
 
@@ -263,7 +276,7 @@ router.patch('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), up
 
 
 
-    } catch {
+    } catch(err) {
         console.error(err);
         if (req.file) {
             fs.unlink(
@@ -276,7 +289,7 @@ router.patch('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), up
     }
 })
 
-router.post('/create-account', authenticateToken, authenticateRole(ROLE.DEVELOPER), upload.single('image'), async (req, res) => {
+router.post('/create-account', authenticateToken, authenticateRole(ROLE.DEVELOPER), async (req, res) => {
     try {
         const [rows] = await pool.query(
             `SELECT dev_id
@@ -287,12 +300,6 @@ router.post('/create-account', authenticateToken, authenticateRole(ROLE.DEVELOPE
 
         if (rows.length !== 0) {
             console.log('multiple user account creation')
-            if (req.file) {
-                // Change for main server, this is for testing only, change on production !!!
-                fs.unlink(path.join(__dirname, '../uploads', req.file.filename), unlinkErr => {
-                    if (unlinkErr) console.error('Failed to delete file:', unlinkErr);
-                });
-            }
             return res.status(400).json({ error: 'User already exists' });
         }
 
@@ -301,18 +308,12 @@ router.post('/create-account', authenticateToken, authenticateRole(ROLE.DEVELOPE
         // Hash the password
         const password_hash = await bcrypt.hash(password, 10)
 
-        const imageFile = req.file;
-
-        if (!imageFile) {
-            return res.status(400).json({ error: 'Image file is required' });
-        }
-
         // Get currencyId, languageId
         const currency_id = await getCurrencyId(currency);
         const language_id = await getLanguageId(language);
-        const query = `INSERT INTO developer(user_id, studio_name, email, bio, currency_id, language_id, password_hash, imglocation)
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?)`
-        const [devRows] = await pool.query(query, [req.user.id, studio_name, email, bio, currency_id, language_id, password_hash, `/uploads/${imageFile.filename}`])
+        const query = `INSERT INTO developer(user_id, studio_name, email, bio, currency_id, language_id, password_hash)
+        VALUES(?, ?, ?, ?, ?, ?, ?)`
+        const [devRows] = await pool.query(query, [req.user.id, studio_name, email, bio, currency_id, language_id, password_hash])
 
         console.log(devRows[0])
 
@@ -323,12 +324,6 @@ router.post('/create-account', authenticateToken, authenticateRole(ROLE.DEVELOPE
         });
     } catch (error) {
         console.error(error);
-        if (req.file) {
-            // Change for main server, this is for testing only, change on production !!!
-            fs.unlink(path.join(__dirname, '../uploads', req.file.filename), unlinkErr => {
-                if (unlinkErr) console.error('Failed to delete file:', unlinkErr);
-            });
-        }
         res.status(500).json({ error: 'Server error' });
     }
 })

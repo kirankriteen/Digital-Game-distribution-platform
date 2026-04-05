@@ -98,7 +98,8 @@ document.getElementById("signupBtn").addEventListener("click", async (e) => {
         console.log("Signup Response:", data);
 
         if (response.ok) {
-            alert("Signup successful! Please login.");
+        alert("Signup successful! Please login.");
+        document.getElementById("reg-log").checked = false;
         } else {
             alert(data.message || "Signup failed");
         }
