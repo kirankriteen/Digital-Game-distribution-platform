@@ -2,13 +2,20 @@
 const params = new URLSearchParams(window.location.search);
 const gameId = params.get("game_id");
 
+// --- Select DOM elements ---
 const carousel = document.getElementById('mediaCarousel');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
 const buyBtn = document.getElementById('buyBtn');
 const wishBtn = document.getElementById('wishBtn');
 
+let scrollInterval;
+
+// ===========================
+// --- Load Game Data ---
+// ===========================
 async function loadGame() {
     try {
-        // Fetch game data from backend
         const res = await fetch(`http://localhost:3000/my/game?game_id=${gameId}`);
         const data = await res.json();
         console.log(data);
@@ -26,8 +33,8 @@ async function loadGame() {
 
         // --- Populate meta info ---
         const metaItems = document.querySelectorAll(".meta-list li strong");
-        metaItems[0].innerText = data.fullname || "Unknown"; // Developer
-        metaItems[1].innerText = data.studio_name || "Unknown";       // Publisher / Genre
+        metaItems[0].innerText = data.studio_name || "Unknown"; // Developer
+        metaItems[1].innerText = game.genre || "Unknown";       // Publisher / Genre
         metaItems[2].innerText = game.release_date || "Unknown"; // Release Date
         metaItems[3].innerText = "Windows";                     // Platform
 
@@ -70,11 +77,81 @@ async function loadGame() {
             }
         });
 
+        // --- Fix for dynamic carousel ---
+        carousel.scrollLeft = 0;
+        resetTimer();
+
     } catch (err) {
         console.error(err);
         document.body.innerHTML = "<h1>Error loading game</h1>";
     }
 }
 
-// Load the game when page opens
+// ===========================
+// --- Carousel Logic ---
+// ===========================
+function startAutoScroll() {
+    scrollInterval = setInterval(() => {
+        shiftSlide(1);
+    }, 5000); 
+}
+
+function stopAutoScroll() {
+    clearInterval(scrollInterval);
+}
+
+function shiftSlide(direction) {
+    const slideWidth = carousel.clientWidth;
+    const maxScroll = carousel.scrollWidth - slideWidth;
+    
+    if (direction === 1 && carousel.scrollLeft >= maxScroll - 5) {
+        carousel.scrollTo({ left: 0, behavior: 'smooth' });
+    } else if (direction === -1 && carousel.scrollLeft <= 5) {
+        carousel.scrollTo({ left: maxScroll, behavior: 'smooth' });
+    } else {
+        carousel.scrollBy({ left: slideWidth * direction, behavior: 'smooth' });
+    }
+}
+
+// Manual Navigation
+nextBtn.addEventListener('click', () => {
+    shiftSlide(1);
+    resetTimer();
+});
+
+prevBtn.addEventListener('click', () => {
+    shiftSlide(-1);
+    resetTimer();
+});
+
+// Hover Behavior
+carousel.addEventListener('mouseenter', stopAutoScroll);
+carousel.addEventListener('mouseleave', startAutoScroll);
+
+function resetTimer() {
+    stopAutoScroll();
+    startAutoScroll();
+}
+
+// ===========================
+// --- Store Interaction ---
+// ===========================
+buyBtn.addEventListener('click', () => {
+    buyBtn.innerText = "Adding to Cart...";
+    setTimeout(() => {
+        alert("Game added to your library!");
+        buyBtn.innerText = "Owned";
+        buyBtn.style.background = "#333";
+        buyBtn.disabled = true;
+    }, 1000);
+});
+
+let wishlisted = false;
+wishBtn.addEventListener('click', () => {
+    wishlisted = !wishlisted;
+    wishBtn.innerText = wishlisted ? "❤ In Wishlist" : "Add to Wishlist";
+    wishBtn.style.borderColor = wishlisted ? "var(--accent)" : "#555";
+});
+
 loadGame();
+startAutoScroll();
