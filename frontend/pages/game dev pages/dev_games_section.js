@@ -24,8 +24,10 @@ async function loadGames() {
         const grid = document.querySelector(".games-grid");
         grid.innerHTML = "";
 
+        const games = data.mygames;
+
         // ✅ No games fallback
-        if (!data.games || data.games.length === 0) {
+        if (!games || games.length === 0) {
             grid.innerHTML = `
                 <p style="color: var(--text-dim);">
                     No games uploaded yet. Click "+ Upload New" to get started.
@@ -34,24 +36,36 @@ async function loadGames() {
             return;
         }
 
-        // ✅ Render each game
-        data.games.forEach(game => {
+        // ✅ Render games
+        games.forEach(game => {
             const card = document.createElement("div");
             card.classList.add("game-card");
 
+            // fallback image
+            const imageUrl = game.coverUrl 
+                ? game.coverUrl 
+                : "https://placehold.co/400x200/1e293b/white?text=No+Cover";
+
+            // format date
+            const releaseDate = new Date(game.release_date).toLocaleDateString();
+
             card.innerHTML = `
                 <div class="poster-container">
-                    <span class="status-tag ${game.status === "Live" ? "status-live" : "status-pending"}">
-                        ${game.status || "Pending"}
-                    </span>
-                    <img src="${game.thumbnail || "https://placehold.co/400x200/1e293b/white?text=No+Image"}" 
-                         class="game-poster">
+                    <span class="status-tag status-live">Live</span>
+                    <img src="${imageUrl}" class="game-poster">
                 </div>
+
                 <div class="card-content">
-                    <h3>${game.title || "Untitled Game"}</h3>
-                    <p>${game.genre || "Unknown"} • ${game.downloads || 0} Downloads</p>
+                    <h3>${game.title}</h3>
+                    <p>
+                        ${game.genre} • ₹${game.price.toLocaleString()}
+                    </p>
+                    <p style="font-size: 0.8rem; color: var(--text-dim);">
+                        Released: ${releaseDate}
+                    </p>
+
                     <div class="card-footer">
-                        <button class="manage-btn" data-id="${game.id}">
+                        <button class="manage-btn" data-id="${game.game_id}">
                             Manage
                         </button>
                     </div>
@@ -61,7 +75,7 @@ async function loadGames() {
             grid.appendChild(card);
         });
 
-        // ✅ Manage button click
+        // ✅ Manage button
         document.querySelectorAll(".manage-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const gameId = e.target.getAttribute("data-id");
