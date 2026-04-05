@@ -1,39 +1,39 @@
 const express = require('express')
 const path = require('path')
+const multer = require('multer');
+const fs = require('fs');
 const { pool } = require('../db/pool')
 const { minioClient } = require('../db/minioclient')
 const Minio = require('minio');
 const { ROLE } = require('../data')
 // const { authenticateToken, authenticateRole } = require('../middleware/auth')
-const { getDeveloperId } = require('./developer');
 const { authenticateToken, authenticateRole } = require('../middleware/auth');
 const router = express.Router()
 router.use(express.json())
 
+const zipStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/zips/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+})
+
+const uploadZip = multer({
+  storage: zipStorage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'application/zip' || file.originalname.endsWith('.zip')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only ZIP files allowed'));
+    }
+  }
+})
+
 router.get('/', (req, res) => {
   res.send('Games Page')
 })
-
-// router.get('/upload-url', async (req, res) => {
-//   try {
-//     const filename = req.query.filename;
-//     if (!filename) {
-//       return res.status(400).send('Filename is required');
-//     }
-
-//     const presignedUrl = await minioClient.presignedPutObject(
-//       'mybucket',
-//       filename,
-//       24 * 60 * 60
-//     );
-
-//     console.log('Presigned URL:', presignedUrl);
-//     res.json({ url: presignedUrl });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Error generating presigned URL');
-//   }
-// });
 
 async function getGenreId(genre) {
   const [genreRows] = await pool.query(
@@ -51,12 +51,11 @@ router.post('/upload-url', authenticateToken, authenticateRole([ROLE.DEVELOPER])
 
   try {
     // Get data from the client
-    const { filename, title, genre, price } = req.body;
-    if (!filename || !title || !genre || !price) {
+    const { filename, title, genre, price, bio, os, processor, memory, storage } = req.body;
+    if (!filename || !title || !genre || !price || !bio || !os || !processor || !memory || !storage) {
       return res.status(400).json({ error: "Missing fields" });
     }
     // insert into the database the data with status not uploaded
-    // const dev_id = await getDeveloperId(req.user.id);
     const [devRows] = await pool.query(
       `SELECT dev_id FROM developer WHERE user_id = ?`,
       [req.user.id]
@@ -70,9 +69,9 @@ router.post('/upload-url', authenticateToken, authenticateRole([ROLE.DEVELOPER])
     const genre_id = await getGenreId(genre);
     const [gameResult] = await pool.query(
       `INSERT INTO games 
-       (title, genre_id, filelocation, filestatus, price)
-       VALUES (?, ?, ?, ?, ?)`,
-      [title, genre_id, `/${title}`, "pending", price]
+       (title, genre_id, filelocation, filestatus, price, bio, os, processor, memory, storage)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [title, genre_id, `/${title}`, "pending", price, bio, os, processor, memory, storage]
     );
     const gameId = gameResult.insertId;
     const [upload] = await pool.query(
@@ -93,11 +92,91 @@ router.post('/upload-url', authenticateToken, authenticateRole([ROLE.DEVELOPER])
       gameId,
       filename,
       title,
-      genre
+      genre,
+      bio,
+      os,
+      processor,
+      memory,
+      storage
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error generating presigned URL', details: err.message });
+  }
+})
+
+router.post('/upload-zip', authenticateToken, authenticateRole(ROLE.DEVELOPER), uploadZip.single('zipfile'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' })
+    }
+    const zipPath = req.file.path;
+    const extractPath = `uploads/extracted/${Date.now()}`;
+
+    fs.mkdirSync(extractPath, { recursive: true })
+
+    const admZip = require('adm-zip');
+    const zip = new admZip(zipPath)
+    zip.extractAllTo(extractPath, true);
+
+    fs.unlinkSync(zipPath);
+
+    const files = fs.readdirSync(extractPath);
+
+    console.log('Extracted files:', files);
+
+    const videoFile = files.find(f => f.endsWith('.mp4'));
+    const img1File = files.find(f => f.startsWith('img1'));
+    const img2File = files.find(f => f.startsWith('img2'));
+    const img3File = files.find(f => f.startsWith('img3'));
+    const cover = files.find(f => f.startsWith('cover'));
+
+    const videoPath = videoFile ? `/${extractPath}/${videoFile}` : null;
+    const img1Path = img1File ? `/${extractPath}/${img1File}` : null;
+    const img2Path = img2File ? `/${extractPath}/${img2File}` : null;
+    const img3Path = img3File ? `/${extractPath}/${img3File}` : null;
+    const coverPath = cover ? `/${extractPath}/${cover}` : null;
+
+    const [devRows] = await pool.query(
+      `SELECT dev_id FROM developer WHERE user_id = ?`,
+      [req.user.id]
+    )
+    if (devRows.length === 0) {
+      console.log('There is no developer');
+      return res.status(400).json({ error: 'There is no developer' })
+    }
+    const dev_id = devRows[0].dev_id
+
+    const { gameId } = req.body;
+    if (!gameId) {
+      return res.status(400).json({ error: 'Missing gameId' });
+    }
+
+    const [gameExist] = await pool.query(
+      `SELECT * FROM games WHERE game_id = ?`,
+      [gameId]
+    )
+    if (gameExist.length === 0) {
+      return res.status(404).json({ error: "game not found" })
+    }
+
+    await pool.query(
+      `UPDATE games 
+         SET video = ?, img1 = ?, img2 = ?, img3 = ?, cover = ?
+         WHERE game_id = ?`,
+      [videoPath, img1Path, img2Path, img3Path, coverPath, gameId]
+    );
+
+    res.json({
+      success: true,
+      extractedPath: extractPath,
+      video: videoPath,
+      images: [img1Path, img2Path, img3Path],
+      cover: coverPath
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'ZIP processing failed' });
   }
 })
 
@@ -160,26 +239,6 @@ router.post('/download-url', authenticateToken, authenticateRole([ROLE.USER, ROL
     res.status(500).json({ error: e.message })
   }
 })
-
-// router.get('/download-url', async (req, res) => {
-//   try {
-//     const filename = req.query.filename;
-//     if (!filename) {
-//       return res.status(400).send('Filename is required');
-//     }
-
-//     const presignedUrl = await minioClient.presignedGetObject(
-//       'mybucket',
-//       filename,
-//       24 * 60 * 60
-//     )
-//     console.log('Download URL:', presignedUrl);
-//     res.json({ url: presignedUrl });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Error generating presigned download URL');
-//   }
-// })
 
 router.post('/upload-complete', async (req, res) => {
   const { gameId } = req.body;
