@@ -40,9 +40,9 @@ router.get('/check', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELO
         [req.user.id]
     );
 
-    if(userRows[0].role_id === 2) {
+    if (userRows[0].role_id === 2) {
         return res.sendStatus(200)
-    } else if(userRows[0].role_id < 2) {
+    } else if (userRows[0].role_id < 2) {
         return res.sendStatus(403)
     }
 })
@@ -112,14 +112,26 @@ router.get('/dashboard', authenticateToken, authenticateRole(ROLE.DEVELOPER), as
         };
 
         const [projectsRows] = await pool.query(
-            `SELECT g.title
+            `SELECT g.title, g.genre_id
              FROM dev_games dg
              JOIN games g ON dg.game_id = g.game_id
              WHERE dg.dev_id = ?`,
             [dev_id]
         );
 
-        const projects = projectsRows.map(row => row.title);
+        const projects = await Promise.all(projectsRows.map(async row => {
+            const [genreRows] = await pool.query(
+                `SELECT genre FROM genre WHERE genre_id = ?`,
+                [row.genre_id]
+            );
+
+            const genre = genreRows.length ? genreRows[0].genre : 'Unknown';
+
+            return {
+                title: row.title,
+                genre: genre
+            };
+        }));
 
         res.json({
             total_revenue: dashboard.total_revenue,
@@ -140,14 +152,33 @@ router.get('/mygames', authenticateToken, authenticateRole(ROLE.DEVELOPER), asyn
         const dev_id = await getDeveloperId(req.user.id);
 
         const [projectsRows] = await pool.query(
-            `SELECT g.title
+            `SELECT g.*
              FROM dev_games dg
              JOIN games g ON dg.game_id = g.game_id
              WHERE dg.dev_id = ?`,
             [dev_id]
         );
 
-        const projects = projectsRows.map(row => row.title);
+        const projects = await Promise.all(projectsRows.map(async row => {
+            // Fetch genre name from genre_id
+            const [genreRows] = await pool.query(
+                `SELECT genre FROM genre WHERE genre_id = ?`,
+                [row.genre_id]
+            );
+            const genre = genreRows.length ? genreRows[0].genre : 'Unknown';
+            const host = req.headers.host || 'localhost:3000';
+            const coverUrl = row.cover ? `http://${host}${row.cover}` : null;
+            // Return project object
+            return {
+                game_id: row.game_id,
+                title: row.title,
+                genre: genre,
+                price: row.price,
+                release_date: row.release_date,
+                coverUrl: coverUrl
+            };
+        })
+        );
 
         res.json({
             mygames: projects
@@ -203,7 +234,7 @@ router.patch('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), up
         const dev_id = await getDeveloperId(req.user.id);
 
         const { studio_name, email, bio, currency, language, old_password, new_password } = req.body;
- 
+
         let fields = [];
         let values = [];
 
@@ -276,7 +307,7 @@ router.patch('/account', authenticateToken, authenticateRole(ROLE.DEVELOPER), up
 
 
 
-    } catch(err) {
+    } catch (err) {
         console.error(err);
         if (req.file) {
             fs.unlink(
@@ -324,6 +355,40 @@ router.post('/create-account', authenticateToken, authenticateRole(ROLE.DEVELOPE
         });
     } catch (error) {
         console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+})
+
+router.post('/delete-account', authenticateToken, authenticateRole(ROLE.DEVELOPER), async (req, res) => {
+    try {
+        // Delete from the database
+        // To delete an account, we need to remove the games from 
+        // games, others are cascading i guess
+        // If not we will change
+        // Then we delete the dev account, not the user account
+        const dev_id = await getDeveloperId(req.user.id);
+
+        const connection = await pool.getConnection();
+        try {
+            await connection.beginTransaction();
+
+            await connection.query('DELETE FROM games WHERE dev_id = ?', [dev_id])
+
+            await connection.query('DELETE FROM developer WHERE dev_id = ?', [dev_id])
+
+            await connection.commit();
+
+            res.json({ message: 'Developer account and related games deleted successfully' });
+        } catch (err) {
+            await connection.rollback();
+            console.error(err);
+            res.status(500).json({ error: 'Server error' });
+        } finally {
+            connection.release();
+        }
+
+    } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'Server error' });
     }
 })
