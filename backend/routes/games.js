@@ -240,7 +240,7 @@ router.post('/download-url', authenticateToken, authenticateRole([ROLE.USER, ROL
   }
 })
 
-router.post('/upload-complete', async (req, res) => {
+router.post('/upload-complete', authenticateToken, authenticateRole(ROLE.DEVELOPER), async (req, res) => {
   const { gameId } = req.body;
   console.log(gameId)
 
@@ -258,6 +258,11 @@ router.post('/upload-complete', async (req, res) => {
       "UPDATE games SET filestatus='uploaded' WHERE game_id=?",
       [gameId]
     );
+
+    await pool.query(
+      "INSERT INTO user_games(user_id, game_id) VALUES (?, ?)",
+      [req.user.id, gameId]
+    )
 
     res.json({ success: true });
 

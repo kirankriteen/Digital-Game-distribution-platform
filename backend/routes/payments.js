@@ -54,7 +54,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
                     [session.metadata.userId, game.gameId]
                 )
 
-                if (existing.length === 0) {
+                if (existing.length === 0) {    
                     await pool.query(
                         `INSERT INTO user_games(user_id, game_id)
                  VALUES(?, ?)`,
@@ -91,7 +91,9 @@ async function payDevelopers(games) {
     for (const game of games) {
         try {
             const devAmount = Math.floor(game.price * (100 - platformFeePercent) / 100);
-            await stripe.transfers.create({
+
+            // Get the transfer
+            const transfer = await stripe.transfers.create({
                 amount: devAmount,
                 currency: 'usd',
                 destination: game.acc_id,
@@ -100,6 +102,13 @@ async function payDevelopers(games) {
 
 
             console.log(`Developer ${game.dev_id} paid for game "${game.title}"`);
+
+            await pool.query(
+                `UPDATE payments
+                SET method = ?, amount = ?, currency_id = ?, status = ?
+                WHERE payment_id = ?`,
+                ['stripe_account', devAmount, 1, 'completed', game.payment_id]
+            )
         } catch (e) {
             console.log(e.message)
             throw new Error(e.message);
@@ -292,13 +301,21 @@ router.post('/games-checkout', authenticateToken, authenticateRole([ROLE.USER, R
             }
 
             const accId = accRows[0].acc_id;
+            const [pay] = await pool.query(
+                `INSERT INTO payments(dev_id, amount)
+                VALUES(?, ?)`,
+                [devId, gameData.price]
+            )
+            const payment_id = pay.insertId
+
 
             gameInfos.push({
                 title: gameData.title,
                 game_id: gameData.game_id,
                 price: gameData.price,
                 dev_id: devId,
-                acc_id: accId
+                acc_id: accId,
+                payment_id: payment_id
             });
         }
 
@@ -378,5 +395,7 @@ router.post('/onboard', authenticateToken, authenticateRole(ROLE.DEVELOPER), asy
         res.status(500).json({ error: e.message });
     }
 })
+
+
 
 module.exports = router
