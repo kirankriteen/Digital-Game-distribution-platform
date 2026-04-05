@@ -161,3 +161,11 @@ CREATE TABLE payments (
         REFERENCES currency(currency_id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE wishlist (
+    user_id INT NOT NULL,
+    game_id INT NOT NULL,
+    PRIMARY KEY (user_id, game_id),
+    FOREIGN KEY (user_id) REFERENCES userlogin(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
+);

@@ -160,4 +160,79 @@ router.get('/search', async (req, res) => {
     }
 })
 
+router.post('/add-wishlist', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
+    try {
+        const user_id = req.user.id;
+        const game_id = req.body.game_id
+
+        const [gameRows] = await pool.query(
+            `SELECT * FROM games WHERE game_id = ?`,
+            [game_id]
+        )
+        if(gameRows.length === 0) {
+            return res.status(404).json({ error: 'Game not found with the game Id' });
+        }
+
+        await pool.query(
+            `INSERT INTO wishlist(user_id, game_id)
+            VALUES(?, ?)`,
+            [user_id, game_id]
+        )
+        res.json({
+            success: true,
+            message: 'inserted into wishlist'
+        })
+
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({ error: "Server Error" });
+    }
+})
+
+router.post('/remove-wishlist', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
+    try {
+        const user_id = req.user.id;
+        const game_id = req.body.game_id
+
+        const [gameRows] = await pool.query(
+            `SELECT * FROM wishlist WHERE game_id = ?`,
+            [game_id]
+        )
+        if(gameRows.length === 0) {
+            return res.status(404).json({ error: 'Game not found in wishlist with the game Id' });
+        }
+
+        await pool.query(
+            `DELETE FROM wishlist WHERE user_id = ? AND game_id = ?`,
+            [user_id, game_id]
+        )
+        res.json({
+            success: true,
+            message: 'deleted from wishlist'
+        })
+
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({ error: "Server Error" });
+    }
+})
+
+router.get('/wishlist', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
+    try {
+        const user_id = req.user.id;
+
+        const [games] = await pool.query(
+            `SELECT game_id FROM wishlist WHERE user_id = ?`,
+            [user_id]
+        )
+        res.json({
+            games
+        })
+
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({ error: "Server Error" });
+    }
+})
+
 module.exports = router
