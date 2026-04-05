@@ -14,6 +14,7 @@ Content-Type: application/json
 # Login details for server at 4000 for joe
 POST http://localhost:4000/login
 Content-Type: application/json
+
 {
     "username": "sally",
     "password": "password123"
@@ -78,3 +79,15 @@ GET http://localhost:3000/dev
 # Request to hello dev page
 GET http://localhost:3000/dev/account
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUyOTc0NTcsImV4cCI6MTc3NTM4Mzg1N30.jGI1nfRIagw6UXaGeqEj-xlkUzv0DG-v28vFMjhN6jc
+
+###
+
+# Request to my game
+GET http://localhost:3000/my/game?game_id=20
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MzczNDAyLCJleHAiOjE3NzU0NTk4MDJ9.pdGfLgV4ihzup2ZqtcRXoS8fHWX33L0l9VBIVVRQGEs
+
+###
+
+# Request to my game
+GET http://localhost:3000/my/mygames
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MzczNDAyLCJleHAiOjE3NzU0NTk4MDJ9.pdGfLgV4ihzup2ZqtcRXoS8fHWX33L0l9VBIVVRQGEs
