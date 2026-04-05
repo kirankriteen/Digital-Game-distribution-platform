@@ -14,6 +14,7 @@ Content-Type: application/json
 # Login details for server at 4000 for joe
 POST http://localhost:4000/login
 Content-Type: application/json
+
 {
     "username": "sally",
     "password": "password123"
@@ -78,3 +79,61 @@ GET http://localhost:3000/dev
 # Request to hello dev page
 GET http://localhost:3000/dev/account
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUyOTc0NTcsImV4cCI6MTc3NTM4Mzg1N30.jGI1nfRIagw6UXaGeqEj-xlkUzv0DG-v28vFMjhN6jc
+
+###
+
+# Request to my game
+GET http://localhost:3000/my/game?game_id=20
+
+###
+
+# Request to my game
+GET http://localhost:3000/my/mygames
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MzczNDAyLCJleHAiOjE3NzU0NTk4MDJ9.pdGfLgV4ihzup2ZqtcRXoS8fHWX33L0l9VBIVVRQGEs
+
+###
+
+# Request search terms
+GET http://localhost:3000/my/search
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MzczNDAyLCJleHAiOjE3NzU0NTk4MDJ9.pdGfLgV4ihzup2ZqtcRXoS8fHWX33L0l9VBIVVRQGEs
+
+###
+
+# Testing payouts
+GET http://localhost:3000/dev/payouts?user_id=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUzODg5MTEsImV4cCI6MTc3NTQ3NTMxMX0.Ie7Fduo9Clnu7C5BWRCKt7iFkKgOPSpnG4VWiw2shPY
+
+###
+
+# Testing payouts
+GET http://localhost:3000/dev/withdraw?user_id=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUzODg5MTEsImV4cCI6MTc3NTQ3NTMxMX0.Ie7Fduo9Clnu7C5BWRCKt7iFkKgOPSpnG4VWiw2shPY
+
+### 
+
+# Testing adding to wishlist
+POST http://localhost:3000/my/add-wishlist
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MzkwMjk3LCJleHAiOjE3NzU0NzY2OTd9.P72oVEMhmuZp6uqEo0bIKwd1JRdD6tO-OvA_ej94_WA
+Content-Type: application/json
+
+{
+    "game_id": "22"
+}
+
+### 
+
+# Testing removing from wishlist
+POST http://localhost:3000/my/remove-wishlist
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MzkwMjk3LCJleHAiOjE3NzU0NzY2OTd9.P72oVEMhmuZp6uqEo0bIKwd1JRdD6tO-OvA_ej94_WA
+Content-Type: application/json
+
+{
+    "game_id": "20"
+}
+
+### 
+
+# Testing getting wishlist
+GET http://localhost:3000/my/wishlist
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUzODg5MTEsImV4cCI6MTc3NTQ3NTMxMX0.Ie7Fduo9Clnu7C5BWRCKt7iFkKgOPSpnG4VWiw2shPY
+

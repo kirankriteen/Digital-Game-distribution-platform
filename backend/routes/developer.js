@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const bcrypt = require('bcrypt')
 const fs = require('fs');
+const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 const { authenticateToken, setUser, authenticateRole } = require('../middleware/auth')
 const { pool } = require('../db/pool')
 const { ROLE } = require('../data')
@@ -389,6 +390,91 @@ router.post('/delete-account', authenticateToken, authenticateRole(ROLE.DEVELOPE
 
     } catch (err) {
         console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+})
+
+router.get('/payouts', authenticateToken, authenticateRole(ROLE.DEVELOPER), async (req, res) => {
+    try {
+        const dev_id = await getDeveloperId(req.query.user_id);
+        const [devRows] = await pool.query(
+            `SELECT acc_id FROM developer WHERE dev_id = ?`,
+            [dev_id]
+        )
+        const acc_id = devRows[0].acc_id
+        const balance = await stripe.balance.retrieve({
+            stripeAccount: acc_id
+        })
+        const available = balance.available.reduce((sum, b) => sum + b.amount, 0);
+        const pending = balance.pending.reduce((sum, b) => sum + b.amount, 0);
+        const currency = balance.available[0]?.currency || balance.pending[0]?.currency || 'usd';
+
+        const [payRows] = await pool.query(
+            `SELECT p.payment_id, p.created_at, p.method, p.amount, c.name,
+            p.status FROM payments p JOIN
+            currency c ON c.currency_id = p.currency_id
+            WHERE dev_id = ?`,
+            [dev_id]
+        )
+        console.log(dev_id)
+        const lifetimeEarningsCents = payRows
+            .filter(p => p.status === 'completed')
+            .reduce((sum, p) => sum + Number(p.amount), 0);
+        res.json({
+            availableForWithdrawal: available,
+            pendingClearance: pending,
+            lifetimeEarningsCents,
+            currency
+        })
+
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+})
+
+router.get('/withdraw', authenticateToken, authenticateRole([ROLE.DEVELOPER]), async (req, res) => {
+    try {
+        const dev_id = await getDeveloperId(req.query.user_id);
+        const [devRows] = await pool.query(
+            `SELECT acc_id FROM developer WHERE dev_id = ?`,
+            [dev_id]
+        );
+        const acc_id = devRows[0].acc_id;
+
+        const balance = await stripe.balance.retrieve({
+            stripeAccount: acc_id
+        });
+        const available = balance.available.reduce((sum, b) => sum + b.amount, 0);
+
+        if (available <= 0) {
+            return res.status(400).json({ error: 'No funds available for withdrawal' });
+        }
+
+        const currency = balance.available[0]?.currency || 'usd';
+
+        const payout = await stripe.payouts.create({
+            amount: available,
+            currency: currency,
+        }, {
+            stripeAccount: acc_id
+        });
+
+        console.log(`Payout created for dev ${dev_id}:`, payout);
+
+        res.json({
+            message: `Withdrawal successful! ${available / 100} ${currency.toUpperCase()} is on its way to your bank.`,
+            payoutId: payout.id
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        if (err.type === 'StripeInvalidRequestError') {
+            return res.status(400).json({ error: err.message });
+        }
         res.status(500).json({ error: 'Server error' });
     }
 })

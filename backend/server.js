@@ -14,6 +14,7 @@ const projectRouter = require('./routes/projects')
 const gamesRouter = require('./routes/games')
 const devRouter = require('./routes/developer')
 const payRouter = require('./routes/payments')
+const myRouter = require('./routes/user')
 
 const PORT = 3000
 const app = express()
@@ -42,6 +43,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/projects', projectRouter)
 app.use('/games', gamesRouter)
 app.use('/dev', devRouter)
+app.use('/my', myRouter)
 
 
 app.get('/', (req, res) => {
