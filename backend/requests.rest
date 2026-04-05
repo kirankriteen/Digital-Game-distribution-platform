@@ -84,10 +84,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6I
 
 # Request to my game
 GET http://localhost:3000/my/game?game_id=20
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MzczNDAyLCJleHAiOjE3NzU0NTk4MDJ9.pdGfLgV4ihzup2ZqtcRXoS8fHWX33L0l9VBIVVRQGEs
 
 ###
 
 # Request to my game
 GET http://localhost:3000/my/mygames
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MzczNDAyLCJleHAiOjE3NzU0NTk4MDJ9.pdGfLgV4ihzup2ZqtcRXoS8fHWX33L0l9VBIVVRQGEs
+
+###
+
+# Request search terms
+GET http://localhost:3000/my/search
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MzczNDAyLCJleHAiOjE3NzU0NTk4MDJ9.pdGfLgV4ihzup2ZqtcRXoS8fHWX33L0l9VBIVVRQGEs
