@@ -142,3 +142,22 @@ ADD COLUMN storage VARCHAR(50) NULL;
 
 ALTER TABLE games
 ADD COLUMN cover VARCHAR(255) NULL;
+
+CREATE TABLE payments (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    dev_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    method VARCHAR(50) NULL,
+    amount INT NULL,
+    currency_id INT NULL,
+    status VARCHAR(20) NULL,
+    -- Foreign key constraints
+    CONSTRAINT fk_dev
+        FOREIGN KEY (dev_id)
+        REFERENCES developer(dev_id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_currency
+        FOREIGN KEY (currency_id)
+        REFERENCES currency(currency_id)
+        ON DELETE CASCADE
+);

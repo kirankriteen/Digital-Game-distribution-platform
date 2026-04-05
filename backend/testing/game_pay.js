@@ -5,13 +5,13 @@ button.addEventListener("click", () => {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1MTI0MzcyLCJleHAiOjE3NzUyMTA3NzJ9.dLCc4o3li6zCuCYC82l1YmWOVX1XqtddEW7RWhcQnjI'
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1Mzg2NzY4LCJleHAiOjE3NzU0NzMxNjh9.PGXEsVNK5CyRRdFR6Gl_ICVZPVdNcZKHAbpWDIKrwfQ'
         },
         body: JSON.stringify({
             games: [
-                // { title: "clone wars" },
+                { title: "clone wars" }
                 // { title: 'the night sky'}
-                {title: 'cricket07'}
+                // {title: 'cricket07'}
             ]
         }),
     })
