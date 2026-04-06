@@ -19,6 +19,7 @@ async function createDevAccount() {
     }
 
     try {
+        // STEP 1: Create developer account
         const response = await fetch("http://localhost:3000/dev/create-account", {
             method: "POST",
             headers: {
@@ -37,13 +38,28 @@ async function createDevAccount() {
 
         const resData = await response.json();
 
-        if (response.ok) {
-            alert("Developer account created!");
-            localStorage.removeItem("devSignupData");
-            window.location.href = "game dev pages/dev_dashboard.htm";
-        } else {
+        if (!response.ok) {
             alert(resData.error);
+            return;
         }
+        console.log(resData);
+        // STEP 2: Call onboarding API
+        const onboardRes = await fetch("http://localhost:3000/pay/onboard", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        const onboardData = await onboardRes.json();
+
+        if (!onboardRes.ok) {
+            alert(onboardData.error || "Onboarding failed");
+            return;
+        }
+
+        // STEP 3: Redirect to Stripe onboarding URL
+        window.location.href = onboardData.url;
 
     } catch (err) {
         console.error(err);

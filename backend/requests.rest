@@ -82,6 +82,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6I
 
 ###
 
+# Get my games
+GET http://localhost:3000/my/game?game_id=24
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUzODIxMzcsImV4cCI6MTc3NTQ2ODUzN30.CtIEMq-4cKblGNDTh14ZHqN80KSuxubxzmgrxGIfp6s
 # Request to my game
 GET http://localhost:3000/my/game?game_id=20
 

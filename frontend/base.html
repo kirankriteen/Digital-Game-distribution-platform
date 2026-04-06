@@ -1,391 +1,785 @@
-
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GameDistro | All-in-One Platform</title>
     <style>
-        :root {
-            --bg-gradient: linear-gradient(135deg, #ff4d4d, #3b82f6);
-            --transition-speed: 0.8s;
-            --netflix-red: #e50914;
-            --sponsored-gold: #ffcc00;
-            --card-width: 280px;
-            --glass: rgba(255, 255, 255, 0.1);
+      :root {
+        --bg-gradient: linear-gradient(135deg, #ff4d4d, #3b82f6);
+        --transition-speed: 0.8s;
+        --netflix-red: #e50914;
+        --sponsored-gold: #ffcc00;
+        --card-width: 280px;
+        --glass: rgba(255, 255, 255, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: #000;
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      /* --- Overlays --- */
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.98);
+        backdrop-filter: blur(25px);
+        z-index: 500;
+        display: none;
+        flex-direction: column;
+        padding: 2rem 4rem;
+        overflow-y: auto;
+        animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(1.05);
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #000; color: #fff; overflow-x: hidden; }
-
-        /* --- Overlays --- */
-        .overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.98);
-            backdrop-filter: blur(25px);
-            z-index: 500;
-            display: none;
-            flex-direction: column;
-            padding: 2rem 4rem;
-            overflow-y: auto;
-            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        to {
+          opacity: 1;
+          transform: scale(1);
         }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
+      }
 
-        .overlay-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3rem; }
-        #main-search-input { 
-            width: 70%; background: #1a1a1a; border: 2px solid #333; 
-            padding: 18px 25px; color: #fff; font-size: 1.4rem; border-radius: 50px;
-            transition: 0.3s;
-        }
-        #main-search-input:focus { border-color: var(--netflix-red); outline: none; box-shadow: 0 0 20px rgba(229, 9, 20, 0.2); }
+      .overlay-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+      }
+      #main-search-input {
+        width: 70%;
+        background: #1a1a1a;
+        border: 2px solid #333;
+        padding: 18px 25px;
+        color: #fff;
+        font-size: 1.4rem;
+        border-radius: 50px;
+        transition: 0.3s;
+      }
+      #main-search-input:focus {
+        border-color: var(--netflix-red);
+        outline: none;
+        box-shadow: 0 0 20px rgba(229, 9, 20, 0.2);
+      }
 
-        /* --- Hero Section --- */
-        .hero-section { position: relative; height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
-        #bg-image-layer { 
-            position: absolute; inset: 0; background-size: cover; background-position: center; 
-            filter: brightness(0.35); z-index: -2; transition: var(--transition-speed) ease-in-out; 
-        }
-        #bg-glow { 
-            position: absolute; inset: 0; background: var(--bg-gradient); 
-            filter: blur(120px); opacity: 0.25; z-index: -1; transition: var(--transition-speed);
-        }
+      /* --- Hero Section --- */
+      .hero-section {
+        position: relative;
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      #bg-image-layer {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.35);
+        z-index: -2;
+        transition: var(--transition-speed) ease-in-out;
+      }
+      #bg-glow {
+        position: absolute;
+        inset: 0;
+        background: var(--bg-gradient);
+        filter: blur(120px);
+        opacity: 0.25;
+        z-index: -1;
+        transition: var(--transition-speed);
+      }
 
-        header { display: flex; justify-content: space-between; align-items: center; padding: 2rem 4rem; position: relative; z-index: 100; }
-        .logo { font-size: 1.8rem; font-weight: 900; color: var(--netflix-red); letter-spacing: -1.5px; cursor: pointer; }
-        
-        nav { display: flex; gap: 2rem; align-items: center; }
-        nav a { color: #aaa; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: 0.3s; }
-        nav a:hover { color: #fff; }
-        
-        .search-trigger { 
-            cursor: pointer; background: var(--glass); padding: 10px 20px; 
-            border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; gap: 10px; transition: 0.3s;
-        }
-        .search-trigger:hover { background: rgba(255,255,255,0.2); border-color: #fff; }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2rem 4rem;
+        position: relative;
+        z-index: 100;
+      }
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: var(--netflix-red);
+        letter-spacing: -1.5px;
+        cursor: pointer;
+      }
 
-        .hero-main { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 4rem; }
-        .hero-text { transition: 0.5s; max-width: 800px; }
-        .hero-text.fade { opacity: 0; transform: translateX(-30px); }
-        h1.hero-title { font-size: 5.5rem; margin-bottom: 1.5rem; line-height: 0.9; font-weight: 800; }
+      nav {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+      nav a {
+        color: #aaa;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: 0.3s;
+      }
+      nav a:hover {
+        color: #fff;
+      }
 
-        /* --- Tabs --- */
-        .tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: rgba(0,0,0,0.8); border-top: 1px solid #222; }
-        .tab-btn { 
-            background: none; border: none; padding: 1.8rem; color: #555; 
-            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-            cursor: pointer; border-top: 4px solid transparent; transition: 0.4s;
-        }
-        .tab-btn.active { color: #fff; border-top-color: var(--netflix-red); background: rgba(255,255,255,0.03); }
+      .search-trigger {
+        cursor: pointer;
+        background: var(--glass);
+        padding: 10px 20px;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: 0.3s;
+      }
+      .search-trigger:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: #fff;
+      }
 
-        /* --- Rows --- */
-        .section-header { display: flex; justify-content: space-between; align-items: flex-end; padding: 0 4rem; margin: 3rem 0 1rem; }
-        .section-header h2 { font-size: 1.5rem; letter-spacing: 0.5px; }
-        
-        .row-wrapper { position: relative; padding: 0 3.5rem; }
-        .horizontal-scroll { 
-            display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth; 
-            padding: 20px 0.5rem; scrollbar-width: none; 
-        }
-        .horizontal-scroll::-webkit-scrollbar { display: none; }
+      .hero-main {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 4rem;
+      }
+      .hero-text {
+        transition: 0.5s;
+        max-width: 800px;
+      }
+      .hero-text.fade {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      h1.hero-title {
+        font-size: 5.5rem;
+        margin-bottom: 1.5rem;
+        line-height: 0.9;
+        font-weight: 800;
+      }
 
-        .nav-btn {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            width: 50px; height: 50px; background: rgba(0,0,0,0.9);
-            border-radius: 50%; color: #fff; border: 1px solid #333; cursor: pointer;
-            z-index: 10; opacity: 0; transition: 0.3s; display: flex; align-items: center; justify-content: center;
-        }
-        .row-wrapper:hover .nav-btn { opacity: 1; }
-        .prev-btn { left: 1rem; } .next-btn { right: 1rem; }
+      /* --- Tabs --- */
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        background: rgba(0, 0, 0, 0.8);
+        border-top: 1px solid #222;
+      }
+      .tab-btn {
+        background: none;
+        border: none;
+        padding: 1.8rem;
+        color: #555;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        border-top: 4px solid transparent;
+        transition: 0.4s;
+      }
+      .tab-btn.active {
+        color: #fff;
+        border-top-color: var(--netflix-red);
+        background: rgba(255, 255, 255, 0.03);
+      }
 
-        /* --- Cards --- */
-        .card { flex: 0 0 var(--card-width); background: #111; border-radius: 8px; overflow: hidden; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; position: relative; border: 1px solid #222; }
-        .card:hover { transform: scale(1.05) translateY(-5px); z-index: 5; border-color: #555; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; transition: 0.5s; }
-        .card:hover img { filter: contrast(1.1); }
-        
-        .card_info { padding: 15px; }
-        .badge-sponsored { position: absolute; top: 12px; left: 12px; background: var(--sponsored-gold); color: #000; padding: 3px 10px; font-size: 0.65rem; font-weight: 800; border-radius: 3px; z-index: 2; }
-        
-        .wishlist-heart { 
-            position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5); 
-            width: 32px; height: 32px; border-radius: 50%; display: flex; 
-            align-items: center; justify-content: center; transition: 0.3s;
-        }
-        .wishlist-heart:hover { transform: scale(1.2); background: #fff; color: #000; }
+      /* --- Rows --- */
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 0 4rem;
+        margin: 3rem 0 1rem;
+      }
+      .section-header h2 {
+        font-size: 1.5rem;
+        letter-spacing: 0.5px;
+      }
 
-        .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 2rem; }
+      .row-wrapper {
+        position: relative;
+        padding: 0 3.5rem;
+      }
+      .horizontal-scroll {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding: 20px 0.5rem;
+        scrollbar-width: none;
+      }
+      .horizontal-scroll::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        background: rgba(0, 0, 0, 0.9);
+        border-radius: 50%;
+        color: #fff;
+        border: 1px solid #333;
+        cursor: pointer;
+        z-index: 10;
+        opacity: 0;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .row-wrapper:hover .nav-btn {
+        opacity: 1;
+      }
+      .prev-btn {
+        left: 1rem;
+      }
+      .next-btn {
+        right: 1rem;
+      }
+
+      /* --- Cards --- */
+      .card {
+        flex: 0 0 var(--card-width);
+        background: #111;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        position: relative;
+        border: 1px solid #222;
+      }
+      .card:hover {
+        transform: scale(1.05) translateY(-5px);
+        z-index: 5;
+        border-color: #555;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+      .card img {
+        width: 100%;
+        aspect-ratio: 16/9;
+        object-fit: cover;
+        transition: 0.5s;
+      }
+      .card:hover img {
+        filter: contrast(1.1);
+      }
+
+      .card_info {
+        padding: 15px;
+      }
+      .badge-sponsored {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: var(--sponsored-gold);
+        color: #000;
+        padding: 3px 10px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        border-radius: 3px;
+        z-index: 2;
+      }
+
+      .wishlist-heart {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(0, 0, 0, 0.5);
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+      }
+      .wishlist-heart:hover {
+        transform: scale(1.2);
+        background: #fff;
+        color: #000;
+      }
+
+      .grid-layout {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 2rem;
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div id="search-overlay" class="overlay">
-        <div class="overlay-header">
-            <h2 style="color: #666;">Search Discovery</h2>
-            <input type="text" id="main-search-input" placeholder="Type game title, genre or hardware...">
-            <div style="font-size: 3rem; cursor: pointer; color: #888;" onclick="toggleOverlay('search-overlay', false)">&times;</div>
+      <div class="overlay-header">
+        <h2 style="color: #666">Search Discovery</h2>
+        <input
+          type="text"
+          id="main-search-input"
+          placeholder="Type game title, genre or hardware..."
+        />
+        <div
+          style="font-size: 3rem; cursor: pointer; color: #888"
+          onclick="toggleOverlay('search-overlay', false)"
+        >
+          &times;
         </div>
-        <div id="search-results-meta" style="color: #888; margin-bottom: 1rem;"></div>
-        <div class="grid-layout" id="search-results"></div>
+      </div>
+      <div
+        id="search-results-meta"
+        style="color: #888; margin-bottom: 1rem"
+      ></div>
+      <div class="grid-layout" id="search-results"></div>
     </div>
 
     <div id="view-all-overlay" class="overlay">
-        <div class="overlay-header">
-            <h1 id="view-all-title">Category</h1>
-            <div style="font-size: 3rem; cursor: pointer; color: #888;" onclick="toggleOverlay('view-all-overlay', false)">&times;</div>
+      <div class="overlay-header">
+        <h1 id="view-all-title">Category</h1>
+        <div
+          style="font-size: 3rem; cursor: pointer; color: #888"
+          onclick="toggleOverlay('view-all-overlay', false)"
+        >
+          &times;
         </div>
-        <div class="grid-layout" id="view-all-grid"></div>
+      </div>
+      <div class="grid-layout" id="view-all-grid"></div>
     </div>
 
     <div class="hero-section">
-        <div id="bg-image-layer"></div>
-        <div id="bg-glow"></div>
+      <div id="bg-image-layer"></div>
+      <div id="bg-glow"></div>
 
-        <header>
-            <div class="logo" onclick="location.reload()">GAMEDISTRO</div>
-            <nav>
-                <div class="search-trigger" onclick="toggleOverlay('search-overlay', true)">
-                    <span style="font-size: 1.2rem;">🔍</span> <span>Quick Find</span>
-                </div>
-             <a href="pages/groups/base.htm">Groups</a>
-                <a href="#" id="devNav">Developers</a>
-                <a href="pages/cart/base.htm">Cart</a>
-                <a href="pages/wishlist/base.htm">Wishlist🤍</a>
-                <a href="pages/downloads/base.htm">Downloads</a>
-                <!-- <a href="pages/login/signup_login.htm" style="color :#da7116">Sign In</a> -->
-                <a href="#" id="authBtn" style="color :#da7116">Sign In</a>
+      <header>
+        <div class="logo" onclick="location.reload()">GAMEDISTRO</div>
+        <nav>
+          <div
+            class="search-trigger"
+            onclick="toggleOverlay('search-overlay', true)"
+          >
+            <span style="font-size: 1.2rem">🔍</span> <span>Quick Find</span>
+          </div>
+          <a href="pages/groups/base.htm">Groups</a>
+          <a href="#" id="devNav">Developers</a>
+          <a href="pages/cart/base.htm">Cart</a>
+          <a href="pages/wishlist/base.htm">Wishlist🤍</a>
+          <a href="pages/downloads/base.htm">Downloads</a>
+          <!-- <a href="pages/login/signup_login.htm" style="color :#da7116">Sign In</a> -->
+          <a href="#" id="authBtn" style="color: #da7116">Sign In</a>
+        </nav>
+      </header>
 
-            </nav>
-        </header>
-
-        <div class="hero-main">
-            <div class="hero-text" id="hero-container">
-                <h1 class="hero-title" id="title">Next Gen Core</h1>
-                <p id="desc" style="max-width: 600px; color: #aaa; font-size: 1.3rem; line-height: 1.5;"></p>
-                <button style="margin-top: 2rem; padding: 15px 40px; background: white; color: black; border: none; border-radius: 4px; font-weight: 700; cursor: pointer; transition: 0.3s;">GET STARTED</button>
-            </div>
+      <div class="hero-main">
+        <div class="hero-text" id="hero-container">
+          <h1 class="hero-title" id="title">Next Gen Core</h1>
+          <p
+            id="desc"
+            style="
+              max-width: 600px;
+              color: #aaa;
+              font-size: 1.3rem;
+              line-height: 1.5;
+            "
+          ></p>
+          <button
+            style="
+              margin-top: 2rem;
+              padding: 15px 40px;
+              background: white;
+              color: black;
+              border: none;
+              border-radius: 4px;
+              font-weight: 700;
+              cursor: pointer;
+              transition: 0.3s;
+            "
+          >
+            GET STARTED
+          </button>
         </div>
+      </div>
 
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchHero('pixel', this)">Pixel Streaming</button>
-            <button class="tab-btn" onclick="switchHero('ml', this)">Machine Learning</button>
-            <button class="tab-btn" onclick="switchHero('inference', this)">Inference</button>
-            <button class="tab-btn" onclick="switchHero('vfx', this)">VFX & Rendering</button>
-        </div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchHero('pixel', this)">
+          Pixel Streaming
+        </button>
+        <button class="tab-btn" onclick="switchHero('ml', this)">
+          Machine Learning
+        </button>
+        <button class="tab-btn" onclick="switchHero('inference', this)">
+          Inference
+        </button>
+        <button class="tab-btn" onclick="switchHero('vfx', this)">
+          VFX & Rendering
+        </button>
+      </div>
     </div>
 
     <div class="content-container">
-        <div class="section-header">
-            <h2>Trending Now 🔥</h2>
-            <span class="view-all-btn" style="cursor:pointer; color: #888;" onclick="openViewAll('Trending Now', 'trending')">View All →</span>
-        </div>
-        <div class="row-wrapper">
-            <button class="nav-btn prev-btn" onclick="scrollRow('trending-list', -1)">❮</button>
-            <div class="horizontal-scroll" id="trending-list"></div>
-            <button class="nav-btn next-btn" onclick="scrollRow('trending-list', 1)">❯</button>
-        </div>
+      <div class="section-header">
+        <h2>Trending Now 🔥</h2>
+        <span
+          class="view-all-btn"
+          style="cursor: pointer; color: #888"
+          onclick="openViewAll('Trending Now', 'trending')"
+          >View All →</span
+        >
+      </div>
+      <div class="row-wrapper">
+        <button
+          class="nav-btn prev-btn"
+          onclick="scrollRow('trending-list', -1)"
+        >
+          ❮
+        </button>
+        <div class="horizontal-scroll" id="trending-list"></div>
+        <button
+          class="nav-btn next-btn"
+          onclick="scrollRow('trending-list', 1)"
+        >
+          ❯
+        </button>
+      </div>
 
-        <div class="section-header">
-            <h2 style="color: var(--sponsored-gold);">Featured Partnerships ✨</h2>
-        </div>
-        <div class="row-wrapper">
-            <div class="horizontal-scroll" id="sponsored-list"></div>
-        </div>
+      <div class="section-header">
+        <h2 style="color: var(--sponsored-gold)">Featured Partnerships ✨</h2>
+      </div>
+      <div class="row-wrapper">
+        <div class="horizontal-scroll" id="sponsored-list"></div>
+      </div>
 
-        <div class="section-header">
-            <h2>Action & RPG ⚔️</h2>
-            <span class="view-all-btn" style="cursor:pointer; color: #888;" onclick="openViewAll('Action & RPG', 'action')">View All →</span>
-        </div>
-        <div class="row-wrapper">
-            <button class="nav-btn prev-btn" onclick="scrollRow('action-list', -1)">❮</button>
-            <div class="horizontal-scroll" id="action-list"></div>
-            <button class="nav-btn next-btn" onclick="scrollRow('action-list', 1)">❯</button>
-        </div>
+      <div class="section-header">
+        <h2>Action & RPG ⚔️</h2>
+        <span
+          class="view-all-btn"
+          style="cursor: pointer; color: #888"
+          onclick="openViewAll('Action & RPG', 'action')"
+          >View All →</span
+        >
+      </div>
+      <div class="row-wrapper">
+        <button class="nav-btn prev-btn" onclick="scrollRow('action-list', -1)">
+          ❮
+        </button>
+        <div class="horizontal-scroll" id="action-list"></div>
+        <button class="nav-btn next-btn" onclick="scrollRow('action-list', 1)">
+          ❯
+        </button>
+      </div>
     </div>
 
     <script>
+      let backendGames = [];
 
-        //if user loggrn in it shows logout button
-        const authBtn = document.getElementById("authBtn");
-        const token = localStorage.getItem("accessToken");
-        if (token) {
-            // User is logged in
-            authBtn.innerText = "Logout";
-            authBtn.addEventListener("click", () => {
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-            
-                alert("Logged out");
-                window.location.href = "pages/login/signup_login.htm";
-            });
-        } else {
-            // User is NOT logged in
-            authBtn.innerText = "Sign In";
-            authBtn.addEventListener("click", () => {
-                window.location.href = "pages/login/signup_login.htm";
-            });
-        }
+      //if user loggrn in it shows logout button
+      const authBtn = document.getElementById("authBtn");
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        // User is logged in
+        authBtn.innerText = "Logout";
+        authBtn.addEventListener("click", () => {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
 
-        //developer login
-        document.getElementById("devNav").addEventListener("click", async () => {
+          alert("Logged out");
+          window.location.href = "pages/login/signup_login.htm";
+        });
+      } else {
+        // User is NOT logged in
+        authBtn.innerText = "Sign In";
+        authBtn.addEventListener("click", () => {
+          window.location.href = "pages/login/signup_login.htm";
+        });
+      }
+
+      //developer login
+      document.getElementById("devNav").addEventListener("click", async () => {
         const token = localStorage.getItem("accessToken");
         if (!token) {
-            alert("Please login first");
-            window.location.href = "/pages/login/signup_login.htm";
-            return;
+          alert("Please login first");
+          window.location.href = "/pages/login/signup_login.htm";
+          return;
         }
-    
+
         try {
-            const res = await fetch("http://localhost:3000/dev/check", {
-                headers: {
-                        "Authorization": "Bearer " + token
-                    }
-                });
-        
-            if (res.status === 200) {
-                window.location.href = "/pages/game dev pages/dev_dashboard.htm";
-            } else if (res.status === 403) {
-                window.location.href = "/pages/game dev pages/dev_signup_page.htm";
-                } else {
-                    throw new Error("Unknown response");
-                }
-        
+          const res = await fetch("http://localhost:3000/dev/check", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+
+          if (res.status === 200) {
+            window.location.href = "/pages/game dev pages/dev_dashboard.htm";
+          } else if (res.status === 403) {
+            window.location.href = "/pages/game dev pages/dev_signup_page.htm";
+          } else {
+            throw new Error("Unknown response");
+          }
         } catch (err) {
-            console.error(err);
-            alert("Error checking developer access");
+          console.error(err);
+          alert("Error checking developer access");
         }
-        });
+      });
 
-        const heroData = {
-            pixel: { title: "Pixel Streaming", desc: "Deliver high-end graphics to any device instantly with zero latency using our global edge network.", gradient: "linear-gradient(135deg, #ff4d4d, #3b82f6)", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600" },
-            ml: { title: "Machine Learning", desc: "Train complex neural networks in record time. Scaling your models from prototype to production has never been easier.", gradient: "linear-gradient(135deg, #f59e0b, #10b981)", img: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600" },
-            inference: { title: "Edge Inference", desc: "Deploy AI models at the edge for lightning-fast responses. Scale to millions of users without managing servers.", gradient: "linear-gradient(135deg, #3b82f6, #a855f7)", img: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1600" },
-            vfx: { title: "VFX & Rendering", desc: "Power through cinematic renders. Our GPU clusters handle the heaviest workloads so you can focus on creativity.", gradient: "linear-gradient(135deg, #0ea5e9, #6366f1)", img: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=1600" }
-        };
+      const heroData = {
+        pixel: {
+          title: "Pixel Streaming",
+          desc: "Deliver high-end graphics to any device instantly with zero latency using our global edge network.",
+          gradient: "linear-gradient(135deg, #ff4d4d, #3b82f6)",
+          img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600",
+        },
+        ml: {
+          title: "Machine Learning",
+          desc: "Train complex neural networks in record time. Scaling your models from prototype to production has never been easier.",
+          gradient: "linear-gradient(135deg, #f59e0b, #10b981)",
+          img: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600",
+        },
+        inference: {
+          title: "Edge Inference",
+          desc: "Deploy AI models at the edge for lightning-fast responses. Scale to millions of users without managing servers.",
+          gradient: "linear-gradient(135deg, #3b82f6, #a855f7)",
+          img: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1600",
+        },
+        vfx: {
+          title: "VFX & Rendering",
+          desc: "Power through cinematic renders. Our GPU clusters handle the heaviest workloads so you can focus on creativity.",
+          gradient: "linear-gradient(135deg, #0ea5e9, #6366f1)",
+          img: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=1600",
+        },
+      };
 
-        const allGames = [
-            { id: 1, title: "Elden Ring: Shadow of Erdtree", tag: "RPG", cat: "trending", img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=600" },
-            { id: 2, title: "Cyberpunk 2077", tag: "Open World", cat: "trending", img: "https://images.unsplash.com/photo-1605898835373-023ad4270243?w=600" },
-            { id: 3, title: "Starfield", tag: "Space Exploration", cat: "trending", img: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=600" },
-            { id: 4, title: "Razer Blade 18", tag: "Hardware", cat: "sponsored", img: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600" },
-            { id: 5, title: "Ghost of Tsushima", tag: "Action", cat: "action", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600" },
-            { id: 6, title: "The Witcher 3: Wild Hunt", tag: "RPG", cat: "action", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600" },
-            { id: 7, title: "Skyrim Special Edition", tag: "RPG", cat: "action", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600" },
-            { id: 8, title: "RTX 5090 Preview", tag: "Hardware", cat: "sponsored", img: "https://images.unsplash.com/photo-1587202399717-20dd6fbc702a?w=600" }
-        ];
+      const allGames = [
+        {
+          id: 1,
+          title: "Elden Ring: Shadow of Erdtree",
+          tag: "RPG",
+          cat: "trending",
+          img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=600",
+        },
+        {
+          id: 2,
+          title: "Cyberpunk 2077",
+          tag: "Open World",
+          cat: "trending",
+          img: "https://images.unsplash.com/photo-1605898835373-023ad4270243?w=600",
+        },
+        {
+          id: 3,
+          title: "Starfield",
+          tag: "Space Exploration",
+          cat: "trending",
+          img: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=600",
+        },
+        {
+          id: 4,
+          title: "Razer Blade 18",
+          tag: "Hardware",
+          cat: "sponsored",
+          img: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600",
+        },
+        {
+          id: 5,
+          title: "Ghost of Tsushima",
+          tag: "Action",
+          cat: "action",
+          img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600",
+        },
+        {
+          id: 6,
+          title: "The Witcher 3: Wild Hunt",
+          tag: "RPG",
+          cat: "action",
+          img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600",
+        },
+        {
+          id: 7,
+          title: "Skyrim Special Edition",
+          tag: "RPG",
+          cat: "action",
+          img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600",
+        },
+        {
+          id: 8,
+          title: "RTX 5090 Preview",
+          tag: "Hardware",
+          cat: "sponsored",
+          img: "https://images.unsplash.com/photo-1587202399717-20dd6fbc702a?w=600",
+        },
+      ];
 
-        let currentHeroIdx = 0;
-        let heroInterval;
+      let currentHeroIdx = 0;
+      let heroInterval;
 
-        // Functional Logic
-        function switchHero(id, el) {
-            const keys = Object.keys(heroData);
-            currentHeroIdx = keys.indexOf(id);
-            const data = heroData[id];
-            
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            const activeBtn = el || document.querySelectorAll('.tab-btn')[currentHeroIdx];
-            activeBtn.classList.add('active');
+      // Functional Logic
+      function switchHero(id, el) {
+        const keys = Object.keys(heroData);
+        currentHeroIdx = keys.indexOf(id);
+        const data = heroData[id];
 
-            const container = document.getElementById('hero-container');
-            container.classList.add('fade');
-            
-            setTimeout(() => {
-                document.getElementById('title').innerText = data.title;
-                document.getElementById('desc').innerText = data.desc;
-                document.getElementById('bg-image-layer').style.backgroundImage = `url('${data.img}')`;
-                document.documentElement.style.setProperty('--bg-gradient', data.gradient);
-                container.classList.remove('fade');
-            }, 400);
-            resetHeroTimer();
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        const activeBtn =
+          el || document.querySelectorAll(".tab-btn")[currentHeroIdx];
+        activeBtn.classList.add("active");
+
+        const container = document.getElementById("hero-container");
+        container.classList.add("fade");
+
+        setTimeout(() => {
+          document.getElementById("title").innerText = data.title;
+          document.getElementById("desc").innerText = data.desc;
+          document.getElementById("bg-image-layer").style.backgroundImage =
+            `url('${data.img}')`;
+          document.documentElement.style.setProperty(
+            "--bg-gradient",
+            data.gradient,
+          );
+          container.classList.remove("fade");
+        }, 400);
+        resetHeroTimer();
+      }
+
+      function resetHeroTimer() {
+        clearInterval(heroInterval);
+        heroInterval = setInterval(() => {
+          currentHeroIdx = (currentHeroIdx + 1) % 4;
+          switchHero(Object.keys(heroData)[currentHeroIdx]);
+        }, 8000);
+      }
+
+      function toggleOverlay(id, show) {
+        const el = document.getElementById(id);
+        el.style.display = show ? "flex" : "none";
+        document.body.style.overflow = show ? "hidden" : "auto";
+        if (show && id === "search-overlay") {
+          document.getElementById("main-search-input").focus();
+          updateSearchResults(""); // Show defaults
         }
+      }
 
-        function resetHeroTimer() {
-            clearInterval(heroInterval);
-            heroInterval = setInterval(() => {
-                currentHeroIdx = (currentHeroIdx + 1) % 4;
-                switchHero(Object.keys(heroData)[currentHeroIdx]);
-            }, 8000);
-        }
-
-        function toggleOverlay(id, show) {
-            const el = document.getElementById(id);
-            el.style.display = show ? 'flex' : 'none';
-            document.body.style.overflow = show ? 'hidden' : 'auto';
-            if(show && id === 'search-overlay') {
-                document.getElementById('main-search-input').focus();
-                updateSearchResults(""); // Show defaults
-            }
-        }
-
-        function scrollRow(id, dir) {
-            const row = document.getElementById(id);
-            const scrollAmount = row.offsetWidth * 0.8;
-            row.scrollBy({ left: scrollAmount * dir, behavior: 'smooth' });
-        }
-
-        function createCard(game) {
-            return `
-                <div class="card">
-                    ${game.cat === 'sponsored' ? '<span class="badge-sponsored">SPONSORED</span>' : ''}
-                    <div class="wishlist-heart" onclick="toggleWishlist(${game.id}, event)">🤍</div>
-                    <img src="${game.img}" loading="lazy">
-                    <div class="card_info">
-                        <div style="font-weight:700; font-size:1rem; margin-bottom:4px;">${game.title}</div>
-                        <div style="font-size:0.75rem; color:#666; text-transform:uppercase; letter-spacing:1px;">${game.tag}</div>
-                    </div>
+      function scrollRow(id, dir) {
+        const row = document.getElementById(id);
+        const scrollAmount = row.offsetWidth * 0.8;
+        row.scrollBy({ left: scrollAmount * dir, behavior: "smooth" });
+      }
+      function createCard(game) {
+        return `
+        <a href="pages/core_needed/game_page.htm?game_id=${game.game_id}">
+        <div class="card">
+            <div class="wishlist-heart" onclick="toggleWishlist(${game.game_id}, event)">🤍</div>
+            <img src="${game.coverUrl || "https://via.placeholder.com/600x338?text=No+Image"}" loading="lazy">
+            <div class="card_info">
+                <div style="font-weight:700; font-size:1rem; margin-bottom:4px;">
+                    ${game.title}
                 </div>
-            `;
-        }
+                <div style="font-size:0.75rem; color:#666; text-transform:uppercase; letter-spacing:1px;">
+                    ${game.genre || "Unknown"}
+                </div>
+            </div>
+        </div>
+        </a>
+    `;
+      }
 
-        function toggleWishlist(id, event) {
-            event.stopPropagation();
-            const btn = event.currentTarget;
-            btn.innerText = btn.innerText === '🤍' ? '❤️' : '🤍';
-            // Placeholder for logic to save to Weaverly User Profile
-            console.log(`Game ${id} added to wishlist`);
-        }
+      function toggleWishlist(id, event) {
+        event.stopPropagation();
+        const btn = event.currentTarget;
+        btn.innerText = btn.innerText === "🤍" ? "❤️" : "🤍";
+        // Placeholder for logic to save to Weaverly User Profile
+        console.log(`Game ${id} added to wishlist`);
+      }
 
-        function openViewAll(title, cat) {
-            document.getElementById('view-all-title').innerText = title;
-            const filtered = allGames.filter(g => g.cat === cat);
-            document.getElementById('view-all-grid').innerHTML = filtered.map(g => createCard(g)).join('');
-            toggleOverlay('view-all-overlay', true);
-        }
+      function openViewAll(title, cat) {
+        document.getElementById("view-all-title").innerText = title;
+        const filtered = allGames.filter((g) => g.cat === cat);
+        document.getElementById("view-all-grid").innerHTML = filtered
+          .map((g) => createCard(g))
+          .join("");
+        toggleOverlay("view-all-overlay", true);
+      }
 
-        function updateSearchResults(val) {
-            const res = allGames.filter(g => 
-                g.title.toLowerCase().includes(val) || 
-                g.tag.toLowerCase().includes(val)
-            );
-            const grid = document.getElementById('search-results');
-            const meta = document.getElementById('search-results-meta');
-            
-            if(res.length > 0) {
-                meta.innerText = val ? `Found ${res.length} results for "${val}"` : "Explore Weaverly Library";
-                grid.innerHTML = res.map(g => createCard(g)).join('');
-            } else {
-                meta.innerText = "No matches found.";
-                grid.innerHTML = `<div style="grid-column: 1/-1; padding: 4rem; text-align: center; color: #444;">
-                    <h3>We couldn't find anything for "${val}"</h3>
-                    <p>Try searching for RPG, Space, or Hardware.</p>
-                </div>`;
-            }
-        }
+      function updateSearchResults(val) {
+        const searchVal = val.toLowerCase();
 
-        document.getElementById('main-search-input').addEventListener('input', (e) => {
-            updateSearchResults(e.target.value.toLowerCase());
+        const res = backendGames.filter(
+          (g) =>
+            g.title.toLowerCase().includes(searchVal) ||
+            (g.genre && g.genre.toLowerCase().includes(searchVal)),
+        );
+
+        const grid = document.getElementById("search-results");
+        const meta = document.getElementById("search-results-meta");
+
+        if (res.length > 0) {
+          meta.innerText = val
+            ? `Found ${res.length} results for "${val}"`
+            : "Explore Game Library";
+
+          grid.innerHTML = res.map((g) => createCard(g)).join("");
+        } else {
+          meta.innerText = "No matches found.";
+          grid.innerHTML = `
+            <div style="grid-column: 1/-1; padding: 4rem; text-align: center; color: #444;">
+                <h3>No results for "${val}"</h3>
+                <p>Try searching for Action, RPG, etc.</p>
+            </div>
+        `;
+        }
+      }
+
+      document
+        .getElementById("main-search-input")
+        .addEventListener("input", (e) => {
+          updateSearchResults(e.target.value.toLowerCase());
         });
 
-        window.onload = () => {
-            switchHero('pixel');
-            document.getElementById('trending-list').innerHTML = allGames.filter(g => g.cat === 'trending').map(g => createCard(g)).join('');
-            document.getElementById('sponsored-list').innerHTML = allGames.filter(g => g.cat === 'sponsored').map(g => createCard(g)).join('');
-            document.getElementById('action-list').innerHTML = allGames.filter(g => g.cat === 'action').map(g => createCard(g)).join('');
-        };
+      async function fetchGames() {
+        try {
+          const res = await fetch("http://localhost:3000/my/search");
+          const data = await res.json();
+
+          backendGames = data.games;
+
+          console.log("Games loaded:", backendGames);
+        } catch (err) {
+          console.error("Error fetching games:", err);
+        }
+      }
+
+      window.onload = async () => {
+        switchHero("pixel");
+
+        await fetchGames();
+
+        updateSearchResults(""); 
+
+        document.getElementById("trending-list").innerHTML = allGames
+          .filter((g) => g.cat === "trending")
+          .map((g) => createCard(g))
+          .join("");
+
+        document.getElementById("sponsored-list").innerHTML = allGames
+          .filter((g) => g.cat === "sponsored")
+          .map((g) => createCard(g))
+          .join("");
+
+        document.getElementById("action-list").innerHTML = allGames
+          .filter((g) => g.cat === "action")
+          .map((g) => createCard(g))
+          .join("");
+      };
     </script>
-</body>
+  </body>
 </html>
