@@ -137,3 +137,48 @@ Content-Type: application/json
 GET http://localhost:3000/my/wishlist
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUzODg5MTEsImV4cCI6MTc3NTQ3NTMxMX0.Ie7Fduo9Clnu7C5BWRCKt7iFkKgOPSpnG4VWiw2shPY
 
+###
+
+# Create a new user from the add things
+POST http://localhost:3000/group/add-user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1NDQ5NjMxLCJleHAiOjE3NzU1MzYwMzF9.xRvmHCiEdBLAuUzWtIRc6H-OTCAlewkgkKmJ9_Cpu4g
+Content-Type: application/json
+
+{
+    "username": "sally"
+}
+
+###
+
+# Create a new user group
+POST http://localhost:3000/group/create-user-group
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6InNhbGx5IiwiaWF0IjoxNzc1NDQ5NjMxLCJleHAiOjE3NzU1MzYwMzF9.xRvmHCiEdBLAuUzWtIRc6H-OTCAlewkgkKmJ9_Cpu4g
+Content-Type: application/json
+
+{
+    "group": "Brighter Life"
+}
+
+###
+
+# Join User group
+POST http://localhost:3000/group/join-user-group
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU0NTEwNTEsImV4cCI6MTc3NTUzNzQ1MX0.FgHdHdv65C6VzpJiDsRYGYOKdFNCBp5txx20wRjwH5A
+Content-Type: application/json
+
+{
+    "groupId": "69d339c3404274711b8cdc9e"
+}
+
+###
+
+# Get messages from the group with pagination
+POST http://localhost:3000/group/get-user-messages
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU0NTEwNTEsImV4cCI6MTc3NTUzNzQ1MX0.FgHdHdv65C6VzpJiDsRYGYOKdFNCBp5txx20wRjwH5A
+Content-Type: application/json
+
+{
+  "groupId": "69d339c3404274711b8cdc9e",
+  "beforeMessageId": "69d3488730d8829ec953c5cd",
+  "limit": 4
+}

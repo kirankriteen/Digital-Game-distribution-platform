@@ -10,17 +10,22 @@ const http = require('http')
 const { ROLE, users, projects } = require('./data')
 const { authUser, authRole } = require('./roleAuth')
 const { authenticateToken, setUser } = require('./middleware/auth')
+const { connectDB } = require('./db/mongodb');
+
 const projectRouter = require('./routes/projects')
 const gamesRouter = require('./routes/games')
 const devRouter = require('./routes/developer')
 const payRouter = require('./routes/payments')
 const myRouter = require('./routes/user')
+const groupRouter = require('./routes/groups')
 
 const PORT = 3000
 const app = express()
 const server = http.createServer(app);
 const io = socketio(server);
 require('./socket')(io);
+
+connectDB();
 
 const jwt = require('jsonwebtoken')
 // app.use(cors({ origin: "http://localhost:3000" }));
@@ -44,6 +49,7 @@ app.use('/projects', projectRouter)
 app.use('/games', gamesRouter)
 app.use('/dev', devRouter)
 app.use('/my', myRouter)
+app.use('/group', groupRouter)
 
 
 app.get('/', (req, res) => {
