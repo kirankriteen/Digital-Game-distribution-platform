@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weaverly | Social Discovery Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-dark: #050506;
             --panel-left: #0a0a0c;
             --panel-mid: #111114;
             --panel-main: #16171d;
-            --accent: #01a75c; 
+            --accent: #01a75c;
             --accent-glow: rgba(0, 242, 255, 0.2);
             --text-bright: #e2faff;
             --text-dim: #64748b;
@@ -20,7 +22,10 @@
             --border: rgba(255, 255, 255, 0.08);
         }
 
-        * { box-sizing: border-box; transition: all 0.2s ease; }
+        * {
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
 
         body {
             background-color: var(--bg-dark);
@@ -45,15 +50,21 @@
         }
 
         .nav-icon {
-            width: 48px; height: 48px;
+            width: 48px;
+            height: 48px;
             background: var(--panel-main);
             border-radius: 16px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-weight: bold; font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
             border: 1px solid var(--border);
         }
 
-        .nav-icon:hover, .nav-icon.active {
+        .nav-icon:hover,
+        .nav-icon.active {
             border-color: var(--accent);
             color: var(--accent);
             box-shadow: 0 0 15px var(--accent-glow);
@@ -99,12 +110,16 @@
             font-size: 14px;
         }
 
-        .channel-item:hover, .channel-item.active {
+        .channel-item:hover,
+        .channel-item.active {
             background: var(--card-bg);
             color: var(--text-bright);
         }
 
-        .channel-item.active { color: var(--accent); background: rgba(0, 242, 255, 0.05); }
+        .channel-item.active {
+            color: var(--accent);
+            background: rgba(0, 242, 255, 0.05);
+        }
 
         /* --- Main Feed Area --- */
         .main-workspace {
@@ -135,20 +150,51 @@
         }
 
         /* --- Post/Message Styling --- */
-        .msg { display: flex; gap: 16px; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
+        .msg {
+            display: flex;
+            gap: 16px;
+            animation: fadeIn 0.4s ease;
+        }
 
-        .avatar { 
-            width: 45px; height: 45px; border-radius: 12px; 
-            background: #222; flex-shrink: 0; border: 1px solid var(--border);
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
         }
-        
-        .msg-content h4 { margin: 0 0 8px 0; font-size: 15px; display: flex; align-items: center; gap: 10px; }
-        .badge-buyer { 
-            font-size: 9px; background: var(--accent); color: #000; 
-            padding: 2px 8px; border-radius: 4px; text-transform: uppercase; font-weight: 800;
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: #222;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
         }
-        .timestamp { font-size: 11px; color: var(--text-dim); font-weight: 400; }
+
+        .msg-content h4 {
+            margin: 0 0 8px 0;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-buyer {
+            font-size: 9px;
+            background: var(--accent);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .timestamp {
+            font-size: 11px;
+            color: var(--text-dim);
+            font-weight: 400;
+        }
 
         .game-share-card {
             margin-top: 15px;
@@ -159,8 +205,18 @@
             max-width: 450px;
         }
 
-        .game-card-img { width: 100%; height: 180px; object-fit: cover; }
-        .game-card-info { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .game-card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .game-card-info {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
         /* --- Social Recommendation Sidebar --- */
         .social-sidebar {
@@ -195,16 +251,25 @@
             transform: translateY(-2px);
         }
 
-        .chat-input { padding: 20px 30px; }
+        .chat-input {
+            padding: 20px 30px;
+        }
+
         .input-box {
             background: var(--bg-dark);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 12px 20px;
-            display: flex; gap: 15px;
+            display: flex;
+            gap: 15px;
         }
+
         .input-box input {
-            background: transparent; border: none; color: white; flex-grow: 1; outline: none;
+            background: transparent;
+            border: none;
+            color: white;
+            flex-grow: 1;
+            outline: none;
         }
 
         .match-card {
@@ -216,15 +281,49 @@
         }
 
         .switch {
-            position: relative; display: inline-block; width: 34px; height: 20px;
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
         }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent); }
-        input:checked + .slider:before { transform: translateX(14px); }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--accent);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(14px);
+        }
     </style>
 </head>
+
 <body>
 
     <aside class="group-sidebar">
@@ -236,7 +335,7 @@
 
     <aside class="channel-sidebar">
         <div class="sidebar-header">Weaverly</div>
-        
+
         <div class="section-label">Public Guilds</div>
         <div class="channel-item active"># rpg-world-fans</div>
         <div class="channel-item"># tech-stack-talk</div>
@@ -254,7 +353,8 @@
                     <span class="slider"></span>
                 </label>
             </div>
-            <p style="color: var(--text-dim); margin: 0; line-height: 1.4; font-size: 11px;">Active: We'll highlight users with shared game libraries and dev stacks.</p>
+            <p style="color: var(--text-dim); margin: 0; line-height: 1.4; font-size: 11px;">Active: We'll highlight
+                users with shared game libraries and dev stacks.</p>
         </div>
     </aside>
 
@@ -262,7 +362,7 @@
         <header class="glass-header">
             <div>
                 <h3 style="margin:0; font-weight: 800;">Open-World RPG Fans</h3>
-                <span style="font-size: 12px; color: var(--text-dim);">12.4k Members  •  2.1k Online</span>
+                <span style="font-size: 12px; color: var(--text-dim);">12.4k Members • 2.1k Online</span>
             </div>
             <button class="btn-action">Join Group</button>
         </header>
@@ -271,11 +371,14 @@
             <div class="msg">
                 <div class="avatar" style="background: linear-gradient(45deg, #ff4757, #ff6b81);"></div>
                 <div class="msg-content">
-                    <h4>Cyber_Explorer <span class="badge-buyer">Verified User</span> <span class="timestamp">2m ago</span></h4>
-                    <p style="margin:0; opacity: 0.9;">Has anyone tried the new DLC for CyberStrike? The world-building in this one is next level. Just grabbed it on the sale.</p>
-                    
+                    <h4>Cyber_Explorer <span class="badge-buyer">Verified User</span> <span class="timestamp">2m
+                            ago</span></h4>
+                    <p style="margin:0; opacity: 0.9;">Has anyone tried the new DLC for CyberStrike? The world-building
+                        in this one is next level. Just grabbed it on the sale.</p>
+
                     <div class="game-share-card">
-                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800" class="game-card-img">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800"
+                            class="game-card-img">
                         <div class="game-card-info">
                             <div>
                                 <div style="font-weight:bold; font-size:14px;">CyberStrike: Zero</div>
@@ -288,7 +391,8 @@
             </div>
 
             <div style="text-align: center; margin: 10px 0;">
-                <span style="background: var(--card-bg); padding: 6px 18px; border-radius: 20px; font-size: 11px; color: var(--accent); border: 1px solid var(--border);">
+                <span
+                    style="background: var(--card-bg); padding: 6px 18px; border-radius: 20px; font-size: 11px; color: var(--accent); border: 1px solid var(--border);">
                     ✨ 3 people with similar game libraries just joined this guild.
                 </span>
             </div>
@@ -314,7 +418,9 @@
             <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 12px; line-height: 1.4;">
                 Shared Games: <strong>Elden Ring, CyberStrike, Witcher 3.</strong>
             </div>
-            <button class="btn-action" style="width: 100%; font-size: 11px; background: transparent; border: 1px solid var(--accent); color: var(--accent);">Add Friend</button>
+            <button class="btn-action"
+                style="width: 100%; font-size: 11px; background: transparent; border: 1px solid var(--accent); color: var(--accent);">Add
+                Friend</button>
         </div>
 
         <div class="recommend-box">
@@ -325,52 +431,15 @@
             <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 12px; line-height: 1.4;">
                 Shared Dev Stack: <strong>React, Rust, Three.js</strong>
             </div>
-            <button class="btn-action" style="width: 100%; font-size: 11px; background: transparent; border: 1px solid var(--accent); color: var(--accent);">Add Friend</button>
+            <button class="btn-action"
+                style="width: 100%; font-size: 11px; background: transparent; border: 1px solid var(--accent); color: var(--accent);">Add
+                Friend</button>
         </div>
     </aside>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="public_page.js">
 
-    <script>
-        const chatFeed = document.getElementById('chatFeed');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const matchToggle = document.getElementById('matchToggle');
-
-        function appendMessage(user, text, isSystem = false) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'msg';
-            
-            if (isSystem) {
-                msgDiv.style.justifyContent = 'center';
-                msgDiv.innerHTML = `<span style="background: var(--card-bg); padding: 6px 18px; border-radius: 20px; font-size: 11px; color: var(--accent); border: 1px solid var(--border);">${text}</span>`;
-            } else {
-                msgDiv.innerHTML = `
-                    <div class="avatar" style="background: #444;"></div>
-                    <div class="msg-content">
-                        <h4>${user} <span class="timestamp">Just now</span></h4>
-                        <p style="margin:0; opacity: 0.9;">${text}</p>
-                    </div>
-                `;
-            }
-            
-            chatFeed.appendChild(msgDiv);
-            chatFeed.scrollTop = chatFeed.scrollHeight;
-        }
-
-        sendBtn.addEventListener('click', () => {
-            if(userInput.value.trim() !== "") {
-                appendMessage("You", userInput.value);
-                userInput.value = "";
-            }
-        });
-
-        userInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') sendBtn.click();
-        });
-
-        matchToggle.addEventListener('change', () => {
-            const status = matchToggle.checked ? "Activated" : "Deactivated";
-            appendMessage("System", `✨ Peer matching engine ${status}.`, true);
-        });
     </script>
 </body>
+
 </html>
