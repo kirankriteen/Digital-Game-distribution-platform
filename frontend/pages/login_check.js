@@ -48,7 +48,7 @@ document.getElementById("loginBtn").addEventListener("click", async (e) => {
                 password: password
             })
         });
-
+        console.log(response)
         const data = await response.json();
 
         console.log("Response:", data);

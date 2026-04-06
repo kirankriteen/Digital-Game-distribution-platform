@@ -11,14 +11,12 @@ const wishBtn = document.getElementById('wishBtn');
 
 let scrollInterval;
 
-// ===========================
-// --- Load Game Data ---
-// ===========================
 async function loadGame() {
     try {
         const res = await fetch(`http://localhost:3000/my/game?game_id=${gameId}`);
         const data = await res.json();
         console.log(data);
+
         const game = data.mygames[0];
 
         if (!game) {
@@ -31,26 +29,26 @@ async function loadGame() {
         document.querySelector(".price-tag").innerText = `$${game.price}`;
         document.querySelector(".description").innerText = game.bio;
 
-        // --- Populate meta info ---
+        // --- Meta info ---
         const metaItems = document.querySelectorAll(".meta-list li strong");
-        metaItems[0].innerText = data.studio_name || "Unknown"; // Developer
-        metaItems[1].innerText = game.genre || "Unknown";       // Publisher / Genre
-        metaItems[2].innerText = game.release_date || "Unknown"; // Release Date
-        metaItems[3].innerText = "Windows";                     // Platform
+        metaItems[0].innerText = data.studio_name || "Unknown";
+        metaItems[1].innerText = game.genre || "Unknown";
+        metaItems[2].innerText = game.release_date || "Unknown";
+        metaItems[3].innerText = "Windows";
 
-        // --- Populate system requirements ---
+        // --- System requirements ---
         const specs = document.querySelectorAll(".spec-item");
         specs[0].innerHTML = `<label>OS</label>${game.os}`;
         specs[1].innerHTML = `<label>Processor</label>${game.processor}`;
         specs[2].innerHTML = `<label>Memory</label>${game.memory}`;
         specs[3].innerHTML = `<label>Storage</label>${game.storage}`;
 
-        // --- Update cover image ---
+        // --- Cover image ---
         if (game.coverUrl) {
             document.querySelector(".game-logo-box").src = game.coverUrl;
         }
 
-        // --- Build media carousel ---
+        // --- Carousel ---
         carousel.innerHTML = "";
 
         if (game.videoUrl) {
@@ -68,7 +66,6 @@ async function loadGame() {
         }
 
         const images = [game.img1Url, game.img2Url, game.img3Url];
-
         images.forEach(imgUrl => {
             if (imgUrl) {
                 const img = document.createElement("img");
@@ -77,9 +74,11 @@ async function loadGame() {
             }
         });
 
-        // --- Fix for dynamic carousel ---
         carousel.scrollLeft = 0;
         resetTimer();
+
+        // 🔥 IMPORTANT: update button state after loading
+        updateBuyButtonState();
 
     } catch (err) {
         console.error(err);
@@ -87,9 +86,22 @@ async function loadGame() {
     }
 }
 
-// ===========================
-// --- Carousel Logic ---
-// ===========================
+function updateBuyButtonState() {
+    const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+    const exists = cart.find(item => item.id == gameId);
+
+    if (exists) {
+        buyBtn.innerText = "Added to Cart";
+        buyBtn.style.background = "#333";
+        buyBtn.disabled = true;
+    } else {
+        buyBtn.innerText = "Buy Now";
+        buyBtn.style.background = "";
+        buyBtn.disabled = false;
+    }
+}
+
 function startAutoScroll() {
     scrollInterval = setInterval(() => {
         shiftSlide(1);
@@ -113,7 +125,7 @@ function shiftSlide(direction) {
     }
 }
 
-// Manual Navigation
+// Buttons
 nextBtn.addEventListener('click', () => {
     shiftSlide(1);
     resetTimer();
@@ -124,7 +136,7 @@ prevBtn.addEventListener('click', () => {
     resetTimer();
 });
 
-// Hover Behavior
+// Hover
 carousel.addEventListener('mouseenter', stopAutoScroll);
 carousel.addEventListener('mouseleave', startAutoScroll);
 
@@ -133,18 +145,68 @@ function resetTimer() {
     startAutoScroll();
 }
 
-// ===========================
-// --- Store Interaction ---
-// ===========================
 buyBtn.addEventListener('click', () => {
-    buyBtn.innerText = "Adding to Cart...";
-    setTimeout(() => {
-        alert("Game added to your library!");
-        buyBtn.innerText = "Owned";
-        buyBtn.style.background = "#333";
-        buyBtn.disabled = true;
-    }, 1000);
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+        showPopup("Please login to add items to cart", false);
+        return;
+    }
+
+    const gameData = {
+        id: gameId,
+        title: document.querySelector(".game-title").innerText,
+        price: document.querySelector(".price-tag").innerText,
+        category: document.querySelectorAll(".meta-list li strong")[1].innerText,
+        image: document.querySelector(".game-logo-box").src
+    };
+
+    let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+    const exists = cart.find(item => item.id == gameData.id);
+
+    if (!exists) {
+        cart.push(gameData);
+        sessionStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    // 🔥 Update button instantly
+    updateBuyButtonState();
+
+    showPopup("Game added to cart!", true);
 });
+
+function showPopup(message, showActions = true) {
+    const old = document.getElementById("cart-popup");
+    if (old) old.remove();
+
+    const popup = document.createElement("div");
+    popup.id = "cart-popup";
+
+    popup.innerHTML = `
+        <div class="popup-overlay"></div>
+        <div class="popup-box">
+            <h2>${message}</h2>
+            ${showActions ? `
+                <div class="popup-actions">
+                    <button id="continueBtn">Continue Browsing</button>
+                    <button id="goCartBtn">Go to Cart</button>
+                </div>
+            ` : ''}
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    if (showActions) {
+        document.getElementById("continueBtn").onclick = () => popup.remove();
+        document.getElementById("goCartBtn").onclick = () => {
+            window.location.href = "../cart/base.htm";
+        };
+    }
+
+    popup.querySelector(".popup-overlay").onclick = () => popup.remove();
+}
 
 let wishlisted = false;
 wishBtn.addEventListener('click', () => {

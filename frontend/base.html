@@ -492,6 +492,8 @@
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
 
+          sessionStorage.removeItem("cart");
+
           alert("Logged out");
           window.location.href = "pages/login/signup_login.htm";
         });
@@ -763,7 +765,7 @@
 
         await fetchGames();
 
-        updateSearchResults(""); 
+        updateSearchResults("");
 
         document.getElementById("trending-list").innerHTML = allGames
           .filter((g) => g.cat === "trending")

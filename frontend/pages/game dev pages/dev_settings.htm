@@ -1,158 +1,234 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Settings | GAMEDISTRO</title>
     <!-- <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet"> -->
-    <link rel="stylesheet" href="styles.css"> 
-</head>
-<body>
-<script src="../../devGuard.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <script src="../../devGuard.js"></script>
 
     <nav>
-        <div class="logo"><a href="../../base.html" style="text-decoration: none;">Game Distribution System</a></div>
-        <a href="dev_dashboard.htm" class="nav-item">Dashboard</a>
-        <a href="dev_games_section.htm" class="nav-item">My Games</a>
-        <a href="dev_analysis.htm" class="nav-item">Analytics</a>
-        <a href="dev_payouts.htm" class="nav-item">Payouts</a>
-        <a href="dev_settings.htm" class="nav-item active">Settings</a>
+      <div class="logo">
+        <a href="../../base.html" style="text-decoration: none"
+          >Game Distribution System</a
+        >
+      </div>
+      <a href="dev_dashboard.htm" class="nav-item">Dashboard</a>
+      <a href="dev_games_section.htm" class="nav-item">My Games</a>
+      <a href="dev_analysis.htm" class="nav-item">Analytics</a>
+      <a href="dev_payouts.htm" class="nav-item">Payouts</a>
+      <a href="dev_settings.htm" class="nav-item active">Settings</a>
     </nav>
 
     <main>
-        <div class="header">
-            <h1>Account Settings</h1>
-            <button class="btn-primary" id="saveBtn">Save Changes</button>
-        </div>
+      <div class="header">
+        <h1>Account Settings</h1>
+        <button class="btn-primary" id="saveBtn">Save Changes</button>
+      </div>
 
-        <div style="display: flex; flex-direction: column; gap: 30px; max-width: 900px;">
-            
-            <div class="form-card">
-                <h3>Studio Profile</h3>
-                <!-- <div class="file-grid" style="grid-template-columns: 120px 1fr; align-items: center; margin-bottom: 25px;">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          gap: 30px;
+          max-width: 900px;
+        "
+      >
+        <div class="form-card">
+          <h3>Studio Profile</h3>
+          <!-- <div class="file-grid" style="grid-template-columns: 120px 1fr; align-items: center; margin-bottom: 25px;">
                     <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--sidebar); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2rem;">🚀</div>
                     <div class="drop-zone">Click or drag to update Studio Logo</div>
                 </div> -->
-                <div class="file-grid" style="grid-template-columns: 120px 1fr; align-items: center; gap: 20px;">
-                
-                <img id="profileImage" alt="your img" src="" 
-                     style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); ">
+          <div
+            class="file-grid"
+            style="
+              grid-template-columns: 120px 1fr;
+              align-items: center;
+              gap: 20px;
+            "
+          >
+            <img
+              id="profileImage"
+              alt="your img"
+              src=""
+              style="
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid var(--primary);
+              "
+            />
 
-                <label for="imageInput" class="drop-zone" style="flex: 1; display: block;">
-                    <span>Click to select Studio Logo</span>
-                    <input type="file" id="imageInput" accept="image/*" hidden>
-                </label>
+            <label
+              for="imageInput"
+              class="drop-zone"
+              style="flex: 1; display: block"
+            >
+              <span>Click to select Studio Logo</span>
+              <input type="file" id="imageInput" accept="image/*" hidden />
+            </label>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
+            <div class="input-group">
+              <label>Studio Name</label>
+              <input type="text" id="studioName" value="Nebula Games Inc." />
             </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="input-group">
-                        <label>Studio Name</label>
-                        <input type="text" id="studioName" value="Nebula Games Inc.">
-                    </div>
-                    <div class="input-group">
-                        <label>Contact Email</label>
-                        <input type="email" id="email" value="dev@nebulagames.io">
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Studio Bio</label>
-                    <textarea id="bio" rows="4">Independent game development studio focused on high-octane sci-fi experiences.</textarea>
-                </div>
+            <div class="input-group">
+              <label>Contact Email</label>
+              <input type="email" id="email" value="dev@nebulagames.io" />
             </div>
+          </div>
 
-            <div class="form-card">
-                <h3>Regional & Preferences</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="input-group">
-                        <label>Preferred Currency</label>
-                        <select id="currency">
-                            <option value="usd">USD - US Dollar</option>
-                            <option value="eur">EUR - Euro</option>
-                            <option value="gbp">GBP - British Pound</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>Language</label>
-                        <select id="language">
-                            <option value="english">English</option>
-                            <option value="japanese">Japanese</option>
-                            <option value="french">French</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-card">
-                <h3>Security</h3>
-                <div class="input-group">
-                    <label>Current Password</label>
-                    <input id="oldPassword" type="password" placeholder="••••••••">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="input-group">
-                        <label>New Password</label>
-                        <input id="newPassword" type="password">
-                    </div>
-                    <div class="input-group">
-                        <label>Confirm New Password</label>
-                        <input id="confirmPassword" type="password">
-                    </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                    <input type="checkbox" style="width: auto;" checked>
-                    <span class="text-dim" style="font-size: 0.85rem;">Enable Two-Factor Authentication (2FA)</span>
-                </div>
-            </div>
-
-            <div style="padding: 20px; border: 1px solid #ef4444; border-radius: 16px; background: rgba(239, 68, 68, 0.05);">
-                <h3 style="color: #ef4444; border-bottom-color: rgba(239, 68, 68, 0.2);">Danger Zone</h3>
-                <p class="text-dim" style="font-size: 0.9rem;">Once you delete your studio account, there is no going back. Please be certain.</p>
-                <button style="background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s;" onmouseover="this.style.background='#ef4444'; this.style.color='white'" onmouseout="this.style.background='transparent'; this.style.color='#ef4444'">Delete Account</button>
-            </div>
-
+          <div class="input-group">
+            <label>Studio Bio</label>
+            <textarea id="bio" rows="4">
+Independent game development studio focused on high-octane sci-fi experiences.</textarea
+            >
+          </div>
         </div>
+
+        <div class="form-card">
+          <h3>Regional & Preferences</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
+            <div class="input-group">
+              <label>Preferred Currency</label>
+              <select id="currency">
+                <option value="usd">USD - US Dollar</option>
+                <option value="eur">EUR - Euro</option>
+                <option value="gbp">GBP - British Pound</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Language</label>
+              <select id="language">
+                <option value="english">English</option>
+                <option value="japanese">Japanese</option>
+                <option value="french">French</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h3>Security</h3>
+          <div class="input-group">
+            <label>Current Password</label>
+            <input id="oldPassword" type="password" placeholder="••••••••" />
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
+            <div class="input-group">
+              <label>New Password</label>
+              <input id="newPassword" type="password" />
+            </div>
+            <div class="input-group">
+              <label>Confirm New Password</label>
+              <input id="confirmPassword" type="password" />
+            </div>
+          </div>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              margin-top: 10px;
+            "
+          >
+            <input type="checkbox" style="width: auto" checked />
+            <span class="text-dim" style="font-size: 0.85rem"
+              >Enable Two-Factor Authentication (2FA)</span
+            >
+          </div>
+        </div>
+
+        <div
+          style="
+            padding: 20px;
+            border: 1px solid #ef4444;
+            border-radius: 16px;
+            background: rgba(239, 68, 68, 0.05);
+          "
+        >
+          <h3
+            style="color: #ef4444; border-bottom-color: rgba(239, 68, 68, 0.2)"
+          >
+            Danger Zone
+          </h3>
+          <p class="text-dim" style="font-size: 0.9rem">
+            Once you delete your studio account, there is no going back. Please
+            be certain.
+          </p>
+          <button
+            id="deleteAccountBtn"
+            style="
+              background: transparent;
+              border: 1px solid #ef4444;
+              color: #ef4444;
+              padding: 8px 16px;
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: 600;
+              transition: 0.3s;
+            "
+            onmouseover="
+              this.style.background = '#ef4444';
+              this.style.color = 'white';
+            "
+            onmouseout="
+              this.style.background = 'transparent';
+              this.style.color = '#ef4444';
+            "
+          >
+            Delete Account
+          </button>
+        </div>
+      </div>
     </main>
-<script src="dev_settings.js"></script>
+    <script src="dev_settings.js"></script>
+  </body>
 
-</body>
-
-
-<script>
+  <script>
     /**
- * Logo Consistency & Theme Checker
- * Logs the current styles of the logo to ensure the Global CSS is applied.
- */
-const checkLogoStyle = () => {
-    const logo = document.querySelector('.logo');
-    
-    if (logo) {
+     * Logo Consistency & Theme Checker
+     * Logs the current styles of the logo to ensure the Global CSS is applied.
+     */
+    const checkLogoStyle = () => {
+      const logo = document.querySelector(".logo");
+
+      if (logo) {
         const styles = window.getComputedStyle(logo);
         const report = {
-            "Text Content": logo.innerText,
-            "Font Family": styles.fontFamily,
-            "Font Weight": styles.fontWeight,
-            "Color (Hex/RGB)": styles.color,
-            "Letter Spacing": styles.letterSpacing
+          "Text Content": logo.innerText,
+          "Font Family": styles.fontFamily,
+          "Font Weight": styles.fontWeight,
+          "Color (Hex/RGB)": styles.color,
+          "Letter Spacing": styles.letterSpacing,
         };
 
         console.table(report);
 
         // Visual feedback: A quick "Pulse" if the global CSS is loaded
         if (styles.fontWeight === "800") {
-            console.log("✅ Global Font Weight (800) detected.");
-            logo.style.transition = "0.5s";
-            logo.style.opacity = "0.5";
-            setTimeout(() => logo.style.opacity = "1", 500);
+          console.log("✅ Global Font Weight (800) detected.");
+          logo.style.transition = "0.5s";
+          logo.style.opacity = "0.5";
+          setTimeout(() => (logo.style.opacity = "1"), 500);
         } else {
-            console.warn("⚠️ Global Font Weight not detected. Check if global.css is linked.");
+          console.warn(
+            "⚠️ Global Font Weight not detected. Check if global.css is linked.",
+          );
         }
-    } else {
+      } else {
         console.error("❌ Logo element not found. Check your class name.");
-    }
-};
+      }
+    };
 
-// Run check on load
-window.addEventListener('DOMContentLoaded', checkLogoStyle);
-</script>
+    // Run check on load
+    window.addEventListener("DOMContentLoaded", checkLogoStyle);
+  </script>
 </html>

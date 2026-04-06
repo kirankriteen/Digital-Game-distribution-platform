@@ -101,7 +101,7 @@ async function authenticateUser(req, res, next) {
         );
         // Find user from the database
         if (rows.length === 0) {
-            return res.status(400).send('Cannot find user');
+            res.status(400).json({ message: "User does not exist" });
         }
         const user = rows[0];
         const isMatch = await bcrypt.compare(req.body.password, user.password_hash);
