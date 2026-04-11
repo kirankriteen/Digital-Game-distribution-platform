@@ -1,0 +1,22 @@
+[{
+  "_id": {
+    "$oid": "69d339c3404274711b8cdc9e"
+  },
+  "name": "Brighter Life",
+  "members": [
+    {
+      "$oid": "69d3362b77816f46a8319f46"
+    },
+    {
+      "$oid": "69d33475c649e2bbf2fa2fe6"
+    }
+  ],
+  "avatar": null,
+  "createdAt": {
+    "$date": "2026-04-06T04:42:43.987Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T04:51:05.322Z"
+  },
+  "__v": 1
+}]

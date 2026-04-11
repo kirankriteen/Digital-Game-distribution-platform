@@ -1,0 +1,32 @@
+[{
+  "_id": {
+    "$oid": "69d33475c649e2bbf2fa2fe6"
+  },
+  "user_id": 1,
+  "username": "kyle",
+  "avatar": null,
+  "status": "offline",
+  "createdAt": {
+    "$date": "2026-04-06T04:20:05.722Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T04:20:05.722Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69d3362b77816f46a8319f46"
+  },
+  "user_id": 2,
+  "username": "sally",
+  "avatar": null,
+  "status": "offline",
+  "createdAt": {
+    "$date": "2026-04-06T04:27:23.144Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T04:27:23.144Z"
+  },
+  "__v": 0
+}]
