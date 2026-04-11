@@ -380,7 +380,14 @@
           <a href="pages/wishlist/base.htm">Wishlist🤍</a>
           <a href="pages/downloads/base.htm">Downloads</a>
           <!-- <a href="pages/login/signup_login.htm" style="color :#da7116">Sign In</a> -->
-          <a href="#" id="authBtn" style="color: #da7116">Sign In</a>
+          <div style="position: relative; display: inline-block;">
+                      <a href="javascript:void(0)" id="authBtn" style="color: #da7116; text-decoration: none; font-size: 0.9rem;">Sign In</a>
+              
+              <div id="auth-dropdown" style="display: none; position: absolute; top: 40px; right: 0; background: #000; border: 1px solid #333; min-width: 160px; z-index: 1000; border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.5);">
+                  <a href="pages/core_needed/settings.htm" style="display: block; padding: 12px 15px; color: white; text-decoration: none; font-size: 14px; border-bottom: 1px solid #222;">⚙️ Settings</a>
+                  <a href="javascript:void(0)" id="logout-trigger" style="display: block; padding: 12px 15px; color: #E50914; text-decoration: none; font-size: 14px;">🚪 Logout</a>
+              </div>
+          </div>
         </nav>
       </header>
 
@@ -483,25 +490,37 @@
       //if user loggrn in it shows logout button
       const authBtn = document.getElementById("authBtn");
       const token = localStorage.getItem("accessToken");
-      if (token) {
-        // User is logged in
-        authBtn.innerText = "Logout";
-        authBtn.addEventListener("click", () => {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
+// Function to handle logout
+const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("cart");
+    alert("Logged out");
+    window.location.reload(); // Refresh to update UI state
+};
 
-          sessionStorage.removeItem("cart");
+if (token) {
+    // User is logged in
+    authBtn.innerText = "🥸";
+    
+    authBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevents immediate closing
+        const dropdown = document.getElementById("auth-dropdown");
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+} else {
+    // User is NOT logged in
+    // authBtn.innerText = "Sign in"; // Different icon for clarity
+    authBtn.addEventListener("click", () => {
+        window.location.href = "pages/login/signup_login.htm";
+    });
+}
 
-          alert("Logged out");
-          window.location.href = "pages/login/signup_login.htm";
-        });
-      } else {
-        // User is NOT logged in
-        authBtn.innerText = "Sign In";
-        authBtn.addEventListener("click", () => {
-          window.location.href = "pages/login/signup_login.htm";
-        });
-      }
+// Close dropdown if user clicks anywhere else on the screen
+window.addEventListener("click", () => {
+    const dropdown = document.getElementById("auth-dropdown");
+    if (dropdown) dropdown.style.display = "none";
+});
 
       //developer login
       document.getElementById("devNav").addEventListener("click", async () => {
