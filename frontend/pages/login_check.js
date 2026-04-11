@@ -38,7 +38,8 @@ document.getElementById("loginBtn").addEventListener("click", async (e) => {
     console.log("Sending:", username, password);
 
     try {
-        const response = await fetch("http://localhost:4000/login", {
+        console.log(`${CONFIG.AUTH_URL}/login`)
+        const response = await fetch(`${CONFIG.AUTH_URL}/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -48,7 +49,7 @@ document.getElementById("loginBtn").addEventListener("click", async (e) => {
                 password: password
             })
         });
-
+        console.log(response)
         const data = await response.json();
 
         console.log("Response:", data);
@@ -81,7 +82,7 @@ document.getElementById("signupBtn").addEventListener("click", async (e) => {
     console.log("Signup Data:", name, email, password);
 
     try {
-        const response = await fetch("http://localhost:4000/signup", {
+        const response = await fetch(`${CONFIG.AUTH_URL}/signup`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

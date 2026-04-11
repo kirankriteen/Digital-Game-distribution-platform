@@ -2,7 +2,7 @@ const token = localStorage.getItem("accessToken");
 
 async function loadSettings() {
     try {
-        const response = await fetch("http://localhost:3000/dev/account", {
+        const response = await fetch("/dev/account", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + token
@@ -81,7 +81,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     }
 
     try {
-        const res = await fetch("http://localhost:3000/dev/account", {
+        const res = await fetch("/dev/account", {
             method: "PATCH",
             headers: {
                 "Authorization": "Bearer " + token
@@ -100,6 +100,43 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
 
     } catch (err) {
         console.error("Update error:", err);
+        alert("Server error");
+    }
+});
+
+document.getElementById("deleteAccountBtn").addEventListener("click", async () => {
+
+    const confirmDelete = confirm(
+        "Are you sure you want to delete your developer account?\n\nAll your games will be permanently deleted."
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+        const res = await fetch("/dev/delete-account", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            }
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            alert("Developer account deleted successfully");
+
+            // Clear auth
+            localStorage.removeItem("accessToken");
+
+            // Redirect
+            window.location.href = "../../base.html";
+        } else {
+            alert(data.error || "Delete failed");
+        }
+
+    } catch (err) {
+        console.error("Delete error:", err);
         alert("Server error");
     }
 });

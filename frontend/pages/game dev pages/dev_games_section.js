@@ -7,7 +7,7 @@ if (!token) {
 
 async function loadGames() {
     try {
-        const response = await fetch("http://localhost:3000/dev/mygames", {
+        const response = await fetch("/dev/mygames", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + token

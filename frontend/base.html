@@ -492,6 +492,8 @@
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
 
+          sessionStorage.removeItem("cart");
+
           alert("Logged out");
           window.location.href = "pages/login/signup_login.htm";
         });
@@ -513,7 +515,7 @@
         }
 
         try {
-          const res = await fetch("http://localhost:3000/dev/check", {
+          const res = await fetch("/dev/check", {
             headers: {
               Authorization: "Bearer " + token,
             },
@@ -747,7 +749,7 @@
 
       async function fetchGames() {
         try {
-          const res = await fetch("http://localhost:3000/my/search");
+          const res = await fetch("/my/search");
           const data = await res.json();
 
           backendGames = data.games;
@@ -763,7 +765,7 @@
 
         await fetchGames();
 
-        updateSearchResults(""); 
+        updateSearchResults("");
 
         document.getElementById("trending-list").innerHTML = allGames
           .filter((g) => g.cat === "trending")

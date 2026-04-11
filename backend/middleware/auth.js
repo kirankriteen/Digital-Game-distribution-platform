@@ -37,6 +37,7 @@ function authenticateRole(roles) {
     return async (req, res, next) => {
         if (!req.user) return res.sendStatus(401)     
         const userId = req.user.id
+        
         if (userId) {
             try {
                 const [userRows] = await pool.query(

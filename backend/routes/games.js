@@ -131,11 +131,19 @@ router.post('/upload-zip', authenticateToken, authenticateRole(ROLE.DEVELOPER), 
     const img3File = files.find(f => f.startsWith('img3'));
     const cover = files.find(f => f.startsWith('cover'));
 
+    console.log(cover)
+    console.log(img2File)
+    console.log(videoFile)
+
     const videoPath = videoFile ? `/${extractPath}/${videoFile}` : null;
     const img1Path = img1File ? `/${extractPath}/${img1File}` : null;
     const img2Path = img2File ? `/${extractPath}/${img2File}` : null;
     const img3Path = img3File ? `/${extractPath}/${img3File}` : null;
     const coverPath = cover ? `/${extractPath}/${cover}` : null;
+
+    console.log(coverPath)
+    console.log(videoPath)
+    console.log(img1Path)
 
     const [devRows] = await pool.query(
       `SELECT dev_id FROM developer WHERE user_id = ?`,

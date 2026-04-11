@@ -3,7 +3,7 @@ const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const matchToggle = document.getElementById('matchToggle');
 
-const socket = io("http://localhost:3000", {
+const socket = io("/", {
     auth: { token: localStorage.accessToken,
         groupId: '69d339c3404274711b8cdc9e'
      }
