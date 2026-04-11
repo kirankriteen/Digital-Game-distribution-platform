@@ -209,10 +209,30 @@ function showPopup(message, showActions = true) {
 }
 
 let wishlisted = false;
-wishBtn.addEventListener('click', () => {
+wishBtn.addEventListener('click', async () => {
     wishlisted = !wishlisted;
+
+    // Update UI instantly
     wishBtn.innerText = wishlisted ? "❤ In Wishlist" : "Add to Wishlist";
     wishBtn.style.borderColor = wishlisted ? "var(--accent)" : "#555";
+
+    try {
+        await fetch(`/my/add-wishlist`, { 
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("accessToken")
+            },
+            body: JSON.stringify({ "game_id": gameId })
+        });
+    } catch (err) {
+        console.error("Wishlist error:", err);
+
+        // Optional: revert UI if request fails
+        wishlisted = !wishlisted;
+        wishBtn.innerText = wishlisted ? "❤ In Wishlist" : "Add to Wishlist";
+        wishBtn.style.borderColor = wishlisted ? "var(--accent)" : "#555";
+    }
 });
 
 loadGame();

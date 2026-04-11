@@ -206,19 +206,7 @@
         </div>
     </div>
 
-    <script>
-        function removeWish(btn) {
-            const card = btn.closest('.wish-card');
-            card.style.opacity = '0';
-            card.style.transform = 'scale(0.9)';
-            setTimeout(() => {
-                card.remove();
-                if(document.querySelectorAll('.wish-card').length === 0) {
-                    document.getElementById('wishlist-container').innerHTML = 
-                    "<div style='grid-column: 1/-1; text-align: center; padding: 5rem; color: #444;'><h2>Your wishlist is empty</h2><p>Heart a game to see it here!</p></div>";
-                }
-            }, 300);
-        }
+    <script src="wishlist.js">
     </script>
 </body>
 </html>
