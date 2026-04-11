@@ -219,6 +219,9 @@
         padding: 20px 0.5rem;
         scrollbar-width: none;
       }
+      .horizontal-scroll a {
+        text-decoration: none;
+      }
       .horizontal-scroll::-webkit-scrollbar {
         display: none;
       }
@@ -280,6 +283,7 @@
 
       .card_info {
         padding: 15px;
+        color : white;
       }
       .badge-sponsored {
         position: absolute;
@@ -452,12 +456,6 @@
         </button>
       </div>
 
-      <div class="section-header">
-        <h2 style="color: var(--sponsored-gold)">Featured Partnerships ✨</h2>
-      </div>
-      <div class="row-wrapper">
-        <div class="horizontal-scroll" id="sponsored-list"></div>
-      </div>
 
       <div class="section-header">
         <h2>Action & RPG ⚔️</h2>
@@ -470,11 +468,11 @@
       </div>
       <div class="row-wrapper">
         <button class="nav-btn prev-btn" onclick="scrollRow('action-list', -1)">
-          ❮
+          
         </button>
         <div class="horizontal-scroll" id="action-list"></div>
         <button class="nav-btn next-btn" onclick="scrollRow('action-list', 1)">
-          ❯
+          
         </button>
       </div>
     </div>
@@ -561,65 +559,7 @@
         },
       };
 
-      const allGames = [
-        {
-          id: 1,
-          title: "Elden Ring: Shadow of Erdtree",
-          tag: "RPG",
-          cat: "trending",
-          img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=600",
-        },
-        {
-          id: 2,
-          title: "Cyberpunk 2077",
-          tag: "Open World",
-          cat: "trending",
-          img: "https://images.unsplash.com/photo-1605898835373-023ad4270243?w=600",
-        },
-        {
-          id: 3,
-          title: "Starfield",
-          tag: "Space Exploration",
-          cat: "trending",
-          img: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=600",
-        },
-        {
-          id: 4,
-          title: "Razer Blade 18",
-          tag: "Hardware",
-          cat: "sponsored",
-          img: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600",
-        },
-        {
-          id: 5,
-          title: "Ghost of Tsushima",
-          tag: "Action",
-          cat: "action",
-          img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600",
-        },
-        {
-          id: 6,
-          title: "The Witcher 3: Wild Hunt",
-          tag: "RPG",
-          cat: "action",
-          img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600",
-        },
-        {
-          id: 7,
-          title: "Skyrim Special Edition",
-          tag: "RPG",
-          cat: "action",
-          img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600",
-        },
-        {
-          id: 8,
-          title: "RTX 5090 Preview",
-          tag: "Hardware",
-          cat: "sponsored",
-          img: "https://images.unsplash.com/photo-1587202399717-20dd6fbc702a?w=600",
-        },
-      ];
-
+     
       let currentHeroIdx = 0;
       let heroInterval;
 
