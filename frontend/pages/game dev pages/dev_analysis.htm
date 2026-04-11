@@ -1,116 +1,77 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Analytics | GameDistro</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <script src="../../devGuard.js"></script>
 
     <nav class="sidebar">
-                <div class="logo"><a href="../../base.html" style="text-decoration: none;">Game Distribution System</a></div>
-    <a href="dev_dashboard.htm" class="nav-item">Dashboard</a>
-    <a href="dev_games_section.htm" class="nav-item">My Games</a>
-    <a href="dev_analysis.htm" class="nav-item active">Analytics</a>
-        <a href="dev_payouts.htm" class="nav-item">Payouts</a>
-        <a href="dev_settings.htm" class="nav-item">Settings</a>
+      <div class="logo">
+        <a href="../../base.html" style="text-decoration: none"
+          >Game Distribution System</a
+        >
+      </div>
+      <a href="dev_dashboard.htm" class="nav-item">Dashboard</a>
+      <a href="dev_games_section.htm" class="nav-item">My Games</a>
+      <a href="dev_analysis.htm" class="nav-item active">Analytics</a>
+      <a href="dev_payouts.htm" class="nav-item">Payouts</a>
+      <a href="dev_settings.htm" class="nav-item">Settings</a>
     </nav>
 
     <main>
-        <div class="header">
-            <h1>Performance Analytics</h1>
-            <div style="display:flex; gap:10px;">
-                <select class="search-bar" style="width:180px;">
-                    <option>Last 30 Days</option>
-                    <option>Last 6 Months</option>
-                    <option>All Time</option>
-                </select>
-                <button class="btn-primary" onclick="window.print()">Export Report</button>
-            </div>
+      <div class="header">
+        <h1>Performance Analytics</h1>
+
+        <div style="display: flex; gap: 10px">
+          <select class="search-bar" id="timeRangeSelect" style="width: 180px">
+            <option>All Time</option>
+            <option>Last 30 Days</option>
+            <option>Last 6 Months</option>
+          </select>
+
+          <button class="btn-primary" id="exportReportBtn">
+            Export Report
+          </button>
+        </div>
+      </div>
+
+      <div class="bento-grid">
+        <div class="card rev-card" style="grid-column: span 3; height: 400px">
+          <h3 style="margin-top: 0">Revenue Overview</h3>
+          <canvas id="revenueChart"></canvas>
         </div>
 
-        
-        <div class="bento-grid">
-            
-            <div class="card rev-card" style="grid-column: span 3; height: 400px;">
-                <h3 style="margin-top:0">Revenue Overview</h3>
-                <canvas id="revenueChart"></canvas>
-            </div>
+        <div class="card" style="grid-column: span 1">
+          <h3 style="margin-top: 0">Average Order Value</h3>
 
-            <div class="card" style="grid-column: span 1;">
-                <h3 style="margin-top:0">Conversion</h3>
-                <div style="text-align: center; padding: 40px 0;">
-                    <span style="font-size: 3rem; font-weight: 800; color: var(--primary);">4.2%</span>
-                    <p style="color: var(--text-dim);">Visitors to Sales</p>
-                </div>
-                <div style="border-top: 1px solid var(--border); padding-top: 20px;">
-                    <p style="font-size: 0.8rem; color: #4ade80;">↑ 1.2% from last week</p>
-                </div>
-            </div>
+          <div style="text-align: center; padding: 40px 0">
+            <span
+              id="conversionRate"
+              style="font-size: 3rem; font-weight: 800; color: var(--primary)"
+            >
+              --
+            </span>
+            <p style="color: var(--text-dim)">Per Transaction</p>
+          </div>
 
-            <!-- <div class="card" style="grid-column: span 1;">
-                <h3>Top Platforms</h3>
-                <canvas id="platformChart"></canvas>
-            </div> -->
-
-            
-            <!-- <div class="card" style="grid-column: span 3;">
-                <h3>Downloads by Region</h3>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-                    <div>
-                        <p>🇺🇸 United States - 45%</p>
-                        <p>🇩🇪 Germany - 12%</p>
-                        <p>🇯🇵 Japan - 10%</p>
-                    </div>
-                    <div style="width: 60%; height: 100px; background: rgba(255,255,255,0.05); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-dim);">
-                        Map Visualization Placeholder
-                    </div>
-                </div>
-            </div> -->
-
+          <div style="border-top: 1px solid var(--border); padding-top: 20px">
+            <p id="conversionTrend" style="font-size: 0.8rem; color: #4ade80">
+              --
+            </p>
+          </div>
         </div>
+      </div>
     </main>
 
-    <script>
-        // Set Chart Defaults for Dark Mode
-        Chart.defaults.color = '#94a3b8';
-        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-        // 1. Revenue Line Chart
-        const ctxRev = document.getElementById('revenueChart').getContext('2d');
-        new Chart(ctxRev, {
-            type: 'line',
-            data: {
-                labels: ['Oct 01', 'Oct 05', 'Oct 10', 'Oct 15', 'Oct 20', 'Oct 25', 'Oct 30'],
-                datasets: [{
-                    label: 'Revenue ($)',
-                    data: [1200, 1900, 1700, 2500, 2200, 3100, 3800],
-                    borderColor: '#6366f1',
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                    borderWidth: 3
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-
-        // 2. Platform Pie Chart
-        const ctxPlat = document.getElementById('platformChart').getContext('2d');
-        new Chart(ctxPlat, {
-            type: 'doughnut',
-            data: {
-                labels: ['Windows', 'macOS', 'Linux'],
-                datasets: [{
-                    data: [75, 20, 5],
-                    backgroundColor: ['#6366f1', '#f43f5e', '#fbbf24'],
-                    borderWidth: 0
-                }]
-            },
-            options: { cutout: '70%', plugins: { legend: { position: 'bottom' } } }
-        });
-    </script>
-</body>
+    <script src="dev_analysis.js"></script>
+  </body>
 </html>

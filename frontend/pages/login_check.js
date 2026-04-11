@@ -110,3 +110,37 @@ document.getElementById("signupBtn").addEventListener("click", async (e) => {
         alert("Server error during signup");
     }
 });
+
+document.getElementById("forgot").addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById("logemail").value;
+
+    if (!username) {
+        alert("Please enter your email/username");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${CONFIG.AUTH_URL}/forgot-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username })
+        });
+
+        const data = await response.json();
+        console.log("Response:", data);
+
+        if (response.ok) {
+            alert("Reset link sent to your email.");
+        } else {
+            alert(data.message || "Failed to send reset link.");
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Server error. Check console.");
+    }
+});

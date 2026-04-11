@@ -139,7 +139,7 @@ app.post('/forgot-password', async (req, res) => {
             expiresAt: Date.now() + 3600000 // 1 hour
         });
 
-        const resetLink = `http://localhost:3000/reset-password?token=${token}`;
+        const resetLink = `http://localhost:3000/pages/login/reset_password.htm?token=${token}`;
 
         await transporter.verify();
 

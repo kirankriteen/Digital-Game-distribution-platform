@@ -52,6 +52,7 @@ async function loadPayouts() {
       data.currency
     );
 
+    renderTransactions(data.payments);
   } catch (err) {
     console.error(err);
 
@@ -59,6 +60,58 @@ async function loadPayouts() {
     pendingEl.innerText = "$0";
     lifetimeEl.innerText = "$0";
   }
+}
+
+function renderTransactions(payments) {
+  const tbody = document.querySelector("tbody");
+
+  // clear existing rows
+  tbody.innerHTML = "";
+
+  if (!payments || payments.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="padding: 15px 10px; color: #888;">
+          No transactions found
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  payments.forEach((p) => {
+    const date = new Date(p.created_at).toLocaleString("en-IN", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+
+    const amount = (p.amount / 100).toLocaleString("en-US", {
+      style: "currency",
+      currency: p.name.toUpperCase(),
+    });
+
+    const statusColor =
+      p.status === "completed"
+        ? "limegreen"
+        : p.status === "pending"
+        ? "orange"
+        : "red";
+
+    const row = `
+      <tr>
+        <td style="padding: 15px 10px">${date}</td>
+        <td style="padding: 15px 10px">${p.method}</td>
+        <td style="padding: 15px 10px">${amount}</td>
+        <td style="padding: 15px 10px">
+          <span class="badge" style="color:white; background:${statusColor}; padding:4px 8px; border-radius:6px;">
+            ${p.status}
+          </span>
+        </td>
+      </tr>
+    `;
+
+    tbody.innerHTML += row;
+  });
 }
 
 // ===== WITHDRAW FUNCTION =====

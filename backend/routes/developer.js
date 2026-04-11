@@ -112,50 +112,51 @@ router.get(
     try {
       const dev_id = await getDeveloperId(req.user.id);
 
-      const [dashboardRows] = await pool.query(
-        `SELECT total_revenue, downloads, active_players
-             FROM dev_dashboard
-             WHERE dev_id = ?`,
+      const [revenueRows] = await pool.query(
+        `SELECT COALESCE(SUM(amount), 0) AS total_revenue
+   FROM payments
+   WHERE dev_id = ? AND status = 'completed'`,
         [dev_id],
       );
 
-      const dashboard = dashboardRows.length
-        ? dashboardRows[0]
-        : {
-            total_revenue: 0,
-            downloads: 0,
-            active_players: 0,
-          };
+      const totalRevenue = revenueRows[0] ? revenueRows[0].total_revenue : 0;
+
+      // Downloads
+      const [downloadRows] = await pool.query(
+        `SELECT COUNT(*) AS downloads
+   FROM user_games ug
+   JOIN dev_games dg ON ug.game_id = dg.game_id
+   WHERE dg.dev_id = ?`,
+        [dev_id],
+      );
+
+      const downloads = downloadRows ? downloadRows[0].downloads : 0;
 
       const [projectsRows] = await pool.query(
-        `SELECT g.title, g.genre_id
-             FROM dev_games dg
-             JOIN games g ON dg.game_id = g.game_id
-             WHERE dg.dev_id = ?`,
+        `SELECT 
+            g.title,
+            ge.genre,
+            COUNT(ug.game_id) AS downloads
+         FROM dev_games dg
+         JOIN games g ON dg.game_id = g.game_id
+         LEFT JOIN genre ge ON g.genre_id = ge.genre_id
+         LEFT JOIN user_games ug ON g.game_id = ug.game_id
+         WHERE dg.dev_id = ?
+         GROUP BY g.game_id`,
         [dev_id],
       );
 
-      const projects = await Promise.all(
-        projectsRows.map(async (row) => {
-          const [genreRows] = await pool.query(
-            `SELECT genre FROM genre WHERE genre_id = ?`,
-            [row.genre_id],
-          );
-
-          const genre = genreRows.length ? genreRows[0].genre : "Unknown";
-
-          return {
-            title: row.title,
-            genre: genre,
-          };
-        }),
-      );
+      const projects = projectsRows.map((row) => ({
+        title: row.title,
+        genre: row.genre || "Unknown",
+        sales: row.downloads,
+      }));
 
       res.json({
-        total_revenue: dashboard.total_revenue,
-        downloads: dashboard.downloads,
-        active_players: dashboard.active_players,
-        projects: projects,
+        total_revenue: totalRevenue,
+        downloads,
+        active_players: 102,
+        projects,
       });
     } catch (err) {
       console.error(err);
@@ -172,7 +173,7 @@ router.get(
     try {
       const dev_id = await getDeveloperId(req.user.id);
 
-        const [projectsRows] = await pool.query(
+      const [projectsRows] = await pool.query(
         `SELECT 
             g.*,
             COUNT(ug.game_id) AS downloads
@@ -181,34 +182,35 @@ router.get(
          LEFT JOIN user_games ug ON g.game_id = ug.game_id
          WHERE dg.dev_id = ?
          GROUP BY g.game_id`,
-        [dev_id]
+        [dev_id],
       );
 
-        const projects = await Promise.all(projectsRows.map(async row => {
-            // Fetch genre name from genre_id
-            const [genreRows] = await pool.query(
-                `SELECT genre FROM genre WHERE genre_id = ?`,
-                [row.genre_id]
-            );
-            const genre = genreRows.length ? genreRows[0].genre : 'Unknown';
-            const host = req.headers.host || 'localhost:3000';
-            const coverUrl = row.cover ? `http://${host}${row.cover}` : null;
-            // Return project object
-            return {
-                game_id: row.game_id,
-                title: row.title,
-                genre: genre,
-                price: row.price,
-                release_date: row.release_date,
-                coverUrl: coverUrl,
-                downloads: row.downloads
-            };
-        })
-        );
+      const projects = await Promise.all(
+        projectsRows.map(async (row) => {
+          // Fetch genre name from genre_id
+          const [genreRows] = await pool.query(
+            `SELECT genre FROM genre WHERE genre_id = ?`,
+            [row.genre_id],
+          );
+          const genre = genreRows.length ? genreRows[0].genre : "Unknown";
+          const host = req.headers.host || "localhost:3000";
+          const coverUrl = row.cover ? `http://${host}${row.cover}` : null;
+          // Return project object
+          return {
+            game_id: row.game_id,
+            title: row.title,
+            genre: genre,
+            price: row.price,
+            release_date: row.release_date,
+            coverUrl: coverUrl,
+            downloads: row.downloads,
+          };
+        }),
+      );
 
-        res.json({
-            mygames: projects
-        });
+      res.json({
+        mygames: projects,
+      });
 
       res.json({
         mygames: projects,
@@ -453,9 +455,10 @@ router.post(
           dev_id,
         ]);
 
-        await connection.query("UPDATE userlogin SET role_id = 1 WHERE user_id = ?", [
-          req.user.id,
-        ]);
+        await connection.query(
+          "UPDATE userlogin SET role_id = 1 WHERE user_id = ?",
+          [req.user.id],
+        );
 
         await connection.commit();
 
@@ -495,8 +498,21 @@ router.get(
       });
       const available = balance.available.reduce((sum, b) => sum + b.amount, 0);
       const pending = balance.pending.reduce((sum, b) => sum + b.amount, 0);
-      const currency =
+      let currency =
         balance.available[0]?.currency || balance.pending[0]?.currency || "usd";
+
+      let fxRate = 1;
+
+      if (currency.toLowerCase() === "gbp") {
+        const fxRes = await fetch("https://open.er-api.com/v6/latest/GBP");
+        const fxData = await fxRes.json();
+        fxRate = fxData?.rates?.USD || 1;
+
+        currency = "usd";
+      }
+
+      const availableConverted = Math.round(available * fxRate);
+      const pendingConverted = Math.round(pending * fxRate);
 
       const [payRows] = await pool.query(
         `SELECT p.payment_id, p.created_at, p.method, p.amount, c.name,
@@ -509,10 +525,11 @@ router.get(
         .filter((p) => p.status === "completed")
         .reduce((sum, p) => sum + Number(p.amount), 0);
       res.json({
-        availableForWithdrawal: available,
-        pendingClearance: pending,
+        availableForWithdrawal: availableConverted,
+        pendingClearance: pendingConverted,
         lifetimeEarningsCents,
         currency,
+        payments: payRows,
       });
     } catch (err) {
       console.error(err);

@@ -153,17 +153,26 @@ router.get('/game', async (req, res) => {
 router.get('/search', async (req, res) => {
     try {
         const [gameRows] = await pool.query(
-            `SELECT g.game_id, g.title, g.cover, g.release_date, ge.genre
-             FROM games g
-             JOIN genre ge ON g.genre_id = ge.genre_id`
-        )
+  `SELECT 
+      g.game_id,
+      g.title,
+      g.cover,
+      g.release_date,
+      ge.genre,
+      COUNT(ug.game_id) AS downloads
+   FROM games g
+   JOIN genre ge ON g.genre_id = ge.genre_id
+   LEFT JOIN user_games ug ON g.game_id = ug.game_id
+   GROUP BY g.game_id, g.title, g.cover, g.release_date, ge.genre`
+);
         const host = req.headers.host || 'localhost:3000';
         const games = gameRows.map(row => ({
             game_id: row.game_id,
             title: row.title,
             coverUrl: row.cover ? `http://${host}${row.cover}` : null,
             genre: row.genre,
-            release_date: row.release_date
+            release_date: row.release_date,
+            downloads: row.downloads
         }));
 
         res.json({

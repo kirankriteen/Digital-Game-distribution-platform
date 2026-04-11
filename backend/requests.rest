@@ -166,7 +166,7 @@ Content-Type: application/json
 
 # Join User group
 POST http://localhost:3000/group/join-user-group
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU0NTEwNTEsImV4cCI6MTc3NTUzNzQ1MX0.FgHdHdv65C6VzpJiDsRYGYOKdFNCBp5txx20wRjwH5A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU5MDIxMjIsImV4cCI6MTc3NTk4ODUyMn0.AbDNsQL7oE12Q1oTN3rargv7fzEK6fcf07IxHdLxm6w
 Content-Type: application/json
 
 {
@@ -177,13 +177,11 @@ Content-Type: application/json
 
 # Get messages from the group with pagination
 POST http://localhost:3000/group/get-user-messages
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU0NTEwNTEsImV4cCI6MTc3NTUzNzQ1MX0.FgHdHdv65C6VzpJiDsRYGYOKdFNCBp5txx20wRjwH5A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU5MDIxMjIsImV4cCI6MTc3NTk4ODUyMn0.AbDNsQL7oE12Q1oTN3rargv7fzEK6fcf07IxHdLxm6w
 Content-Type: application/json
 
 {
-  "groupId": "69d339c3404274711b8cdc9e",
-  "beforeMessageId": "69d3488730d8829ec953c5cd",
-  "limit": 4
+  "groupId": "69d339c3404274711b8cdc9e"
 }
 
 ###
@@ -219,3 +217,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6I
 POST http://localhost:3000/group/get-my-groups
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU4OTcwMDEsImV4cCI6MTc3NTk4MzQwMX0.wVB6QwgCHQCkLeoD1iIwP1WfNQB2MEvVUuCNE6DmuRA
 
+# Get user groups
+POST http://localhost:3000/group/get-user-groups
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU4OTkzNTUsImV4cCI6MTc3NTk4NTc1NX0.bqrgm_fIyux_8CeIiEl0iKUsoDLEKYTO4hlhQGUSW8E
