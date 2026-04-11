@@ -1,31 +1,44 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameDistro | Downloads</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Downloads</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js"></script>
 
-<style>
-    :root {
+    <!-- <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register(
+          "https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/sw.js"
+        );
+      }
+    </script> -->
+
+    <style>
+      :root {
         --netflix-red: #e50914;
         --progress-blue: #3b82f6;
         --bg-dark: #0a0a0a;
         --surface: #1a1a1a;
         --text-dim: #666;
-    }
+      }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    body {
+      body {
         background-color: var(--bg-dark);
         color: #fff;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         padding: 2rem 5%;
-    }
+      }
 
-    .download-stats {
+      .download-stats {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
@@ -34,17 +47,38 @@
         padding: 1.5rem;
         border-radius: 12px;
         border: 1px solid #333;
-    }
+      }
 
-    .stat-box h4 { color: var(--text-dim); font-size: 0.75rem; margin-bottom: 5px; }
-    .stat-box p { font-size: 1.2rem; font-weight: 800; }
+      .stat-box h4 {
+        color: var(--text-dim);
+        font-size: 0.75rem;
+        margin-bottom: 5px;
+      }
+      .stat-box p {
+        font-size: 1.2rem;
+        font-weight: 800;
+      }
 
-    .section-title { margin: 2rem 0 1rem; font-weight: 800; display: flex; gap: 10px; }
-    .active-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; }
+      .section-title {
+        margin: 2rem 0 1rem;
+        font-weight: 800;
+        display: flex;
+        gap: 10px;
+      }
+      .active-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+      }
 
-    .dl-list { display: flex; flex-direction: column; gap: 15px; }
+      .dl-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
 
-    .dl-card {
+      .dl-card {
         background: var(--surface);
         border-radius: 10px;
         padding: 1.2rem;
@@ -52,24 +86,41 @@
         grid-template-columns: 80px 1fr 150px;
         align-items: center;
         gap: 20px;
-    }
+      }
 
-    .dl-thumb { width: 80px; aspect-ratio: 1/1; border-radius: 6px; object-fit: cover; }
+      .dl-thumb {
+        width: 80px;
+        aspect-ratio: 1/1;
+        border-radius: 6px;
+        object-fit: cover;
+      }
 
-    .progress-container { width: 100%; background: #333; height: 6px; border-radius: 10px; }
-    .progress-fill { height: 100%; background: var(--progress-blue); }
+      .progress-container {
+        width: 100%;
+        background: #333;
+        height: 6px;
+        border-radius: 10px;
+      }
+      .progress-fill {
+        height: 100%;
+        background: var(--progress-blue);
+      }
 
-    .dl-meta {
+      .dl-meta {
         display: flex;
         justify-content: space-between;
         font-size: 0.75rem;
         color: var(--text-dim);
         margin-top: 8px;
-    }
+      }
 
-    .dl-actions { display: flex; justify-content: flex-end; gap: 10px; }
+      .dl-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
 
-    .icon-btn {
+      .icon-btn {
         background: #333;
         border: none;
         color: #fff;
@@ -77,56 +128,48 @@
         height: 36px;
         border-radius: 6px;
         cursor: pointer;
-    }
+      }
 
-    .play-btn {
+      .play-btn {
         background: #fff;
         color: #000;
         width: 80px;
         font-weight: bold;
-    }
-</style>
+      }
+    </style>
+  </head>
 
-</head>
+  <body>
+    <header
+      style="display: flex; justify-content: space-between; margin-bottom: 2rem"
+    >
+      <h1>Downloads</h1>
+      <a href="../../base.html" style="color: #666">Back</a>
+    </header>
 
-<body>
-
-<header style="display:flex; justify-content:space-between; margin-bottom:2rem;">
-    <h1>Downloads</h1>
-    <a href="../../base.html" style="color:#666;">Back</a>
-</header>
-
-<!-- STATS -->
-
-<div class="download-stats">
-    <div class="stat-box">
+    <div class="download-stats">
+      <div class="stat-box">
         <h4>Speed</h4>
         <p id="speed">0 Mbps</p>
-    </div>
-    <div class="stat-box">
+      </div>
+      <div class="stat-box">
         <h4>Disk Space</h4>
         <p>412 GB Free</p>
-    </div>
-    <div class="stat-box">
+      </div>
+      <div class="stat-box">
         <h4>Queue</h4>
         <p id="queue">0</p>
+      </div>
     </div>
-</div>
 
-<!-- DOWNLOADING -->
+    <h2 class="section-title">
+      <span class="active-dot"></span> Currently Downloading
+    </h2>
+    <div class="dl-list" id="downloading-list"></div>
 
-<h2 class="section-title"><span class="active-dot"></span> Currently Downloading</h2>
-<div class="dl-list" id="downloading-list"></div>
+    <h2 class="section-title">Purchased Games</h2>
+    <div class="dl-list" id="purchased-list"></div>
 
-<!-- AVAILABLE -->
-
-<h2 class="section-title">Available to Download</h2>
-<div class="dl-list" id="available-list"></div>
-
-<!-- COMPLETED -->
-
-<h2 class="section-title">Downloaded</h2>
-<div class="dl-list" id="completed-list"></div>
-
-</body>
+    <script src="downloads_base.js"></script>
+  </body>
 </html>

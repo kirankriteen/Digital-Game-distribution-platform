@@ -36,7 +36,7 @@ function loadCart() {
                 </div>
             </div>
         `;
-
+        
         cartList.appendChild(card);
     });
 
@@ -71,7 +71,7 @@ async function proceedToCheckout() {
     }
 
     try {
-        const response = await fetch("http://localhost:3000/pay/games-checkout", {
+        const response = await fetch("/pay/games-checkout", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

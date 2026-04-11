@@ -7,7 +7,7 @@ window.addEventListener("load", async () => {
     }
 
     try {
-        const response = await fetch("http://localhost:3000/dev/check", {
+        const response = await fetch("/dev/check", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + token

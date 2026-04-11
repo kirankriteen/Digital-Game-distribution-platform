@@ -338,8 +338,8 @@ router.post('/games-checkout', authenticateToken, authenticateRole([ROLE.USER, R
                 info: 'games-checkout',
                 games: JSON.stringify(gameInfos)
             },
-            success_url: `http://localhost:3000/pages/downloads/base.html`,
-            cancel_url: `http://localhost:3000/pages/cancel.html`
+            success_url: `http://localhost:3000/pages/downloads/base.htm`,
+            cancel_url: `http://localhost:3000/pages/cart/cart.html`
         })
 
         res.json({ url: session.url, total });

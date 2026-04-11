@@ -83,7 +83,7 @@ function updateThemeBackground(theme) {
 
 async function loadDashboard() {
   try {
-    const response = await fetch("http://localhost:3000/dev/dashboard", {
+    const response = await fetch("/dev/dashboard", {
       method: "GET",
       headers: {
         Authorization: "Bearer " + token,

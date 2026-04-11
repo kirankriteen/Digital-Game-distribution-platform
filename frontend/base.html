@@ -515,7 +515,7 @@
         }
 
         try {
-          const res = await fetch("http://localhost:3000/dev/check", {
+          const res = await fetch("/dev/check", {
             headers: {
               Authorization: "Bearer " + token,
             },
@@ -749,7 +749,7 @@
 
       async function fetchGames() {
         try {
-          const res = await fetch("http://localhost:3000/my/search");
+          const res = await fetch("/my/search");
           const data = await res.json();
 
           backendGames = data.games;

@@ -2,7 +2,7 @@ const token = localStorage.getItem("accessToken");
 
 async function loadSettings() {
     try {
-        const response = await fetch("http://localhost:3000/dev/account", {
+        const response = await fetch("/dev/account", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + token
@@ -81,7 +81,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     }
 
     try {
-        const res = await fetch("http://localhost:3000/dev/account", {
+        const res = await fetch("/dev/account", {
             method: "PATCH",
             headers: {
                 "Authorization": "Bearer " + token
@@ -113,7 +113,7 @@ document.getElementById("deleteAccountBtn").addEventListener("click", async () =
     if (!confirmDelete) return;
 
     try {
-        const res = await fetch("http://localhost:3000/dev/delete-account", {
+        const res = await fetch("/dev/delete-account", {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + token,

@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // STEP 1: Get presigned URL
-            const res = await fetch("http://localhost:3000/games/upload-url", {
+            const res = await fetch("/games/upload-url", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (xhr.status >= 200 && xhr.status < 300) {
 
                     // STEP 3: Confirm upload
-                    await fetch("http://localhost:3000/games/upload-complete", {
+                    await fetch("/games/upload-complete", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     formData.append("zipfile", assetsZip);
                     formData.append("gameId", gameId);
 
-                    const zipRes = await fetch("http://localhost:3000/games/upload-zip", {
+                    const zipRes = await fetch("/games/upload-zip", {
                         method: "POST",
                         headers: {
                             "Authorization": "Bearer " + token

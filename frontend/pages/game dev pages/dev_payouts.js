@@ -22,7 +22,7 @@ function formatMoney(amount, currency) {
 // ===== LOAD PAYOUT DATA =====
 async function loadPayouts() {
   try {
-    const response = await fetch("http://localhost:3000/dev/payouts", {
+    const response = await fetch("/dev/payouts", {
       method: "GET",
       headers: {
         Authorization: "Bearer " + token,
@@ -67,7 +67,7 @@ async function handleWithdraw() {
     withdrawBtn.disabled = true;
     withdrawBtn.innerText = "Processing...";
 
-    const response = await fetch("http://localhost:3000/dev/withdraw", {
+    const response = await fetch("/dev/withdraw", {
       method: "GET",
       headers: {
         Authorization: "Bearer " + token,

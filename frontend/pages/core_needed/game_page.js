@@ -13,7 +13,7 @@ let scrollInterval;
 
 async function loadGame() {
     try {
-        const res = await fetch(`http://localhost:3000/my/game?game_id=${gameId}`);
+        const res = await fetch(`/my/game?game_id=${gameId}`);
         const data = await res.json();
         console.log(data);
 
