@@ -58,7 +58,7 @@ document.getElementById("loginBtn").addEventListener("click", async (e) => {
             localStorage.setItem("accessToken", data.accessToken);
             localStorage.setItem("refreshToken", data.refreshToken);
 
-            alert("Login successful");
+            // alert("Login successful");
 
             window.location.href = "/base.html";
         } else {

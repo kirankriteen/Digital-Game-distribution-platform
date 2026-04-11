@@ -206,3 +206,16 @@ Content-Type: application/json
   "token": "",
   "newPassword": "password123"
 }
+
+###
+
+# Get groups list
+POST http://localhost:3000/group/get-user-groups
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU4OTcwMDEsImV4cCI6MTc3NTk4MzQwMX0.wVB6QwgCHQCkLeoD1iIwP1WfNQB2MEvVUuCNE6DmuRA
+
+###
+
+# Get my groups list
+POST http://localhost:3000/group/get-my-groups
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU4OTcwMDEsImV4cCI6MTc3NTk4MzQwMX0.wVB6QwgCHQCkLeoD1iIwP1WfNQB2MEvVUuCNE6DmuRA
+

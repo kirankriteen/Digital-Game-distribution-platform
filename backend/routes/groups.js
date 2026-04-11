@@ -169,4 +169,63 @@ router.post('/get-user-messages', authenticateToken, authenticateRole([ROLE.USER
     }
 })
 
+router.post('/get-user-groups', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
+    try {
+        const groups = await Group.find({ type: 'user' })
+            .populate('members', 'username avatar status')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            groups
+        });
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ error: "Server Error" });
+    }
+})
+
+async function getMongoUserId(req) {
+    const userId = req.user?.id; 
+
+    if (userId === undefined || userId === null) {
+        throw new Error("User ID not found in request");
+    }
+
+    const numericUserId = Number(userId);
+
+    if (isNaN(numericUserId)) {
+        throw new Error("Invalid user_id format");
+    }
+
+    const user = await User.findOne({ user_id: numericUserId });
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    return user._id
+}
+
+router.post('/get-my-groups', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
+    try {
+        const userId = await getMongoUserId(req);
+
+        const groups = await Group.find({
+            type: 'user',
+            members: userId
+        })
+            .populate('members', 'username avatar status')
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            groups
+        });
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ error: "Server Error" });
+    }
+})
+
 module.exports = router

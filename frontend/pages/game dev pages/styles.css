@@ -205,6 +205,10 @@ input:focus, select:focus, textarea:focus {
     .logo { font-size: 1rem; }
 }
 
+.poster-container img {
+    width: 400px;
+    height: 400px;
+}
 
 
 
