@@ -28,7 +28,7 @@
 
         /* --- Workspace Sidebar --- */
         .workspace-bar {
-            width: 80px;
+            width: 280px;
             background: rgba(0,0,0,0.4);
             border-right: 1px solid rgba(255,255,255,0.05);
             display: flex;
@@ -38,9 +38,12 @@
             gap: 20px;
             z-index: 100;
         }
+        .workspace-bar a{
+            text-decoration: none;
+        }
 
         .nav-circle {
-            width: 48px;
+            width: 120px;
             height: 48px;
             background: var(--panel);
             border-radius: 16px;
@@ -197,12 +200,12 @@
         </div>
     </div>
 
-    <div class="workspace-bar">
-        <a href="../../base.html"><div class="nav-circle" title="Home">🏠</div></a>
-        <a href="./devs_page.htm"><div class="nav-circle" title="Developer Chat">🛠️</div></a>
-        <a href="./public_page.htm"><div class="nav-circle" title="Community">🗨️</div></a>
-        <div class="nav-circle" title="Settings" style="margin-top: auto;" onclick="openSettings()">⚙️</div>
-    </div>
+        <div class="workspace-bar">
+            <a href="../../base.html"><div class="nav-circle" title="Home">Home</div></a>
+            <a href="./devs_page.htm"><div class="nav-circle" title="Developer Chat">Developer Chat</div></a>
+            <a href="./public_page.htm"><div class="nav-circle" title="Community">Community</div></a>
+            <div class="nav-circle" title="Settings" style="margin-top: auto;" onclick="openSettings()">⚙️</div>
+        </div>
 
     <div class="main-stage">
         <header class="glass-header">
