@@ -219,6 +219,9 @@
         padding: 20px 0.5rem;
         scrollbar-width: none;
       }
+      .horizontal-scroll a {
+        text-decoration: none;
+      }
       .horizontal-scroll::-webkit-scrollbar {
         display: none;
       }
@@ -280,6 +283,7 @@
 
       .card_info {
         padding: 15px;
+        color : white;
       }
       .badge-sponsored {
         position: absolute;
@@ -376,7 +380,14 @@
           <a href="pages/wishlist/base.htm">Wishlist🤍</a>
           <a href="pages/downloads/base.htm">Downloads</a>
           <!-- <a href="pages/login/signup_login.htm" style="color :#da7116">Sign In</a> -->
-          <a href="#" id="authBtn" style="color: #da7116">Sign In</a>
+          <div style="position: relative; display: inline-block;">
+                      <a href="javascript:void(0)" id="authBtn" style="color: #da7116; text-decoration: none; font-size: 0.9rem;">Sign In</a>
+              
+              <div id="auth-dropdown" style="display: none; position: absolute; top: 40px; right: 0; background: #000; border: 1px solid #333; min-width: 160px; z-index: 1000; border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.5);">
+                  <a href="pages/core_needed/settings.htm" style="display: block; padding: 12px 15px; color: white; text-decoration: none; font-size: 14px; border-bottom: 1px solid #222;">⚙️ Settings</a>
+                  <a href="javascript:void(0)" id="logout-trigger" style="display: block; padding: 12px 15px; color: #E50914; text-decoration: none; font-size: 14px;">🚪 Logout</a>
+              </div>
+          </div>
         </nav>
       </header>
 
@@ -452,12 +463,6 @@
         </button>
       </div>
 
-      <div class="section-header">
-        <h2 style="color: var(--sponsored-gold)">Featured Partnerships ✨</h2>
-      </div>
-      <div class="row-wrapper">
-        <div class="horizontal-scroll" id="sponsored-list"></div>
-      </div>
 
       <div class="section-header">
         <h2>Action & RPG ⚔️</h2>
@@ -470,11 +475,11 @@
       </div>
       <div class="row-wrapper">
         <button class="nav-btn prev-btn" onclick="scrollRow('action-list', -1)">
-          ❮
+          
         </button>
         <div class="horizontal-scroll" id="action-list"></div>
         <button class="nav-btn next-btn" onclick="scrollRow('action-list', 1)">
-          ❯
+          
         </button>
       </div>
     </div>
@@ -485,25 +490,37 @@
       //if user loggrn in it shows logout button
       const authBtn = document.getElementById("authBtn");
       const token = localStorage.getItem("accessToken");
-      if (token) {
-        // User is logged in
-        authBtn.innerText = "Logout";
-        authBtn.addEventListener("click", () => {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
+// Function to handle logout
+const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("cart");
+    alert("Logged out");
+    window.location.reload(); // Refresh to update UI state
+};
 
-          sessionStorage.removeItem("cart");
+if (token) {
+    // User is logged in
+    authBtn.innerText = "🥸";
+    
+    authBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevents immediate closing
+        const dropdown = document.getElementById("auth-dropdown");
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+} else {
+    // User is NOT logged in
+    // authBtn.innerText = "Sign in"; // Different icon for clarity
+    authBtn.addEventListener("click", () => {
+        window.location.href = "pages/login/signup_login.htm";
+    });
+}
 
-          alert("Logged out");
-          window.location.href = "pages/login/signup_login.htm";
-        });
-      } else {
-        // User is NOT logged in
-        authBtn.innerText = "Sign In";
-        authBtn.addEventListener("click", () => {
-          window.location.href = "pages/login/signup_login.htm";
-        });
-      }
+// Close dropdown if user clicks anywhere else on the screen
+window.addEventListener("click", () => {
+    const dropdown = document.getElementById("auth-dropdown");
+    if (dropdown) dropdown.style.display = "none";
+});
 
       //developer login
       document.getElementById("devNav").addEventListener("click", async () => {
@@ -561,65 +578,7 @@
         },
       };
 
-      const allGames = [
-        {
-          id: 1,
-          title: "Elden Ring: Shadow of Erdtree",
-          tag: "RPG",
-          cat: "trending",
-          img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=600",
-        },
-        {
-          id: 2,
-          title: "Cyberpunk 2077",
-          tag: "Open World",
-          cat: "trending",
-          img: "https://images.unsplash.com/photo-1605898835373-023ad4270243?w=600",
-        },
-        {
-          id: 3,
-          title: "Starfield",
-          tag: "Space Exploration",
-          cat: "trending",
-          img: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=600",
-        },
-        {
-          id: 4,
-          title: "Razer Blade 18",
-          tag: "Hardware",
-          cat: "sponsored",
-          img: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600",
-        },
-        {
-          id: 5,
-          title: "Ghost of Tsushima",
-          tag: "Action",
-          cat: "action",
-          img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600",
-        },
-        {
-          id: 6,
-          title: "The Witcher 3: Wild Hunt",
-          tag: "RPG",
-          cat: "action",
-          img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600",
-        },
-        {
-          id: 7,
-          title: "Skyrim Special Edition",
-          tag: "RPG",
-          cat: "action",
-          img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600",
-        },
-        {
-          id: 8,
-          title: "RTX 5090 Preview",
-          tag: "Hardware",
-          cat: "sponsored",
-          img: "https://images.unsplash.com/photo-1587202399717-20dd6fbc702a?w=600",
-        },
-      ];
-
+     
       let currentHeroIdx = 0;
       let heroInterval;
 

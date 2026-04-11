@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEAVERLY | Netflix Discovery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #141414;
+            --sidebar-bg: #000000;
+            --accent: #E50914; 
+            --match-green: #46d369;
+            --text-main: #ffffff;
+            --text-dim: #b3b3b3;
+            --card-bg: #181818;
+            --modal-overlay: rgba(0, 0, 0, 0.9);
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Helvetica Neue', 'Outfit', sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar: Netflix Vertical Nav --- */
+        .workspace-bar {
+            width: 100px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+            gap: 25px;
+            z-index: 100;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            color: var(--text-dim);
+            cursor: pointer;
+        }
+
+        .nav-icon { font-size: 24px; margin-bottom: 5px; }
+        .nav-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .nav-item:hover { color: #fff; transform: scale(1.1); }
+
+        .profile-square-nav {
+            width: 32px; height: 32px;
+            background: var(--accent); border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        /* --- Main Content Stage --- */
+        .main-stage {
+            flex-grow: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Header Search */
+        .glass-header {
+            padding: 20px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            position: absolute; top: 0; width: 100%; z-index: 50;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.5);
+            padding: 5px 12px;
+            width: 280px;
+        }
+
+        .search-container input {
+            background: transparent; border: none; color: white;
+            padding: 8px; width: 100%; outline: none;
+        }
+
+        /* --- Featured Carousel (Netflix Hero) --- */
+        .carousel-container {
+            height: 65vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .slide-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(70deg, #141414 30%, transparent 90%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 5%;
+        }
+
+        .slide-overlay h1 { font-size: 4rem; margin: 0; font-weight: 800; }
+        .slide-overlay p { max-width: 500px; color: var(--text-dim); font-size: 1.2rem; margin: 20px 0; }
+
+        /* --- Matches Shelf --- */
+        .shelf { padding: 40px 5%; margin-top: -50px; position: relative; z-index: 10; }
+        .shelf-title { font-size: 1.4rem; margin-bottom: 20px; font-weight: 800; }
+        
+        .shelf-container {
+            display: flex; gap: 15px; overflow-x: auto; padding-bottom: 20px;
+            scrollbar-width: none;
+        }
+        .shelf-container::-webkit-scrollbar { display: none; }
+
+        .user-card {
+            min-width: 260px;
+            background: var(--card-bg);
+            border-radius: 4px;
+            padding: 20px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .user-card:hover { transform: scale(1.08); border-color: #fff; background: #222; }
+
+        .match-score { color: var(--match-green); font-weight: bold; font-size: 16px; margin-bottom: 10px; }
+
+        /* --- Settings Modal --- */
+        .settings-modal {
+            position: fixed; inset: 0;
+            background: var(--modal-overlay);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+
+        .settings-content {
+            background: var(--bg);
+            width: 450px; padding: 50px; border-radius: 4px;
+            text-align: center; border: 1px solid #333;
+        }
+
+        .netflix-input {
+            width: 100%; background: #333; border: none;
+            padding: 15px; color: white; border-radius: 4px;
+            margin-bottom: 20px; font-size: 16px; outline: none;
+        }
+
+        .btn-action {
+            background: white; color: black; border: none;
+            padding: 12px 30px; border-radius: 4px;
+            font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 10px;
+        }
+        .btn-action:hover { background: rgba(255,255,255,0.8); }
+
+        .toggle-box {
+            margin-top: 30px;
+            background: #222;
+            padding: 15px 25px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <h1 style="margin-bottom: 30px;">Who's Browsing?</h1>
+            <div class="profile-square-nav" style="width: 100px; height: 100px; margin: 0 auto 30px; border-radius: 8px;"></div>
+            <input type="text" id="set-name" class="netflix-input" placeholder="Update Name">
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn-action" onclick="closeSettings()">SAVE</button>
+                <button class="btn-action" style="background: #333; color: white;" onclick="closeSettings()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="workspace-bar">
+        <a href="../../base.html" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="./devs_page.htm" class="nav-item">
+            <span class="nav-icon">🛠️</span>
+            <span class="nav-label">Devs</span>
+        </a>
+        <a href="./public_page.htm" class="nav-item">
+            <span class="nav-icon">🗨️</span>
+            <span class="nav-label">Community</span>
+        </a>
+        <div class="nav-item" style="margin-top: auto;" onclick="openSettings()">
+            <div class="profile-square-nav"></div>
+            <span class="nav-label">Settings</span>
+        </div>
+    </nav>
+
+    <main class="main-stage">
+        <header class="glass-header">
+            <div style="color: var(--accent); font-weight: 900; font-size: 32px; letter-spacing: -1.5px;">WEAVERLY</div>
+            <div class="search-container">
+                <span>🔍</span>
+                <input type="text" placeholder="People, games, or tech stack...">
+            </div>
+        </header>
+
+        <div class="carousel-container">
+            <div class="carousel-track" id="mainCarousel">
+                <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=1600&q=80');">
+                    <div class="slide-overlay">
+                        <h1 id="hero-title">Project Nebula</h1>
+                        <p>The #1 framework for real-time web discovery. Used by over 2k developers worldwide.</p>
+                        <div>
+                            <button class="btn-action"><span>▶</span> PLAY</button>
+                            <button class="btn-action" style="background: rgba(109, 109, 110, 0.7); color: white; margin-left: 10px;">ⓘ More Info</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1600&q=80');">
+                    <div class="slide-overlay">
+                        <h1>Synthwave UI</h1>
+                        <p>80+ glassmorphic components for modern React applications. Fully open source.</p>
+                        <div>
+                            <button class="btn-action"><span>▶</span> PLAY</button>
+                            <button class="btn-action" style="background: rgba(109, 109, 110, 0.7); color: white; margin-left: 10px;">ⓘ More Info</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="shelf">
+            <h2 class="shelf-title">Top Matches for You</h2>
+            <div class="shelf-container" id="match-results">
+                </div>
+
+            <div class="toggle-box" style="max-width: 450px;">
+                <div>
+                    <div style="font-weight: bold; font-size: 16px;">Smart Discovery</div>
+                    <div style="font-size: 12px; color: var(--text-dim);">Show me to people with similar libraries.</div>
+                </div>
+                <input type="checkbox" checked id="matchBool" style="transform: scale(1.6); accent-color: var(--accent);">
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- 1. Recommendation Logic ---
+        const currentUser = {
+            name: "You",
+            age: 24,
+            games: ["CyberStrike", "Elden Ring", "Witcher 3", "Valorant"]
+        };
+
+        const otherUsers = [
+            { name: "Neon_Samurai", age: 26, games: ["Elden Ring", "Witcher 3", "Rust"] },
+            { name: "Pixel_Dev", age: 23, games: ["Valorant", "CyberStrike", "Minecraft"] },
+            { name: "Ghost_Player", age: 28, games: ["CyberStrike", "Elden Ring", "Valorant"] },
+            { name: "Retro_Girl", age: 19, games: ["Pacman", "Witcher 3"] },
+            { name: "Code_King", age: 25, games: ["Witcher 3", "CyberStrike"] }
+        ];
+
+        function generateMatches() {
+            const container = document.getElementById('match-results');
+            container.innerHTML = '';
+            
+            otherUsers.forEach(user => {
+                const common = user.games.filter(g => currentUser.games.includes(g));
+                const ageDiff = Math.abs(user.age - currentUser.age);
+                
+                // Netflix-style score
+                let score = (common.length / currentUser.games.length) * 100;
+                if (ageDiff <= 5) score += 15; 
+                if (score > 98) score = 98;
+
+                if (common.length > 0) {
+                    const card = document.createElement('div');
+                    card.className = 'user-card';
+                    card.innerHTML = `
+                        <div class="match-score">${Math.round(score)}% Match</div>
+                        <div style="font-size: 20px; font-weight: 800; margin-bottom: 5px;">${user.name}</div>
+                        <div style="font-size: 13px; color: #b3b3b3; margin-bottom: 15px;">
+                            ${user.age} yrs • Shared: ${common.slice(0, 2).join(', ')}
+                        </div>
+                        <button class="btn-action" style="width: 100%; justify-content: center; background: #E50914; color: white; font-size: 12px;">ADD FRIEND</button>
+                    `;
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        // --- 2. Carousel Logic ---
+        const carousel = document.getElementById('mainCarousel');
+        function autoScroll() {
+            const width = carousel.clientWidth;
+            if (carousel.scrollLeft >= (carousel.scrollWidth - width - 5)) {
+                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                carousel.scrollBy({ left: width, behavior: 'smooth' });
+            }
+        }
+        setInterval(autoScroll, 6000);
+
+        // --- 3. Settings UI Logic ---
+        const modal = document.getElementById('settingsModal');
+        const setNameInput = document.getElementById('set-name');
+        const heroTitle = document.getElementById('hero-title');
+
+        function openSettings() { modal.style.display = 'flex'; }
+        function closeSettings() {
+            if (setNameInput.value) heroTitle.innerText = "Welcome, " + setNameInput.value;
+            modal.style.display = 'none';
+        }
+
+        // --- 4. Toggle Logic ---
+        document.getElementById('matchBool').addEventListener('change', (e) => {
+            alert(e.target.checked ? "Discovery Mode: ON" : "Discovery Mode: OFF");
+        });
+
+        // Initialize
+        window.onload = generateMatches;
+    </script>
+</body>
+</html>
