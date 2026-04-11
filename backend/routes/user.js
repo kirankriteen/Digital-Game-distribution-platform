@@ -2,9 +2,25 @@ const express = require('express')
 const { authenticateToken, authenticateRole } = require('../middleware/auth')
 const { pool } = require('../db/pool')
 const { ROLE } = require('../data')
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const bcrypt = require('bcrypt')
 
 const router = express.Router()
 router.use(express.json())
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
 
 router.get('/check', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
     const [userRows] = await pool.query(
@@ -169,7 +185,7 @@ router.post('/add-wishlist', authenticateToken, authenticateRole([ROLE.USER, ROL
             `SELECT * FROM games WHERE game_id = ?`,
             [game_id]
         )
-        if(gameRows.length === 0) {
+        if (gameRows.length === 0) {
             return res.status(404).json({ error: 'Game not found with the game Id' });
         }
 
@@ -183,7 +199,7 @@ router.post('/add-wishlist', authenticateToken, authenticateRole([ROLE.USER, ROL
             message: 'inserted into wishlist'
         })
 
-    } catch(err) {
+    } catch (err) {
         console.log(err)
         res.status(500).json({ error: "Server Error" });
     }
@@ -198,7 +214,7 @@ router.post('/remove-wishlist', authenticateToken, authenticateRole([ROLE.USER, 
             `SELECT * FROM wishlist WHERE game_id = ?`,
             [game_id]
         )
-        if(gameRows.length === 0) {
+        if (gameRows.length === 0) {
             return res.status(404).json({ error: 'Game not found in wishlist with the game Id' });
         }
 
@@ -211,7 +227,7 @@ router.post('/remove-wishlist', authenticateToken, authenticateRole([ROLE.USER, 
             message: 'deleted from wishlist'
         })
 
-    } catch(err) {
+    } catch (err) {
         console.log(err)
         res.status(500).json({ error: "Server Error" });
     }
@@ -229,9 +245,114 @@ router.get('/wishlist', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEV
             games
         })
 
-    } catch(err) {
+    } catch (err) {
         console.log(err)
         res.status(500).json({ error: "Server Error" });
+    }
+})
+
+router.get('/account', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
+    try {
+        const user_id = req.user.id
+
+        const [userRows] = await pool.query(
+            `SELECT * FROM userlogin WHERE user_id = ?`,
+            [user_id]
+        )
+
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: 'User record not found' });
+        }
+
+        const user = userRows[0];
+        const host = req.headers.host || 'localhost:3000';
+        const imageUrl = `http://${host}${user.imglocation}`;
+        console.log(imageUrl)
+
+        res.json({
+            display_name: user.fullname,
+            email: user.username,
+            age: user.age,
+            imageUrl: imageUrl
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+})
+
+router.patch('/account', authenticateToken, authenticateRole([ROLE.USER, ROLE.DEVELOPER]), async (req, res) => {
+    try {
+        const user_id = req.user.id;
+        const { fullname, username, age, old_password, new_password } = req.body;
+
+        let fields = [];
+        let values = [];
+
+        if (fullname) {
+            fields.push('fullname = ?');
+            values.push(fullname)
+        }
+
+        if (username) {
+            fields.push('username = ?');
+            values.push(username)
+        }
+
+        if (age) {
+            fields.push('age = ?');
+            values.push(age)
+        }
+
+        if (old_password && new_password) {
+            const [old] = await pool.query(`SELECT password_hash FROM userlogin WHERE user_id = ?`, [user_id])
+            old_hash = old[0].password_hash
+            const isMatch = await bcrypt.compare(old_password, old_hash);
+            if (isMatch) {
+                const password_hash = await bcrypt.hash(new_password, 10)
+                fields.push('password_hash = ?');
+                values.push(password_hash);
+            }
+
+        }
+
+        if (req.file) {
+            const [oldData] = await pool.query(
+                'SELECT imglocation FROM userlogin WHERE user_id = ?',
+                [user_id]
+            );
+
+            if (oldData[0]?.imglocation) {
+                const oldPath = path.join(__dirname, '../', oldData[0].imglocation);
+                fs.unlink(oldPath, err => {
+                    if (err) console.error('Failed to delete old image:', err);
+                });
+            }
+
+            fields.push('imglocation = ?');
+            values.push(`/uploads/${req.file.filename}`);
+        }
+
+        if (fields.length === 0) {
+            return res.status(400).json({ message: 'No fields provided to update' });
+        }
+
+        values.push(user_id);
+
+        const query = `UPDATE userlogin SET ${fields.join(', ')} WHERE user_id = ?`;
+        await pool.query(query, values);
+
+        res.json({ success: true, message: 'Profile updated successfully' });
+    } catch (err) {
+        console.error(err);
+        if (req.file) {
+            fs.unlink(
+                path.join(__dirname, '../uploads', req.file.filename),
+                () => { }
+            );
+        }
+
+        res.status(500).json({ message: 'Server error' });
     }
 })
 

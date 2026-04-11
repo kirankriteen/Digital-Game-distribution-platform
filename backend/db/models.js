@@ -22,6 +22,7 @@ const groupSchema = new mongoose.Schema({
   name: { type: String, required: true },
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   avatar: String,
+  type: { type: String, enum: ['user', 'dev'], default: 'user' }
 }, { timestamps: true });
 
 const messageSchema = new mongoose.Schema({

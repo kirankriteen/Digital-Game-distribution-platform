@@ -9,10 +9,14 @@ const crypto = require('crypto');
 const PORT = 4000
 const { userData } = require('./data')
 const { pool } = require('./db/pool')
+const { connectDB } = require('./db/mongodb');
+const { User, Group, Message } = require('./db/models')
 
 const jwt = require('jsonwebtoken')
 
 app.use(express.json())
+
+connectDB();
 
 //app.use(cors({ origin: "http://127.0.0.1:5501" }));
 //app.use(cors({ origin: "http://localhost:3000" }));
@@ -88,6 +92,14 @@ app.post('/signup', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10)
         const sql = 'INSERT INTO userLogin (username, password_hash, fullname, role_id) VALUES (?, ?, ?, ?)';
         const [result] = await pool.execute(sql, [email, hashedPassword, fullName, 1]);
+
+        const userId = result.insertId;
+        await User.create({
+            user_id: userId,
+            username: fullName,
+            avatar: null,
+            status: "offline"
+        });
 
         res.status(201).json({ message: 'User registered successfully', userId: result.insertId });
     }
