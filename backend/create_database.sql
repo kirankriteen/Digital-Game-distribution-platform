@@ -169,3 +169,7 @@ CREATE TABLE wishlist (
     FOREIGN KEY (user_id) REFERENCES userlogin(user_id) ON DELETE CASCADE,
     FOREIGN KEY (game_id) REFERENCES games(game_id) ON DELETE CASCADE
 );
+
+ALTER TABLE userlogin
+ADD COLUMN imglocation VARCHAR(255) DEFAULT NULL,
+ADD COLUMN age INT DEFAULT 25;

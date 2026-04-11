@@ -70,7 +70,7 @@ GET http://localhost:3000/games/upload-url
 
 ### 
 GET http://localhost:3000/dev/mygames 
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzUzNjYzOTYsImV4cCI6MTc3NTQ1Mjc5Nn0.KsejTzcaiHeKMG_CVqhJDc2sRRqUkTTp-xvcYkzlg4I
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6Imt5bGUiLCJpYXQiOjE3NzU4NzYzMzUsImV4cCI6MTc3NTk2MjczNX0.a_d1Lrmbsot2xpvvv2xy5DR5PZZER5AjT2lFEUgzXWY
 
 GET http://localhost:3000/dev
 
@@ -184,4 +184,25 @@ Content-Type: application/json
   "groupId": "69d339c3404274711b8cdc9e",
   "beforeMessageId": "69d3488730d8829ec953c5cd",
   "limit": 4
+}
+
+###
+
+# Get forgot password
+POST http://localhost:4000/forgot-password
+Content-Type: application/json
+
+{
+  "username": "@gmail.com"
+}
+
+###
+
+# Get reset password
+POST http://localhost:4000/reset-password
+Content-Type: application/json
+
+{
+  "token": "",
+  "newPassword": "password123"
 }

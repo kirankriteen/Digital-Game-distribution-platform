@@ -1,0 +1,216 @@
+[{
+  "_id": {
+    "$oid": "69d3486430d8829ec953c5c6"
+  },
+  "group": {
+    "$oid": "69d339c3404274711b8cdc9e"
+  },
+  "sender": {
+    "$oid": "69d3362b77816f46a8319f46"
+  },
+  "text": "hello",
+  "readBy": [
+    {
+      "$oid": "69d33475c649e2bbf2fa2fe6"
+    },
+    {
+      "$oid": "69d3362b77816f46a8319f46"
+    }
+  ],
+  "createdAt": {
+    "$date": "2026-04-06T05:45:08.214Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T05:45:08.214Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69d3486630d8829ec953c5c7"
+  },
+  "group": {
+    "$oid": "69d339c3404274711b8cdc9e"
+  },
+  "sender": {
+    "$oid": "69d3362b77816f46a8319f46"
+  },
+  "text": "i am sally",
+  "readBy": [
+    {
+      "$oid": "69d33475c649e2bbf2fa2fe6"
+    },
+    {
+      "$oid": "69d3362b77816f46a8319f46"
+    }
+  ],
+  "createdAt": {
+    "$date": "2026-04-06T05:45:10.863Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T05:45:10.863Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69d3486d30d8829ec953c5c8"
+  },
+  "group": {
+    "$oid": "69d339c3404274711b8cdc9e"
+  },
+  "sender": {
+    "$oid": "69d3362b77816f46a8319f46"
+  },
+  "text": "can anyone introduce themselves",
+  "readBy": [
+    {
+      "$oid": "69d33475c649e2bbf2fa2fe6"
+    },
+    {
+      "$oid": "69d3362b77816f46a8319f46"
+    }
+  ],
+  "createdAt": {
+    "$date": "2026-04-06T05:45:17.471Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T05:45:17.471Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69d3487730d8829ec953c5c9"
+  },
+  "group": {
+    "$oid": "69d339c3404274711b8cdc9e"
+  },
+  "sender": {
+    "$oid": "69d33475c649e2bbf2fa2fe6"
+  },
+  "text": "hey sally ;)",
+  "readBy": [
+    {
+      "$oid": "69d33475c649e2bbf2fa2fe6"
+    },
+    {
+      "$oid": "69d3362b77816f46a8319f46"
+    }
+  ],
+  "createdAt": {
+    "$date": "2026-04-06T05:45:27.915Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T05:45:27.915Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69d3487930d8829ec953c5ca"
+  },
+  "group": {
+    "$oid": "69d339c3404274711b8cdc9e"
+  },
+  "sender": {
+    "$oid": "69d33475c649e2bbf2fa2fe6"
+  },
+  "text": "I am kyle",
+  "readBy": [
+    {
+      "$oid": "69d33475c649e2bbf2fa2fe6"
+    },
+    {
+      "$oid": "69d3362b77816f46a8319f46"
+    }
+  ],
+  "createdAt": {
+    "$date": "2026-04-06T05:45:29.747Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T05:45:29.747Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69d3487c30d8829ec953c5cb"
+  },
+  "group": {
+    "$oid": "69d339c3404274711b8cdc9e"
+  },
+  "sender": {
+    "$oid": "69d33475c649e2bbf2fa2fe6"
+  },
+  "text": "how are you?",
+  "readBy": [
+    {
+      "$oid": "69d33475c649e2bbf2fa2fe6"
+    },
+    {
+      "$oid": "69d3362b77816f46a8319f46"
+    }
+  ],
+  "createdAt": {
+    "$date": "2026-04-06T05:45:32.301Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T05:45:32.301Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69d3488130d8829ec953c5cc"
+  },
+  "group": {
+    "$oid": "69d339c3404274711b8cdc9e"
+  },
+  "sender": {
+    "$oid": "69d33475c649e2bbf2fa2fe6"
+  },
+  "text": "I hope you are fine",
+  "readBy": [
+    {
+      "$oid": "69d33475c649e2bbf2fa2fe6"
+    },
+    {
+      "$oid": "69d3362b77816f46a8319f46"
+    }
+  ],
+  "createdAt": {
+    "$date": "2026-04-06T05:45:37.964Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T05:45:37.964Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69d3488730d8829ec953c5cd"
+  },
+  "group": {
+    "$oid": "69d339c3404274711b8cdc9e"
+  },
+  "sender": {
+    "$oid": "69d3362b77816f46a8319f46"
+  },
+  "text": "yeah i'm great",
+  "readBy": [
+    {
+      "$oid": "69d33475c649e2bbf2fa2fe6"
+    },
+    {
+      "$oid": "69d3362b77816f46a8319f46"
+    }
+  ],
+  "createdAt": {
+    "$date": "2026-04-06T05:45:43.227Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-06T05:45:43.227Z"
+  },
+  "__v": 0
+}]
