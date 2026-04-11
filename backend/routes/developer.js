@@ -153,12 +153,16 @@ router.get('/mygames', authenticateToken, authenticateRole(ROLE.DEVELOPER), asyn
         const dev_id = await getDeveloperId(req.user.id);
 
         const [projectsRows] = await pool.query(
-            `SELECT g.*
-             FROM dev_games dg
-             JOIN games g ON dg.game_id = g.game_id
-             WHERE dg.dev_id = ?`,
-            [dev_id]
-        );
+        `SELECT 
+            g.*,
+            COUNT(ug.game_id) AS downloads
+         FROM dev_games dg
+         JOIN games g ON dg.game_id = g.game_id
+         LEFT JOIN user_games ug ON g.game_id = ug.game_id
+         WHERE dg.dev_id = ?
+         GROUP BY g.game_id`,
+        [dev_id]
+      );
 
         const projects = await Promise.all(projectsRows.map(async row => {
             // Fetch genre name from genre_id
@@ -176,7 +180,8 @@ router.get('/mygames', authenticateToken, authenticateRole(ROLE.DEVELOPER), asyn
                 genre: genre,
                 price: row.price,
                 release_date: row.release_date,
-                coverUrl: coverUrl
+                coverUrl: coverUrl,
+                downloads: row.downloads
             };
         })
         );
